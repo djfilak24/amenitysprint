@@ -524,17 +524,16 @@ const SprintProcessSection = () => {
 
 // ── PROJECTS DATA ────────────────────────────────────────────────────────────
 const PROJECTS = [
-  { id:1, slug:"241-n-5th",          tag:"Amenity Study",        name:"241 N 5TH ST.",      city:"Minneapolis, MN",  duration:"2.5 Weeks", investment:"$12K–$14K", type:"Roof Deck · Social Club · Event Space",        deliverables:["Floor Plans","3D Renderings","Design Language","Axonometric View"],       imgLabel:"Roof Deck Concept · 241 N 5th St.",        size:"L" },
-  { id:2, slug:"9320-excelsior",     tag:"Building Reposition",  name:"9320 EXCELSIOR",     city:"Minneapolis, MN",  duration:"2.5 Weeks", investment:"$3K–$6K",   type:"Campus Analysis · Link Activation",           deliverables:["Initial Analysis","Site Plan","Opportunity Diagrams","Link Study"],         imgLabel:"Campus Aerial · 9320 Excelsior",           size:"S" },
-  { id:3, slug:"55-west-monroe",     tag:"Building Reposition",  name:"55 WEST MONROE",     city:"Chicago, IL",      duration:"4 Weeks",   investment:"$12K–$15K", type:"The Urban Eddy · Ground Floor Lobby",         deliverables:["Axonometric Plan","Floor Plan","Explorations","Animation"],               imgLabel:"Ground Floor Lobby · 55 West Monroe",      size:"L" },
-  { id:4, slug:"two22-tower",        tag:"Building Reposition",  name:"TWO22 TOWER",        city:"Minneapolis, MN",  duration:"2 Weeks",   investment:"$5K–$8K",   type:"2nd Floor Connection · Tenant Lounge",        deliverables:["Renderings","Floor Plans","Storytelling Mockup","Animation"],             imgLabel:"Tenant Lounge · Two22 Tower",              size:"M" },
-  { id:5, slug:"50-south-sixth",     tag:"Building Reposition",  name:"50 SOUTH SIXTH",     city:"Minneapolis, MN",  duration:"6 Weeks",   investment:"$2K–$4K",   type:"Atrium Redesign · 5-Step Reposition",         deliverables:["Renderings","Material Palette","Floor Plans","360 Tour"],                 imgLabel:"Atrium Proposal · 50 South Sixth",         size:"S" },
-  { id:6, slug:"golden-hills",       tag:"Building Reposition",  name:"GOLDEN HILLS",       city:"Minneapolis, MN",  duration:"3 Weeks",   investment:"$2K–$4K",   type:"Concept Design · Finish Palette",             deliverables:["Concept Plan","Finish Palette","Sketches","360 Tour"],                    imgLabel:"Concept Renderings · Golden Hills",        size:"S" },
-  { id:7, slug:"cbre-concourse",     tag:"Building Reposition",  name:"CBRE CONCOURSE",     city:"Atlanta, GA",      duration:"2.5 Weeks", investment:"$5K–$8K",   type:"Lobby Activation · Modular Trellis System",   deliverables:["Construction Docs","Floor Plan","Demolition Plan","Renderings"],          imgLabel:"Lobby Activation · CBRE Concourse",        size:"M" },
-  { id:8, slug:"1500-spring-garden", tag:"Building Reposition",  name:"1500 SPRING GARDEN", city:"Philadelphia, PA", duration:"3 Weeks",   investment:"$8K–$10K",  type:"Rooftop Activation · Garden Courtyard",       deliverables:["Rooftop Plan","Exterior Study","Entry Sequence","Analysis"],              imgLabel:"Rooftop Activation · 1500 Spring Garden",  size:"M" },
-  { id:9, slug:"crest-ridge",        tag:"Single-to-Multi Tenant",name:"CREST RIDGE",       city:"Minnetonka, MN",   duration:"6 Months",  investment:"$3K–$6K",   type:"Agile Planning · Tenant Strategy",            deliverables:["Stacking Plans","Agile Timeline","Comp Analysis","Dashboard"],            imgLabel:"Leasing Strategy · Crest Ridge",           size:"S" },
-  { id:10,slug:"zna-hq",            tag:"Campus & Master Plan",  name:"ZNA HQ BUILDING",    city:"Chicago, IL",      duration:"6 Weeks",   investment:"$12K–$14K", type:"The Sculpture in the Park · Campus Reposition",deliverables:["Base Scheme","Alternate Plans","Signage Study","Conference Center"],       imgLabel:"Campus Study · ZNA HQ",                    size:"L" },
-];
+  { id:1, slug:"zna-hq",            tag:"Campus & Master Plan",  name:"ZNA HQ BUILDING",    city:"Chicago, IL",      duration:"6 Weeks",   investment:"$12K–$14K", type:"The Sculpture in the Park · Campus Reposition",deliverables:["Base Scheme","Alternate Plans","Signage Study","Conference Center"],       img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-3tVTOHYMNTjMaF04lEslNvttObsczE.jpeg",  size:"L" },
+  { id:2, slug:"cbre-concourse",     tag:"Building Reposition",  name:"CBRE CONCOURSE",     city:"Atlanta, GA",      duration:"2.5 Weeks", investment:"$5K–$8K",   type:"Lobby Activation · Modular Trellis System",   deliverables:["Construction Docs","Floor Plan","Demolition Plan","Renderings"],          img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-glrIqPS69Tknu73CvN3HyEvXpjmqL0.jpeg",  size:"M" },
+  { id:3, slug:"50-south-sixth",     tag:"Building Reposition",  name:"50 SOUTH SIXTH ST.", city:"Minneapolis, MN",  duration:"6 Weeks",   investment:"$2K–$4K",   type:"Atrium Redesign · 5-Step Reposition",         deliverables:["Renderings","Material Palette","Floor Plans","360 Tour"],                 img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-5FbHwo7bDssQx82qA5OErzhvk0jOni.jpeg",  size:"S" },
+  { id:4, slug:"two22-tower",        tag:"Building Reposition",  name:"TWO22 TOWER",        city:"Minneapolis, MN",  duration:"2 Weeks",   investment:"$5K–$8K",   type:"2nd Floor Connection · Tenant Lounge",        deliverables:["Renderings","Floor Plans","Storytelling Mockup","Animation"],             img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-oh4A18thJrrAjfLmhvM5C4TJzZsfq3.jpeg",  size:"M" },
+  { id:5, slug:"boston-experience",  tag:"Building Reposition",  name:"BOSTON EXPERIENCE",  city:"Boston, MA",       duration:"2.5 Weeks", investment:"$8K–$10K",  type:"Exhibit Zoning · Site Activation",            deliverables:["Site Analysis","Exhibit Zoning","Egress Plan","Activation Strategy"],     img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-oh8dzCX4ZfHFea8mF094IxEXuDAmT1.jpeg",  size:"M" },
+  { id:6, slug:"55-west-monroe",     tag:"Building Reposition",  name:"55 WEST MONROE",     city:"Chicago, IL",      duration:"4 Weeks",   investment:"$12K–$15K", type:"The Urban Eddy · Ground Floor Lobby",         deliverables:["Axonometric Plan","Floor Plan","Explorations","Animation"],               img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-YS9pTq3PGeOOm9zXBQIrbKr9BXQp83.jpeg",  size:"L" },
+  { id:7, slug:"crest-ridge",        tag:"Single-to-Multi Tenant",name:"CREST RIDGE",       city:"Minnetonka, MN",   duration:"6 Months",  investment:"$3K–$6K",   type:"Agile Planning · Tenant Strategy",            deliverables:["Stacking Plans","Agile Timeline","Comp Analysis","Dashboard"],            img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-KcuP5TSelDQyQamU5IP3CHQTaD6bIM.jpeg",  size:"S" },
+  { id:8, slug:"golden-hills",       tag:"Building Reposition",  name:"GOLDEN HILLS",       city:"Minneapolis, MN",  duration:"3 Weeks",   investment:"$2K–$4K",   type:"Concept Design · Finish Palette",             deliverables:["Concept Plan","Finish Palette","Sketches","360 Tour"],                    img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-p0LyzpBiXl3uSl3ERNXt8c7R2qP0bf.jpeg",  size:"S" },
+  { id:9, slug:"1500-spring-garden", tag:"Building Reposition",  name:"1500 SPRING GARDEN", city:"Philadelphia, PA", duration:"3 Weeks",   investment:"$8K–$10K",  type:"Rooftop Activation · Garden Courtyard",       deliverables:["Rooftop Plan","Exterior Study","Entry Sequence","Analysis"],              img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-3Reb5Y0KBRbojqzyrWQEqzk9wJlJeg.jpeg",  size:"M" },
+  ];
 
 const SIZE_CONFIG = {
   S:{ label:"S", name:"Targeted", color:"#18988B" },
@@ -558,8 +557,20 @@ const ProjectCard = ({ p, delay }) => {
         transition:`opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s, box-shadow 0.3s ease`,
         boxShadow:hovered?"0 12px 40px rgba(0,0,0,0.12)":"0 2px 12px rgba(0,0,0,0.04)",
       }}>
-      <div style={{ position:"relative", overflow:"hidden" }}>
-        <ImgPlaceholder label={p.imgLabel} aspectRatio="4/3" style={{ borderRadius:0 }}/>
+<div style={{ position:"relative", overflow:"hidden" }}>
+  <div style={{ width:"100%", aspectRatio:"4/3", position:"relative" }}>
+    <img 
+      src={p.img} 
+      alt={p.name}
+      style={{ 
+        width:"100%", 
+        height:"100%", 
+        objectFit:"cover",
+        transition:"transform 0.5s ease",
+        transform: hovered ? "scale(1.05)" : "scale(1)",
+      }}
+    />
+  </div>
         <div style={{
           position:"absolute", inset:0, background:"rgba(0,0,0,0.88)",
           opacity:hovered?1:0, transition:"opacity 0.35s ease",
@@ -641,7 +652,7 @@ const SprintTier = ({ tier, active, onClick }) => {
   );
 };
 
-// ── MAIN ─────────────────────────────────────────────────────────────────────
+// ── MAIN ──────────────────────────────��──────────────────────────────────────
 export default function AmenitySprint() {
   const [scrolled, setScrolled] = useState(false);
   const [heroIn, setHeroIn] = useState(false);
@@ -975,7 +986,7 @@ export default function AmenitySprint() {
                 letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.6rem" }}>Sprint Portfolio</div>
               <h2 style={{ ...fade(projVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
                 fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)", color:"#000" }}>
-                10 Studies. 5 Markets.
+                9 Studies. 5 Markets.
               </h2>
             </div>
             <div style={{ ...fade(projVis,0.15), display:"flex", gap:"0.5rem", flexWrap:"wrap" }}>
