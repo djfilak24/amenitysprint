@@ -1,4 +1,4 @@
-import AmenitySprint from "@/components/AmenitySprint";
+import AmenitySprint from "../components/AmenitySprint";
 
 export const metadata = {
   title: "NELSON Asset Strategy — Amenity Sprint",
