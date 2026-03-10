@@ -691,10 +691,14 @@ export default function AmenitySprint() {
         padding: mobile ? "0 5vw" : "0 4vw",
         height:64, display:"flex", alignItems:"center", justifyContent:"space-between",
       }}>
-        <svg width="90" height="18" viewBox="0 0 90 18" fill="none">
-          <text x="0" y="15" fontFamily="'Poppins',sans-serif" fontWeight="800" fontSize="16" fill={scrolled?"#000":"#fff"} letterSpacing="2">NELSON</text>
-          <polygon points="68,1 74,1 71,8" fill="#00BADC"/>
-        </svg>
+        <img 
+          src={scrolled 
+            ? "https://nelsonworldwide.com/wp-content/themes/theme/images/nelson-logo.svg" 
+            : "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NELSON_whiteBlueFin-BHENwe28ggL1i46CvcW16xy4UDxTTw.png"
+          } 
+          alt="NELSON" 
+          style={{ height: 24, width: "auto", transition: "opacity 0.3s ease" }}
+        />
         {/* Mobile: just the CTA button */}
         {mobile ? (
           <button onClick={()=>scrollTo("contact")} style={{
@@ -831,12 +835,24 @@ export default function AmenitySprint() {
       </section>
 
       {/* ── MARQUEE ── */}
-      <div style={{ background:"#00BADC", padding:"0.875rem 0", overflow:"hidden" }}>
-        <div style={{ display:"flex", gap:"3rem", animation:"marquee 22s linear infinite", whiteSpace:"nowrap", width:"max-content" }}>
+      <div style={{ background:"#00BADC", padding:"1rem 0", overflow:"hidden" }}>
+        <div style={{ display:"flex", gap:"2rem", animation:"marquee 45s linear infinite", whiteSpace:"nowrap", width:"max-content" }}>
           {[...Array(3)].map((_,r)=>(
             ["Amenity Sprint","Lobby Activation","Roof Deck Concept","Tenant Lounge","Building Reposition","Campus Study","Competitive Analysis","Design Language","Visualization","Floor Plans"].map((item,i)=>(
-              <span key={`${r}-${i}`} style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.65rem", fontWeight:600, letterSpacing:"0.2em", textTransform:"uppercase", color:"#fff" }}>
-                {item} <span style={{ opacity:0.5, marginLeft:"1rem" }}>·</span>
+              <span key={`${r}-${i}`} style={{ 
+                fontFamily:"'Poppins',sans-serif", 
+                fontSize:"0.62rem", 
+                fontWeight:600, 
+                letterSpacing:"0.14em", 
+                textTransform:"uppercase", 
+                color:"#fff",
+                background:"rgba(255,255,255,0.15)",
+                padding:"0.4rem 0.9rem",
+                borderRadius:99,
+                border:"1px solid rgba(255,255,255,0.25)",
+                display:"inline-block",
+              }}>
+                {item}
               </span>
             ))
           ))}
@@ -892,8 +908,30 @@ export default function AmenitySprint() {
       <SprintProcessSection />
 
       {/* ── TIERS ── */}
-      <section id="approach-tiers" style={{ padding: mobile?"4rem 5vw":"7rem 6vw", background:"#fff" }}>
-        <div ref={tierRef} style={{ maxWidth:1100, margin:"0 auto" }}>
+      <section id="approach-tiers" style={{ 
+        padding: mobile?"4rem 5vw":"7rem 6vw", 
+        position:"relative",
+        overflow:"hidden",
+        minHeight: mobile ? "auto" : "90vh",
+      }}>
+        {/* Full-bleed background image */}
+        <div style={{
+          position:"absolute",
+          inset:0,
+          backgroundImage:"url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80')",
+          backgroundSize:"cover",
+          backgroundPosition:"center",
+          zIndex:0,
+        }}/>
+        {/* Gradient blur overlay */}
+        <div style={{
+          position:"absolute",
+          inset:0,
+          background:"linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.5) 100%)",
+          backdropFilter:"blur(2px)",
+          zIndex:1,
+        }}/>
+        <div ref={tierRef} style={{ maxWidth:1100, margin:"0 auto", position:"relative", zIndex:2 }}>
           <div style={{
             display:"grid",
             gridTemplateColumns: mobile ? "1fr" : "1fr 2fr",
@@ -905,11 +943,11 @@ export default function AmenitySprint() {
                 letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>Scalable Scope</div>
               <h2 style={{ ...fade(tierVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
                 fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)",
-                lineHeight:1.15, color:"#000", marginBottom:"1rem" }}>
+                lineHeight:1.15, color:"#fff", marginBottom:"1rem" }}>
                 One size<br/>never fits all.
               </h2>
               <p style={{ ...fade(tierVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem",
-                fontWeight:300, color:"#666", lineHeight:1.8 }}>
+                fontWeight:300, color:"rgba(255,255,255,0.7)", lineHeight:1.8 }}>
                 Our S / M / L / XL framework matches scope to your asset, budget, and timeline.
               </p>
             </div>
@@ -1086,10 +1124,11 @@ export default function AmenitySprint() {
           }}>
             {/* Brand block — full width on mobile */}
             <div style={{ gridColumn: mobile?"1 / -1":"auto" }}>
-              <svg width="90" height="18" viewBox="0 0 90 18" fill="none" style={{ marginBottom:"0.875rem" }}>
-                <text x="0" y="15" fontFamily="'Poppins',sans-serif" fontWeight="800" fontSize="16" fill="#fff" letterSpacing="2">NELSON</text>
-                <polygon points="68,1 74,1 71,8" fill="#00BADC"/>
-              </svg>
+              <img 
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NELSON_whiteBlueFin-BHENwe28ggL1i46CvcW16xy4UDxTTw.png" 
+                alt="NELSON" 
+                style={{ height: 24, width: "auto", marginBottom:"0.875rem" }}
+              />
               <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:500,
                 color:"rgba(255,255,255,0.25)", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:"0.875rem" }}>
                 Asset Strategy &amp; Repositioning
