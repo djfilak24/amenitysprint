@@ -6,7 +6,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const project = getProject(params.slug);
+  const { slug } = await params;
+  const project = getProject(slug);
   if (!project) return { title: "Project Not Found" };
   return {
     title: `${project.name} — ${project.tag}`,
@@ -14,6 +15,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function ProjectRoute({ params }) {
-  return <ProjectPage slug={params.slug} />;
+export default async function ProjectRoute({ params }) {
+  const { slug } = await params;
+  return <ProjectPage slug={slug} />;
 }

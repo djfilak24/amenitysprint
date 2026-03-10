@@ -1,8 +1,6 @@
 "use client";
 import { PROJECTS } from "@/lib/projects";
 import ConceptPhase from "@/components/ConceptPhase";
-
-"use client";
 import { useState, useEffect, useRef } from "react";
 
 // ─────────────────────────────────────────────────────────────────────────────
