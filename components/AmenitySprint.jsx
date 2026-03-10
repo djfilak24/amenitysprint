@@ -715,25 +715,38 @@ const ProjectCard = ({ p, delay }) => {
       onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}
       style={{
         display:"block", textDecoration:"none",
-        background:"#fff", border:"1px solid #e8e8e8", borderRadius:"0.75rem",
+        background:"#fff",
+        border:`1px solid ${hovered ? "rgba(0,0,0,0.14)" : "rgba(0,0,0,0.07)"}`,
+        borderRadius:"1.25rem",
         overflow:"hidden",
-        opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(24px)",
-        transition:`opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s, box-shadow 0.3s ease`,
-        boxShadow:hovered?"0 12px 40px rgba(0,0,0,0.12)":"0 2px 12px rgba(0,0,0,0.04)",
+        opacity:visible?1:0, transform:visible?(hovered?"translateY(-4px)":"translateY(0)"):"translateY(24px)",
+        transition:`opacity 0.7s ease ${delay}s, transform 0.5s ease, box-shadow 0.4s ease, border-color 0.3s ease`,
+        boxShadow:hovered
+          ? `0 20px 50px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.10)`
+          : "0 3px 14px rgba(0,0,0,0.07)",
       }}>
 <div style={{ position:"relative", overflow:"hidden" }}>
-  <div style={{ width:"100%", aspectRatio:"4/3", position:"relative" }}>
-    <img 
-      src={p.img} 
+  {/* Widescreen 16:9 thumbnail */}
+  <div style={{ width:"100%", aspectRatio:"16/9", position:"relative" }}>
+    <img
+      src={p.img}
       alt={p.name}
-      style={{ 
-        width:"100%", 
-        height:"100%", 
+      style={{
+        width:"100%",
+        height:"100%",
         objectFit:"cover",
-        transition:"transform 0.5s ease",
-        transform: hovered ? "scale(1.05)" : "scale(1)",
+        objectPosition:"top center",
+        transition:"transform 0.55s ease",
+        transform: hovered ? "scale(1.04)" : "scale(1)",
+        display:"block",
       }}
     />
+    {/* Subtle gradient overlay for contrast */}
+    <div style={{
+      position:"absolute", inset:0,
+      background:"linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.18) 100%)",
+      pointerEvents:"none",
+    }}/>
   </div>
         <div style={{
           position:"absolute", inset:0, background:"rgba(0,0,0,0.88)",
@@ -760,19 +773,22 @@ const ProjectCard = ({ p, delay }) => {
           {sz.label}
         </div>
       </div>
-      <div style={{ padding:"1.25rem 1.5rem 1.5rem" }}>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:500,
-          letterSpacing:"0.14em", textTransform:"uppercase", color:"#999", marginBottom:"0.35rem" }}>{p.tag}</div>
+      <div style={{ padding:"1.1rem 1.4rem 1.4rem" }}>
+        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
+          letterSpacing:"0.16em", textTransform:"uppercase", color:"#aaa", marginBottom:"0.3rem" }}>{p.tag}</div>
         <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1.05rem", fontWeight:700,
-          color:"#000", lineHeight:1.2, marginBottom:"0.35rem" }}>{p.name}</div>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.75rem", fontWeight:400,
-          color:"#666", marginBottom:"1rem", lineHeight:1.5 }}>{p.type}</div>
-        <div style={{ display:"flex", justifyContent:"space-between", borderTop:"1px solid #f0f0f0", paddingTop:"0.85rem" }}>
-          <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:500,
-            textTransform:"uppercase", letterSpacing:"0.1em", color:"#bbb" }}>{p.city}</div>
+          color:"#0a0a0a", lineHeight:1.2, marginBottom:"0.3rem" }}>{p.name}</div>
+        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.73rem", fontWeight:400,
+          color:"#777", marginBottom:"0.9rem", lineHeight:1.5 }}>{p.type}</div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end",
+          borderTop:"1px solid rgba(0,0,0,0.06)", paddingTop:"0.8rem" }}>
+          <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
+            textTransform:"uppercase", letterSpacing:"0.12em", color:"#bbb" }}>{p.city}</div>
           <div style={{ textAlign:"right" }}>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:600, color:"#000" }}>{p.investment}</div>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:400, color:"#bbb" }}>{p.duration}</div>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:700,
+              color:"#111", lineHeight:1 }}>{p.investment}</div>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:400,
+              color:"#bbb", marginTop:"0.15rem" }}>{p.duration}</div>
           </div>
         </div>
       </div>
@@ -780,38 +796,84 @@ const ProjectCard = ({ p, delay }) => {
   );
 };
 
+// REPLACE these img paths with your actual images placed in /public/images/
 const TIERS = [
-  { label:"S", range:"$2K–$6K", weeks:"2–3 weeks", desc:"Targeted upgrades with immediate impact — entry refresh, signage, lighting, finish improvements. Fast ROI, minimal disruption." },
-  { label:"M", range:"$5K–$10K", weeks:"2.5–4 weeks", desc:"Significant public-space improvements that open revenue opportunities and solve internal building problems." },
-  { label:"L", range:"$8K–$15K", weeks:"4–6 weeks", desc:"High-investment repositioning that substantially elevates current and future real estate value." },
-  { label:"XL", range:"Custom", weeks:"6+ weeks", desc:"Large-scale rebranding, infrastructure overhaul, circulation redesign. Full market repositioning for flagship assets." },
+  { label:"S", range:"$2K–$6K", weeks:"2–3 weeks", desc:"Targeted upgrades with immediate impact — entry refresh, signage, lighting, finish improvements. Fast ROI, minimal disruption.", img:"/images/tier-s.jpg" },
+  { label:"M", range:"$5K–$10K", weeks:"2.5–4 weeks", desc:"Significant public-space improvements that open revenue opportunities and solve internal building problems.", img:"/images/tier-m.jpg" },
+  { label:"L", range:"$8K–$15K", weeks:"4–6 weeks", desc:"High-investment repositioning that substantially elevates current and future real estate value.", img:"/images/tier-l.jpg" },
+  { label:"XL", range:"Custom", weeks:"6+ weeks", desc:"Large-scale rebranding, infrastructure overhaul, circulation redesign. Full market repositioning for flagship assets.", img:"/images/tier-xl.jpg" },
 ];
 
 const SprintTier = ({ tier, active, onClick }) => {
   const sz = SIZE_CONFIG[tier.label];
+  const [hov, setHov] = useState(false);
   return (
-    <div onClick={onClick} style={{
-      borderRadius:"0.75rem",
-      border:active?`2px solid ${sz.color}`:"1px solid #e8e8e8",
-      background:active?"#000":"#fff",
-      padding:"2rem", cursor:"pointer",
-      transition:"all 0.3s ease",
-      boxShadow:active?`0 0 0 4px ${sz.color}22`:"none",
-    }}>
-      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"1.25rem" }}>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"2.5rem", fontWeight:800,
-          color:active?sz.color:"#e0e0e0", lineHeight:1 }}>{tier.label}</div>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:600,
-          letterSpacing:"0.12em", textTransform:"uppercase",
-          color:active?"#fff":"#999", background:active?"rgba(255,255,255,0.1)":"#f5f5f5",
-          padding:"0.25rem 0.6rem", borderRadius:99 }}>{sz.name}</div>
+    <div onClick={onClick}
+      onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{
+        position:"relative", borderRadius:"1.5rem", overflow:"hidden",
+        border:active?`2px solid ${sz.color}`:"1px solid rgba(0,0,0,0.08)",
+        background:"#fff", cursor:"pointer",
+        transition:"box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease",
+        boxShadow: active
+          ? `0 12px 40px ${sz.color}44, 0 2px 12px rgba(0,0,0,0.12)`
+          : hov ? "0 8px 28px rgba(0,0,0,0.14)" : "0 2px 10px rgba(0,0,0,0.07)",
+        transform: hov && !active ? "translateY(-3px)" : "none",
+      }}>
+
+      {/* Card background image – top portion */}
+      <div style={{
+        position:"absolute", top:0, left:0, right:0, bottom:0,
+        backgroundImage:`url(${tier.img})`,
+        backgroundSize:"cover", backgroundPosition:"center top",
+        filter:"brightness(0.88) saturate(0.85)",
+      }}/>
+
+      {/* Gradient: image visible at top → fades to white at bottom */}
+      <div style={{
+        position:"absolute", top:0, left:0, right:0, bottom:0,
+        background: active
+          ? `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 45%, rgba(0,0,0,0.94) 100%)`
+          : "linear-gradient(to bottom, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.0) 25%, rgba(255,255,255,0.65) 55%, rgba(255,255,255,1.0) 75%)",
+      }}/>
+
+      {/* Content layer */}
+      <div style={{ position:"relative", zIndex:2, padding:"1.75rem 1.75rem 1.5rem" }}>
+        {/* Header row */}
+        <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"0.5rem" }}>
+          <div style={{
+            fontFamily:"'Poppins',sans-serif",
+            fontSize: tier.label==="XL" ? "3.75rem" : "4.75rem",
+            fontWeight:800, lineHeight:1, letterSpacing:"-0.03em",
+            color: active ? sz.color : "rgba(255,255,255,0.88)",
+            textShadow: active ? "none" : "0 2px 12px rgba(0,0,0,0.3)",
+          }}>{tier.label}</div>
+          <div style={{
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:700,
+            letterSpacing:"0.14em", textTransform:"uppercase", marginTop:"0.35rem",
+            color: active ? "#fff" : "rgba(255,255,255,0.9)",
+            background: active ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.42)",
+            padding:"0.25rem 0.65rem", borderRadius:99,
+            backdropFilter:"blur(6px)",
+          }}>{sz.name}</div>
+        </div>
+
+        {/* Spacer so text sits in white zone for inactive cards */}
+        <div style={{ height: active ? "0.75rem" : "3.5rem" }}/>
+
+        <div style={{
+          fontFamily:"'Poppins',sans-serif", fontSize:"1rem", fontWeight:700,
+          color:active?"#fff":"#000", marginBottom:"0.25rem",
+        }}>{tier.range}</div>
+        <div style={{
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:500,
+          color:active?sz.color:"#888", marginBottom:"0.875rem",
+        }}>{tier.weeks}</div>
+        <div style={{
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:400,
+          color:active?"rgba(255,255,255,0.65)":"#555", lineHeight:1.75,
+        }}>{tier.desc}</div>
       </div>
-      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1rem", fontWeight:700,
-        color:active?"#fff":"#000", marginBottom:"0.25rem" }}>{tier.range}</div>
-      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:500,
-        color:active?sz.color:"#999", marginBottom:"1rem" }}>{tier.weeks}</div>
-      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.8rem", fontWeight:400,
-        color:active?"rgba(255,255,255,0.6)":"#666", lineHeight:1.7 }}>{tier.desc}</div>
     </div>
   );
 };
@@ -1072,7 +1134,7 @@ export default function AmenitySprint() {
         <div style={{
           position:"absolute",
           inset:0,
-          backgroundImage:"url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80')",
+          backgroundImage:"url('/images/tier-bg.jpg')",
           backgroundSize:"cover",
           backgroundPosition:"center",
           zIndex:0,
