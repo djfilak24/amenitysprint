@@ -1,0 +1,8 @@
+[project]
+name = "pdf-extraction"
+version = "0.1.0"
+description = "PDF image extraction utilities"
+requires-python = ">=3.9"
+dependencies = [
+    "pymupdf>=1.24.0",
+]
