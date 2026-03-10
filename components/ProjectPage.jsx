@@ -56,8 +56,48 @@ const useCountUp = (target, duration = 1600, trigger = false, delay = 0) => {
 // IMAGE PLACEHOLDER
 // ─────────────────────────────────────────────────────────────────────────────
 
-const Img = ({ label, aspect = "4/3", style = {}, hover = false }) => {
+const Img = ({ label, aspect = "4/3", src = null, style = {}, hover = false }) => {
   const [hov, setHov] = useState(false);
+  const [imgErr, setImgErr] = useState(false);
+  const showReal = src && !imgErr;
+
+  if (showReal) {
+    return (
+      <div
+        onMouseEnter={() => hover && setHov(true)}
+        onMouseLeave={() => hover && setHov(false)}
+        style={{
+          width: "100%", aspectRatio: aspect,
+          borderRadius: "2px", overflow: "hidden", position: "relative",
+          ...style,
+        }}
+      >
+        <img
+          src={src} alt={label}
+          onError={() => setImgErr(true)}
+          style={{
+            width: "100%", height: "100%", objectFit: "cover", display: "block",
+            transition: "transform 0.55s ease",
+            transform: hov ? "scale(1.04)" : "scale(1)",
+          }}
+        />
+        {hover && (
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(0,0,0,0.62) 0%, transparent 55%)",
+            opacity: hov ? 1 : 0, transition: "opacity 0.3s ease",
+            display: "flex", alignItems: "flex-end", padding: "0.875rem",
+          }}>
+            <span style={{
+              fontFamily: "'Poppins',sans-serif", fontSize: "0.58rem", fontWeight: 600,
+              letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.92)",
+            }}>{label}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       onMouseEnter={() => hover && setHov(true)}
@@ -157,7 +197,7 @@ const StatCard = ({ stat, trigger, index }) => {
 // EDITORIAL MASONRY GALLERY
 // ─────────────────────────────────────────────────────────────────────────────
 
-const MasonryGallery = ({ photos, mobile }) => {
+const MasonryGallery = ({ photos, mobile, fallback }) => {
   const colSpan = { hero: 3, large: 2, medium: 1, small: 1 };
 
   if (mobile) {
@@ -167,7 +207,7 @@ const MasonryGallery = ({ photos, mobile }) => {
           const wide = p.size === "hero" || p.size === "large";
           return (
             <div key={i} style={{ gridColumn: wide ? "1 / -1" : "auto" }}>
-              <Img label={p.label} aspect={wide ? "16/9" : p.aspect} hover />
+              <Img label={p.label} aspect={wide ? "16/9" : p.aspect} src={p.src || fallback} hover />
             </div>
           );
         })}
@@ -182,7 +222,7 @@ const MasonryGallery = ({ photos, mobile }) => {
           gridColumn: `span ${colSpan[p.size] || 1}`,
           minHeight: p.size === "small" ? 200 : "auto",
         }}>
-          <Img label={p.label} aspect={p.aspect} hover style={{ height: "100%", minHeight: "100%" }} />
+          <Img label={p.label} aspect={p.aspect} src={p.src || fallback} hover style={{ height: "100%", minHeight: "100%" }} />
         </div>
       ))}
     </div>
@@ -689,7 +729,13 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
       <section style={{ background:"#fff", padding:mobile?"4rem 5vw":"7rem 6vw" }}>
         <div ref={conceptRef}>
           <ConceptPhase
-            concept={P.concept}
+            concept={{
+              ...P.concept,
+              conceptPhotos: P.concept.conceptPhotos?.map(ph => ({
+                ...ph,
+                src: ph.src || P.cardImage,
+              })),
+            }}
             sprintDuration={P.sprintDuration}
             visible={conceptVis}
             mobile={mobile}
@@ -742,7 +788,7 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
             </p>
           </div>
           <div style={{ ...fd(galleryVis,0.14) }}>
-            <MasonryGallery photos={P.gallery} mobile={mobile} />
+            <MasonryGallery photos={P.gallery} mobile={mobile} fallback={P.cardImage} />
           </div>
         </div>
       </section>

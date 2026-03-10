@@ -13,15 +13,28 @@ import { useState } from "react";
 
 const Img = ({ label, aspect = "4/3", src = null, hover = false, style = {} }) => {
   const [hov, setHov] = useState(false);
+  const [imgErr, setImgErr] = useState(false);
 
-  if (src) {
+  if (src && !imgErr) {
     return (
       <div style={{ width: "100%", aspectRatio: aspect, borderRadius: "2px",
         overflow: "hidden", position: "relative", ...style }}
         onMouseEnter={() => hover && setHov(true)}
         onMouseLeave={() => hover && setHov(false)}>
-        <img src={src} alt={label} style={{ width: "100%", height: "100%", objectFit: "cover",
-          transform: hov ? "scale(1.03)" : "scale(1)", transition: "transform 0.5s ease" }} />
+        <img src={src} alt={label} onError={() => setImgErr(true)}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block",
+            transform: hov ? "scale(1.04)" : "scale(1)", transition: "transform 0.55s ease" }} />
+        {hover && (
+          <div style={{ position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%)",
+            opacity: hov ? 1 : 0, transition: "opacity 0.3s ease",
+            display: "flex", alignItems: "flex-end", padding: "0.875rem" }}>
+            <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: "0.56rem", fontWeight: 600,
+              letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)" }}>
+              {label}
+            </span>
+          </div>
+        )}
       </div>
     );
   }
