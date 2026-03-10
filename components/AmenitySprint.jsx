@@ -694,21 +694,31 @@ export default function AmenitySprint() {
 
       {/* ── NAV ── */}
       <nav style={{
-        position:"fixed", top:0, left:0, right:0, zIndex:1000,
-        background:scrolled?"rgba(255,255,255,0.95)":"transparent",
+        position:"fixed", 
+        top: scrolled ? 12 : 0, 
+        left: scrolled ? (mobile ? "3vw" : "4vw") : 0, 
+        right: scrolled ? (mobile ? "3vw" : "4vw") : 0, 
+        zIndex:1000,
+        background:scrolled?"rgba(255,255,255,0.97)":"transparent",
         backdropFilter:scrolled?"blur(16px)":"none",
-        borderBottom:scrolled?"1px solid rgba(0,0,0,0.07)":"1px solid transparent",
-        transition:"all 0.4s ease",
-        padding: mobile ? "0 5vw" : "0 4vw",
-        height:64, display:"flex", alignItems:"center", justifyContent:"space-between",
+        borderRadius: scrolled ? 12 : 0,
+        boxShadow: scrolled ? "0 4px 24px rgba(0,0,0,0.12)" : "none",
+        border: scrolled ? "1px solid rgba(0,0,0,0.06)" : "1px solid transparent",
+        transition:"all 0.4s cubic-bezier(0.4,0,0.2,1)",
+        padding: mobile ? "0 5vw" : "0 2rem",
+        height: scrolled ? 56 : 64, 
+        display:"flex", alignItems:"center", justifyContent:"space-between",
       }}>
+        {/* NELSON Logo - white version when not scrolled, filter to dark when scrolled */}
         <img 
-          src={scrolled 
-            ? "https://nelsonworldwide.com/wp-content/themes/theme/images/nelson-logo.svg" 
-            : "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NELSON_whiteBlueFin-BHENwe28ggL1i46CvcW16xy4UDxTTw.png"
-          } 
+          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NELSON_whiteBlueFin-BHENwe28ggL1i46CvcW16xy4UDxTTw.png"
           alt="NELSON" 
-          style={{ height: 24, width: "auto", transition: "opacity 0.3s ease" }}
+          style={{ 
+            height: scrolled ? 20 : 24, 
+            width: "auto", 
+            transition: "all 0.3s ease",
+            filter: scrolled ? "brightness(0) saturate(100%)" : "none",
+          }}
         />
         {/* Mobile: just the CTA button */}
         {mobile ? (
@@ -749,32 +759,34 @@ export default function AmenitySprint() {
         padding: mobile ? "88px 5vw 5vh" : "0 6vw 10vh",
         position:"relative", overflow:"hidden",
       }}>
-        {/* Full-bleed background image */}
+        {/* Full-bleed background image - positioned to show below the metadata bar */}
         <div style={{
           position:"absolute",
-          inset:0,
+          top: mobile ? 0 : 110,
+          left:0, right:0, bottom:0,
           backgroundImage:"url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg')",
           backgroundSize:"cover",
           backgroundPosition:"center right",
           zIndex:0,
         }}/>
+        {/* Dark top section above the image */}
+        {!mobile && (
+          <div style={{
+            position:"absolute",
+            top:0, left:0, right:0, height:110,
+            background:"#1e2022",
+            zIndex:0,
+          }}/>
+        )}
         {/* Gradient overlay - dark on left, revealing image on right */}
         <div style={{
           position:"absolute",
-          inset:0,
+          top: mobile ? 0 : 110,
+          left:0, right:0, bottom:0,
           background: mobile 
             ? "linear-gradient(180deg, rgba(30,32,34,0.92) 0%, rgba(30,32,34,0.85) 50%, rgba(30,32,34,0.75) 100%)"
-            : "linear-gradient(90deg, rgba(30,32,34,0.97) 0%, rgba(30,32,34,0.92) 35%, rgba(30,32,34,0.7) 55%, rgba(30,32,34,0.3) 75%, transparent 100%)",
+            : "linear-gradient(90deg, rgba(30,32,34,0.95) 0%, rgba(30,32,34,0.88) 30%, rgba(30,32,34,0.6) 50%, rgba(30,32,34,0.2) 70%, transparent 100%)",
           zIndex:1,
-        }}/>
-        {/* Subtle blur on left side for text readability */}
-        <div style={{
-          position:"absolute",
-          top:0, left:0, bottom:0,
-          width: mobile ? "100%" : "60%",
-          backdropFilter:"blur(1px)",
-          zIndex:1,
-          pointerEvents:"none",
         }}/>
 
         {/* Desktop-only: top metadata bar */}
@@ -852,8 +864,8 @@ export default function AmenitySprint() {
       </section>
 
       {/* ── MARQUEE ── */}
-      <div style={{ background:"#2a2d30", padding:"1.1rem 0", overflow:"hidden", borderTop:"1px solid rgba(255,255,255,0.06)", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
-        <div style={{ display:"flex", gap:"1.5rem", animation:"marquee 50s linear infinite", whiteSpace:"nowrap", width:"max-content" }}>
+      <div style={{ background:"#f7f7f7", padding:"1rem 0", overflow:"hidden", borderTop:"1px solid #e8e8e8", borderBottom:"1px solid #e8e8e8" }}>
+        <div style={{ display:"flex", gap:"1rem", animation:"marquee 50s linear infinite", whiteSpace:"nowrap", width:"max-content" }}>
           {[...Array(3)].map((_,r)=>(
             [
               {name:"Amenity Sprint", icon:"M13 10V3L4 14h7v7l9-11h-7z"},
@@ -869,20 +881,21 @@ export default function AmenitySprint() {
             ].map((item,i)=>(
               <span key={`${r}-${i}`} style={{ 
                 fontFamily:"'Poppins',sans-serif", 
-                fontSize:"0.6rem", 
+                fontSize:"0.58rem", 
                 fontWeight:600, 
-                letterSpacing:"0.12em", 
+                letterSpacing:"0.1em", 
                 textTransform:"uppercase", 
-                color:"#fff",
-                background:"rgba(0,186,220,0.12)",
-                padding:"0.45rem 1rem 0.45rem 0.7rem",
+                color:"#333",
+                background:"#fff",
+                padding:"0.4rem 0.9rem 0.4rem 0.65rem",
                 borderRadius:99,
-                border:"1px solid rgba(0,186,220,0.3)",
+                border:"1px solid #e0e0e0",
+                boxShadow:"0 1px 3px rgba(0,0,0,0.04)",
                 display:"inline-flex",
                 alignItems:"center",
-                gap:"0.5rem",
+                gap:"0.4rem",
               }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00BADC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00BADC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d={item.icon}/>
                 </svg>
                 {item.name}
@@ -892,69 +905,156 @@ export default function AmenitySprint() {
         </div>
       </div>
 
-      {/* ── INTRO ── */}
-      <section id="approach" style={{ padding: mobile?"4rem 5vw":"8rem 6vw", background:"#fff" }}>
-        <div ref={introRef} style={{ maxWidth:1100, margin:"0 auto" }}>
+      {/* ── THE JOURNEY TIMELINE ── */}
+      <section id="approach" style={{ padding: mobile?"4rem 5vw":"6rem 6vw 5rem", background:"#fff" }}>
+        <div ref={introRef} style={{ maxWidth:1300, margin:"0 auto" }}>
+          {/* Header */}
+          <div style={{ 
+            display:"grid", 
+            gridTemplateColumns: mobile ? "1fr" : "1fr 1.2fr", 
+            gap: mobile ? "1.5rem" : "4rem",
+            marginBottom: mobile ? "2.5rem" : "3.5rem",
+            alignItems:"end"
+          }}>
+            <div>
+              <div style={{ ...fade(introVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:600,
+                letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.75rem" }}>The Journey</div>
+              <h2 style={{ ...fade(introVis,0.08), fontFamily:"'Poppins',sans-serif", fontWeight:800,
+                fontSize: mobile?"clamp(1.8rem,7vw,2.4rem)":"clamp(2.2rem,3.5vw,3.2rem)",
+                lineHeight:1.1, color:"#1a1a1a" }}>
+                Sketch to<br/>built product.
+              </h2>
+            </div>
+            <p style={{ ...fade(introVis,0.15), fontFamily:"'Poppins',sans-serif", fontSize:"0.95rem",
+              fontWeight:300, color:"#666", lineHeight:1.7 }}>
+              From the first site visit to broker activation — every milestone across the full project lifecycle. Click any step to explore.
+            </p>
+          </div>
+
+          {/* Timeline phases */}
+          {!mobile && (
+            <div style={{ ...fade(introVis,0.2), display:"flex", alignItems:"center", marginBottom:"1rem", gap:"0" }}>
+              {[
+                {label:"SPRINT", color:"#00BADC", width:"55%"},
+                {label:"DESIGN", color:"#666", width:"15%"},
+                {label:"BUILD", color:"#666", width:"15%"},
+                {label:"OUTCOME", color:"#666", width:"15%"},
+              ].map((phase,i)=>(
+                <div key={phase.label} style={{ width:phase.width, position:"relative" }}>
+                  <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
+                    letterSpacing:"0.18em", color:phase.color, marginBottom:"0.6rem" }}>{phase.label}</div>
+                  <div style={{ height:3, background: i===0 ? "#00BADC" : "#e0e0e0", borderRadius:2 }}/>
+                  <div style={{ position:"absolute", right:0, top:"1.3rem", width:10, height:10, borderRadius:"50%",
+                    background: i===0 ? "#00BADC" : "#e0e0e0", border:"2px solid #fff", boxShadow:"0 0 0 2px "+(i===0?"#00BADC":"#e0e0e0") }}/>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Timeline cards */}
+          <div style={{ 
+            display:"grid", 
+            gridTemplateColumns: mobile ? "1fr" : "repeat(7, 1fr)", 
+            gap: mobile ? "1rem" : "0.6rem",
+            marginTop: mobile ? "0" : "1.5rem"
+          }}>
+            {[
+              {week:"WEEK 1", title:"Site Visit + Competitive Audit", desc:"Walked the building with PM and leasing. Mapped 12 competitive assets.", phase:"sprint"},
+              {week:"WEEK 2", title:"Programming + Matrix Workshop", desc:"Amenity Matrix workshop with ownership. Aligned on 8 key space types.", phase:"sprint"},
+              {week:"WEEK 3", title:"Concept Design — 3 Directions", desc:"Urban Eddy, The Exchange, and Vertical Village developed in parallel.", phase:"sprint"},
+              {week:"WEEK 4", title:"Delivery Package + Broker Kit", desc:"Floor plans, renderings, narrative deck, and broker activation kit.", phase:"sprint"},
+              {week:"MONTH 2–3", title:"Design Development + CDs", desc:"Full construction documents. Material specs, MEP coordination.", phase:"design"},
+              {week:"MONTH 4–7", title:"Phased Construction", desc:"Construction sequenced to maintain 95% tenant operations.", phase:"build"},
+              {week:"MONTH 8+", title:"Leasing Activation + Results", desc:"Broker launch event in completed lobby. 14 tours in 30 days.", phase:"outcome"},
+            ].map((step,i)=>(
+              <div key={i} style={{
+                background: step.phase==="sprint" ? "#fff" : (step.phase==="design" ? "#f8f8f8" : "#f5f5f5"),
+                border: step.phase==="sprint" ? "1px solid #e8e8e8" : "1px solid #ebebeb",
+                borderRadius:6,
+                padding: mobile ? "1.25rem" : "1rem",
+                cursor:"pointer",
+                transition:"all 0.2s ease",
+              }}
+                onMouseOver={e=>{e.currentTarget.style.borderColor="#00BADC";e.currentTarget.style.boxShadow="0 4px 12px rgba(0,186,220,0.1)"}}
+                onMouseOut={e=>{e.currentTarget.style.borderColor=step.phase==="sprint"?"#e8e8e8":"#ebebeb";e.currentTarget.style.boxShadow="none"}}
+              >
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.55rem", fontWeight:600,
+                  letterSpacing:"0.12em", color: step.phase==="sprint" ? "#00BADC" : "#999", marginBottom:"0.5rem" }}>{step.week}</div>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:700,
+                  color:"#1a1a1a", marginBottom:"0.4rem", lineHeight:1.25 }}>{step.title}</div>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:400,
+                  color:"#777", lineHeight:1.5 }}>{step.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS / VOICES ── */}
+      <section style={{ padding: mobile?"4rem 5vw":"6rem 6vw", background:"#1e2022" }}>
+        <div style={{ maxWidth:1200, margin:"0 auto" }}>
           <div style={{
             display:"grid",
-            gridTemplateColumns: mobile ? "1fr" : "1fr 1fr",
-            gap: mobile ? "2.5rem" : "6rem",
+            gridTemplateColumns: mobile ? "1fr" : "1fr 1.5fr",
+            gap: mobile ? "2.5rem" : "5rem",
             alignItems:"start"
           }}>
             <div>
-              <div style={{ ...fade(introVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
-                letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>What We Do</div>
-              <h2 style={{ ...fade(introVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(2rem,3.5vw,3rem)",
-                lineHeight:1.15, color:"#000", marginBottom:"1.25rem" }}>
-                Design intelligence,<br/>at the speed of<br/>leasing decisions.
+              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:600,
+                letterSpacing:"0.2em", textTransform:"uppercase", color:"#E07A5F", marginBottom:"0.75rem" }}>Voices</div>
+              <h2 style={{ fontFamily:"'Poppins',sans-serif", fontWeight:800,
+                fontSize: mobile?"clamp(1.8rem,7vw,2.4rem)":"clamp(2rem,3vw,2.8rem)",
+                lineHeight:1.1, color:"#fff", marginBottom:"1.25rem" }}>
+                Ownership.<br/>Leasing.<br/>Tenants.
               </h2>
-              <p style={{ ...fade(introVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.9rem",
-                fontWeight:300, color:"#555", lineHeight:1.8, marginBottom:"1rem" }}>
-                Asset Strategy is NELSON's design and real estate consultancy focused on eliminating vacancy, retaining tenants, and making buildings more market competitive.
+              <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem",
+                fontWeight:300, color:"rgba(255,255,255,0.5)", lineHeight:1.7, marginBottom:"2rem" }}>
+                The measure of a sprint isn't the deliverable — it's what happens after.
               </p>
-              <p style={{ ...fade(introVis,0.28), fontFamily:"'Poppins',sans-serif", fontSize:"0.9rem",
-                fontWeight:300, color:"#555", lineHeight:1.8 }}>
-                Our Amenity Sprint delivers a compelling concept that gives ownership and leasing teams something tangible — before the RFP deadline, before the broker call, before the competitor finishes their renovation.
-              </p>
-              <div style={{ ...fade(introVis,0.36), marginTop:"2rem", display:"flex", gap:"0.75rem", flexWrap:"wrap" }}>
-                {["Tenant Planning","Space Management","Building Repositioning"].map(s=>(
-                  <span key={s} style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.65rem", fontWeight:500,
-                    color:"#000", background:"#f0f0f0", padding:"0.35rem 0.85rem", borderRadius:99 }}>{s}</span>
+              <div style={{ display:"flex", flexDirection:"column", gap:"0.6rem" }}>
+                {[
+                  {label:"Building Owner", color:"#00BADC"},
+                  {label:"Leasing Team", color:"#4CAF50"},
+                  {label:"Building Tenant", color:"#E07A5F"},
+                ].map(item=>(
+                  <div key={item.label} style={{ display:"flex", alignItems:"center", gap:"0.6rem" }}>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background:item.color }}/>
+                    <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.75rem", fontWeight:400, color:"rgba(255,255,255,0.6)" }}>{item.label}</span>
+                  </div>
                 ))}
               </div>
             </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-              <div style={{ ...fade(introVis,0.15), borderRadius:"0.5rem", overflow:"hidden" }}>
-                <img 
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg"
-                  alt="Modern amenity lounge with sculptural lighting"
-                  style={{ width:"100%", aspectRatio:"4/3", objectFit:"cover" }}
-                />
+            <div>
+              <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", marginBottom:"1.5rem" }}>
+                <div style={{ width:8, height:8, borderRadius:"50%", background:"#E07A5F" }}/>
+                <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:600,
+                  letterSpacing:"0.15em", textTransform:"uppercase", color:"#E07A5F" }}>Building Tenant</span>
               </div>
-              <div style={{ ...fade(introVis,0.25), display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
-                <div style={{ borderRadius:"0.5rem", overflow:"hidden" }}>
-                  <img 
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-YS9pTq3PGeOOm9zXBQIrbKr9BXQp83.jpeg"
-                    alt="Floor plan axonometric view"
-                    style={{ width:"100%", aspectRatio:"1/1", objectFit:"cover" }}
-                  />
-                </div>
-                <div style={{ borderRadius:"0.5rem", overflow:"hidden" }}>
-                  <img 
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-glrIqPS69Tknu73CvN3HyEvXpjmqL0.jpeg"
-                    alt="CBRE Concourse design language"
-                    style={{ width:"100%", aspectRatio:"1/1", objectFit:"cover" }}
-                  />
-                </div>
+              <div style={{ position:"relative" }}>
+                <div style={{ position:"absolute", top:-20, left:-10, fontFamily:"Georgia,serif", fontSize:"8rem",
+                  color:"rgba(255,255,255,0.03)", lineHeight:1 }}>"</div>
+                <p style={{ fontFamily:"'Poppins',sans-serif", fontSize: mobile ? "1.1rem" : "1.35rem",
+                  fontWeight:300, fontStyle:"italic", color:"rgba(255,255,255,0.85)", lineHeight:1.6, marginBottom:"1.5rem" }}>
+                  "The lobby used to feel like a pass-through. Now it's where we hold team lunches and client arrivals. It genuinely changed how our team thinks about coming into the office."
+                </p>
+              </div>
+              <div>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.9rem", fontWeight:600, color:"#fff" }}>James T.</div>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.75rem", fontWeight:400, color:"rgba(255,255,255,0.5)" }}>Office Manager · Tenant — Level 18</div>
+              </div>
+              {/* Testimonial indicator dots */}
+              <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", marginTop:"2rem" }}>
+                <div style={{ width:6, height:6, borderRadius:"50%", background:"rgba(255,255,255,0.2)" }}/>
+                <div style={{ width:6, height:6, borderRadius:"50%", background:"rgba(255,255,255,0.2)" }}/>
+                <div style={{ width:24, height:6, borderRadius:3, background:"#E07A5F" }}/>
+                <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:600,
+                  letterSpacing:"0.1em", textTransform:"uppercase", color:"#E07A5F", marginLeft:"0.25rem" }}>James T.</span>
+                <div style={{ width:6, height:6, borderRadius:"50%", background:"rgba(255,255,255,0.2)" }}/>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* ── SPRINT PROCESS ── */}
-      <SprintProcessSection />
 
       {/* ��─ TIERS ── */}
       <section id="approach-tiers" style={{ 
