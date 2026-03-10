@@ -762,7 +762,16 @@ export default function AmenitySprint() {
         {!mobile && (
           <div style={{ position:"absolute", right:"5vw", top:"50%", transform:"translateY(-50%)",
             width:"42vw", maxWidth:600, opacity:heroIn?1:0, transition:"opacity 1.2s ease 0.4s" }}>
-            <ImgPlaceholder label="Hero — Architecture / Interior Photograph" aspectRatio="3/4" style={{ borderRadius:"0.5rem" }}/>
+            <img 
+              src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=90" 
+              alt="One Financial Center Lobby - Modern Glass Atrium Interior"
+              style={{ 
+                width:"100%", 
+                height:"100%", 
+                objectFit:"cover",
+                borderRadius:"0.5rem"
+              }}
+            />
           </div>
         )}
 
@@ -918,7 +927,7 @@ export default function AmenitySprint() {
       {/* ── SPRINT PROCESS ── */}
       <SprintProcessSection />
 
-      {/* ── TIERS ── */}
+      {/* ��─ TIERS ── */}
       <section id="approach-tiers" style={{ 
         padding: mobile?"4rem 5vw":"7rem 6vw", 
         position:"relative",

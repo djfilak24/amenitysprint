@@ -4,5 +4,6 @@ version = "0.1.0"
 description = "PDF image extraction utilities"
 requires-python = ">=3.9"
 dependencies = [
-    "pymupdf>=1.24.0",
+    "pdf2image>=1.16.3",
+    "Pillow>=10.0.0",
 ]
