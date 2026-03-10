@@ -743,56 +743,58 @@ export default function AmenitySprint() {
 
       {/* ── HERO ── */}
       <section style={{
-        minHeight:"100dvh", background:C.bgHero,
+        minHeight:"100dvh",
         display:"flex", flexDirection:"column",
         justifyContent: mobile ? "center" : "flex-end",
         padding: mobile ? "88px 5vw 5vh" : "0 6vw 10vh",
         position:"relative", overflow:"hidden",
       }}>
-        {/* Blue gradient accent */}
-        <div style={{ position:"absolute", top:0, right:0, width:"55vw", height:"100%",
-          background:"linear-gradient(135deg,transparent 30%,rgba(0,186,220,0.06) 70%,rgba(0,186,220,0.11) 100%)",
-          pointerEvents:"none" }}/>
-        {/* Subtle texture grain */}
-        <div style={{ position:"absolute", inset:0, opacity:0.03,
-          backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-          backgroundSize:"256px 256px", pointerEvents:"none" }}/>
-
-        {/* Desktop-only: right image placeholder */}
-        {!mobile && (
-          <div style={{ position:"absolute", right:"5vw", top:"50%", transform:"translateY(-50%)",
-            width:"42vw", maxWidth:600, opacity:heroIn?1:0, transition:"opacity 1.2s ease 0.4s" }}>
-            <img 
-              src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=90" 
-              alt="One Financial Center Lobby - Modern Glass Atrium Interior"
-              style={{ 
-                width:"100%", 
-                height:"100%", 
-                objectFit:"cover",
-                borderRadius:"0.5rem"
-              }}
-            />
-          </div>
-        )}
+        {/* Full-bleed background image */}
+        <div style={{
+          position:"absolute",
+          inset:0,
+          backgroundImage:"url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg')",
+          backgroundSize:"cover",
+          backgroundPosition:"center right",
+          zIndex:0,
+        }}/>
+        {/* Gradient overlay - dark on left, revealing image on right */}
+        <div style={{
+          position:"absolute",
+          inset:0,
+          background: mobile 
+            ? "linear-gradient(180deg, rgba(30,32,34,0.92) 0%, rgba(30,32,34,0.85) 50%, rgba(30,32,34,0.75) 100%)"
+            : "linear-gradient(90deg, rgba(30,32,34,0.97) 0%, rgba(30,32,34,0.92) 35%, rgba(30,32,34,0.7) 55%, rgba(30,32,34,0.3) 75%, transparent 100%)",
+          zIndex:1,
+        }}/>
+        {/* Subtle blur on left side for text readability */}
+        <div style={{
+          position:"absolute",
+          top:0, left:0, bottom:0,
+          width: mobile ? "100%" : "60%",
+          backdropFilter:"blur(1px)",
+          zIndex:1,
+          pointerEvents:"none",
+        }}/>
 
         {/* Desktop-only: top metadata bar */}
         {!mobile && (
           <div style={{ position:"absolute", top:80, left:"6vw", right:"6vw",
             display:"flex", justifyContent:"space-between", alignItems:"center",
-            borderBottom:"1px solid rgba(255,255,255,0.07)", paddingBottom:"1rem" }}>
+            borderBottom:"1px solid rgba(255,255,255,0.12)", paddingBottom:"1rem", zIndex:3 }}>
             <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:500,
-              letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.25)" }}>
+              letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)" }}>
               Asset Strategy &amp; Repositioning
             </span>
             <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:500,
-              letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.25)" }}>
+              letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)" }}>
               Minneapolis · Chicago · Atlanta · Philadelphia · Boston
             </span>
           </div>
         )}
 
         {/* Hero copy */}
-        <div style={{ maxWidth: mobile ? "100%" : "50vw", position:"relative", zIndex:2 }}>
+        <div style={{ maxWidth: mobile ? "100%" : "55vw", position:"relative", zIndex:3 }}>
           <div style={{ ...fade(heroIn,0.15), fontFamily:"'Poppins',sans-serif",
             fontSize: mobile ? "0.6rem" : "0.65rem", fontWeight:600,
             letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>
@@ -810,12 +812,7 @@ export default function AmenitySprint() {
             NELSON Asset Strategy delivers a full amenity concept — competitive analysis, programming, design language, and visualization — in 2 to 6 weeks. At a price point built for ownership decisions.
           </p>
 
-          {/* Mobile: image placeholder inline */}
-          {mobile && (
-            <div style={{ ...fade(heroIn,0.32), marginBottom:"2rem" }}>
-              <ImgPlaceholder label="Architecture / Interior Photograph" aspectRatio="16/9" style={{ borderRadius:"0.5rem" }}/>
-            </div>
-          )}
+
 
           <div style={{ ...fade(heroIn,0.48), display:"flex", gap:"0.75rem", flexWrap:"wrap" }}>
             <button onClick={()=>scrollTo("approach")} style={{ background:"#00BADC", border:"none", cursor:"pointer",
@@ -855,24 +852,40 @@ export default function AmenitySprint() {
       </section>
 
       {/* ── MARQUEE ── */}
-      <div style={{ background:"#00BADC", padding:"1rem 0", overflow:"hidden" }}>
-        <div style={{ display:"flex", gap:"2rem", animation:"marquee 45s linear infinite", whiteSpace:"nowrap", width:"max-content" }}>
+      <div style={{ background:"#2a2d30", padding:"1.1rem 0", overflow:"hidden", borderTop:"1px solid rgba(255,255,255,0.06)", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ display:"flex", gap:"1.5rem", animation:"marquee 50s linear infinite", whiteSpace:"nowrap", width:"max-content" }}>
           {[...Array(3)].map((_,r)=>(
-            ["Amenity Sprint","Lobby Activation","Roof Deck Concept","Tenant Lounge","Building Reposition","Campus Study","Competitive Analysis","Design Language","Visualization","Floor Plans"].map((item,i)=>(
+            [
+              {name:"Amenity Sprint", icon:"M13 10V3L4 14h7v7l9-11h-7z"},
+              {name:"Lobby Activation", icon:"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"},
+              {name:"Roof Deck Concept", icon:"M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"},
+              {name:"Tenant Lounge", icon:"M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"},
+              {name:"Building Reposition", icon:"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"},
+              {name:"Campus Study", icon:"M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"},
+              {name:"Competitive Analysis", icon:"M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"},
+              {name:"Design Language", icon:"M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"},
+              {name:"Visualization", icon:"M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"},
+              {name:"Floor Plans", icon:"M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"},
+            ].map((item,i)=>(
               <span key={`${r}-${i}`} style={{ 
                 fontFamily:"'Poppins',sans-serif", 
-                fontSize:"0.62rem", 
+                fontSize:"0.6rem", 
                 fontWeight:600, 
-                letterSpacing:"0.14em", 
+                letterSpacing:"0.12em", 
                 textTransform:"uppercase", 
                 color:"#fff",
-                background:"rgba(255,255,255,0.15)",
-                padding:"0.4rem 0.9rem",
+                background:"rgba(0,186,220,0.12)",
+                padding:"0.45rem 1rem 0.45rem 0.7rem",
                 borderRadius:99,
-                border:"1px solid rgba(255,255,255,0.25)",
-                display:"inline-block",
+                border:"1px solid rgba(0,186,220,0.3)",
+                display:"inline-flex",
+                alignItems:"center",
+                gap:"0.5rem",
               }}>
-                {item}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00BADC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={item.icon}/>
+                </svg>
+                {item.name}
               </span>
             ))
           ))}
@@ -912,12 +925,28 @@ export default function AmenitySprint() {
               </div>
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-              <div style={{ ...fade(introVis,0.15) }}>
-                <ImgPlaceholder label="Interior — Lobby / Amenity Space" aspectRatio="4/3"/>
+              <div style={{ ...fade(introVis,0.15), borderRadius:"0.5rem", overflow:"hidden" }}>
+                <img 
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg"
+                  alt="Modern amenity lounge with sculptural lighting"
+                  style={{ width:"100%", aspectRatio:"4/3", objectFit:"cover" }}
+                />
               </div>
               <div style={{ ...fade(introVis,0.25), display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
-                <ImgPlaceholder label="Floor Plan / Axon" aspectRatio="1/1"/>
-                <ImgPlaceholder label="Design Language" aspectRatio="1/1"/>
+                <div style={{ borderRadius:"0.5rem", overflow:"hidden" }}>
+                  <img 
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-YS9pTq3PGeOOm9zXBQIrbKr9BXQp83.jpeg"
+                    alt="Floor plan axonometric view"
+                    style={{ width:"100%", aspectRatio:"1/1", objectFit:"cover" }}
+                  />
+                </div>
+                <div style={{ borderRadius:"0.5rem", overflow:"hidden" }}>
+                  <img 
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-glrIqPS69Tknu73CvN3HyEvXpjmqL0.jpeg"
+                    alt="CBRE Concourse design language"
+                    style={{ width:"100%", aspectRatio:"1/1", objectFit:"cover" }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -984,7 +1013,7 @@ export default function AmenitySprint() {
       </section>
 
       {/* ── PROJECTS ── */}
-      <section id="projects" style={{ padding: mobile?"4rem 5vw 5rem":"7rem 6vw 8rem", background:"#f7f7f7" }}>
+      <section id="projects" style={{ padding: mobile?"4rem 5vw 5rem":"7rem 6vw 8rem", background:"#1e2022" }}>
         <div style={{ maxWidth:1200, margin:"0 auto" }}>
           <div ref={projRef} style={{ display:"flex", justifyContent:"space-between",
             alignItems: mobile?"flex-start":"flex-end",
@@ -994,7 +1023,7 @@ export default function AmenitySprint() {
               <div style={{ ...fade(projVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
                 letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.6rem" }}>Sprint Portfolio</div>
               <h2 style={{ ...fade(projVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)", color:"#000" }}>
+                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)", color:"#fff" }}>
                 9 Studies. 5 Markets.
               </h2>
             </div>

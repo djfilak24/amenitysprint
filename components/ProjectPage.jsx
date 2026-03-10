@@ -153,7 +153,7 @@ const StatCard = ({ stat, trigger, index }) => {
   );
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────���─────────────────
 // EDITORIAL MASONRY GALLERY
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -530,8 +530,22 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
           <div style={{ position: "absolute", right: "5vw", top: "50%", transform: "translateY(-50%)",
             width: "44vw", maxWidth: 620,
             opacity: heroIn ? 1 : 0, transition: "opacity 1.4s ease 0.25s" }}>
-            <Img label={`${P.name} — Built Project Hero`} aspect="4/5"
-              style={{ borderRadius: "2px", boxShadow: "0 40px 80px rgba(0,0,0,0.5)" }} />
+            {P.heroImage ? (
+              <img 
+                src={P.heroImage} 
+                alt={`${P.name} — Built Project Hero`}
+                style={{ 
+                  width: "100%", 
+                  aspectRatio: "4/5", 
+                  objectFit: "cover",
+                  borderRadius: "2px", 
+                  boxShadow: "0 40px 80px rgba(0,0,0,0.5)" 
+                }} 
+              />
+            ) : (
+              <Img label={`${P.name} — Built Project Hero`} aspect="4/5"
+                style={{ borderRadius: "2px", boxShadow: "0 40px 80px rgba(0,0,0,0.5)" }} />
+            )}
           </div>
         )}
 
@@ -551,7 +565,15 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
         <div style={{ maxWidth: mobile ? "100%" : "46vw", position: "relative", zIndex: 2 }}>
           {mobile && (
             <div style={{ marginBottom: "1.5rem", opacity: heroIn ? 1 : 0, transition: "opacity 1s ease 0.2s" }}>
-              <Img label={`${P.name} — Built Project`} aspect="16/9" style={{ borderRadius: "2px" }} />
+              {P.heroImage ? (
+                <img 
+                  src={P.heroImage} 
+                  alt={`${P.name} — Built Project`}
+                  style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", borderRadius: "2px" }} 
+                />
+              ) : (
+                <Img label={`${P.name} — Built Project`} aspect="16/9" style={{ borderRadius: "2px" }} />
+              )}
             </div>
           )}
 
