@@ -324,6 +324,170 @@ const VisualizeCard = ({ active }) => {
 };
 
 // ── SPRINT PROCESS SECTION ───────────────────────────────────────────────────
+// ── LANDING JOURNEY TIMELINE ─────────────────────────────────────────────────
+const SPRINT_JOURNEY = [
+  { phase:"Sprint",  week:"Week 1",   label:"Site Visit + Audit",    color:"#00BADC", desc:"Walk the building. Map 10+ competitors in the submarket. Photograph every dead zone. Understand what the market needs — and what it's tired of seeing." },
+  { phase:"Sprint",  week:"Week 2",   label:"Programming Workshop",  color:"#00BADC", desc:"Amenity Matrix workshop with ownership and leasing. Align on 6–8 high-value interventions from a field of 24. Budget scoped to your tier." },
+  { phase:"Design",  week:"Wk 2–3",  label:"Concept Design",        color:"#18988B", desc:"2–3 distinct concept directions developed in parallel. Spatial narrative, materiality, and programming strategy defined." },
+  { phase:"Design",  week:"Wk 3–4",  label:"Delivery Package",      color:"#18988B", desc:"Floor plans, renderings, axonometrics, design language board. Everything your team needs to move with conviction." },
+  { phase:"Build",   week:"Mo 2–5",  label:"Design Development",    color:"#FF7F40", desc:"Full construction documents. MEP coordination. Contractor bid package. Construction sequenced around tenant operations." },
+  { phase:"Outcome", week:"Mo 5+",   label:"Leasing Activation",    color:"#FFD53D", desc:"Broker launch. Tours begin within 30 days. Leases signed at premium. The sprint pays for itself before the lobby is done." },
+];
+
+const LandingJourneySection = () => {
+  const mobile = useIsMobile();
+  const [ref, visible] = useScrollReveal(0.08);
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    if (!visible) return;
+    const t = setInterval(() => setActiveStep(s => (s + 1) % SPRINT_JOURNEY.length), 2800);
+    return () => clearInterval(t);
+  }, [visible]);
+
+  const phases = ["Sprint","Design","Build","Outcome"];
+  const phaseColors = { Sprint:"#00BADC", Design:"#18988B", Build:"#FF7F40", Outcome:"#FFD53D" };
+
+  return (
+    <section style={{ padding: mobile ? "4rem 5vw" : "8rem 6vw", background:"#1e2022", position:"relative", overflow:"hidden" }}>
+      {/* Subtle grid texture */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        backgroundImage:"linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px)",
+        backgroundSize:"48px 48px" }}/>
+
+      <div ref={ref} style={{ maxWidth:1100, margin:"0 auto", position:"relative" }}>
+
+        {/* Header */}
+        <div style={{ marginBottom: mobile ? "3rem" : "4rem" }}>
+          <div style={{ opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(20px)",
+            transition:"all 0.7s ease 0s",
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
+            letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>
+            From Sketch to Keys
+          </div>
+          <h2 style={{ opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(20px)",
+            transition:"all 0.7s ease 0.1s",
+            fontFamily:"'Poppins',sans-serif", fontWeight:800,
+            fontSize: mobile ? "clamp(1.7rem,7vw,2.2rem)" : "clamp(2rem,4vw,3rem)",
+            color:"#fff", lineHeight:1.1, margin:0 }}>
+            Concept to construction<br/>on a leasing timeline.
+          </h2>
+        </div>
+
+        {/* Phase labels */}
+        <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease 0.2s", display:"flex", marginBottom:"0.5rem" }}>
+          {phases.map(phase => {
+            const pSteps = SPRINT_JOURNEY.filter(s => s.phase === phase);
+            const pct = (pSteps.length / SPRINT_JOURNEY.length) * 100;
+            return (
+              <div key={phase} style={{ width:`${pct}%` }}>
+                <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", fontWeight:700,
+                  letterSpacing:"0.18em", textTransform:"uppercase", color:phaseColors[phase] }}>{phase}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Progress track */}
+        <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease 0.25s",
+          position:"relative", height:2, background:"rgba(255,255,255,0.07)", marginBottom:"2.5rem" }}>
+          <div style={{
+            position:"absolute", left:0, top:0, height:"100%",
+            width:`${((activeStep + 1) / SPRINT_JOURNEY.length) * 100}%`,
+            background:SPRINT_JOURNEY[activeStep].color,
+            transition:"width 0.55s ease, background 0.4s",
+            boxShadow:`0 0 8px ${SPRINT_JOURNEY[activeStep].color}99`,
+          }}/>
+          {SPRINT_JOURNEY.map((s, i) => (
+            <div key={i} onClick={() => setActiveStep(i)} style={{
+              position:"absolute",
+              left:`${(i / (SPRINT_JOURNEY.length - 1)) * 100}%`,
+              top:"50%", transform:"translate(-50%,-50%)",
+              width: i === activeStep ? 16 : 10,
+              height: i === activeStep ? 16 : 10,
+              borderRadius:"50%",
+              background: i <= activeStep ? s.color : "#1e2022",
+              border:`2px solid ${i <= activeStep ? s.color : "rgba(255,255,255,0.15)"}`,
+              cursor:"pointer", transition:"all 0.3s ease", zIndex:2,
+              boxShadow: i === activeStep ? `0 0 12px ${s.color}99` : "none",
+            }}/>
+          ))}
+        </div>
+
+        {/* Step cards */}
+        {mobile ? (
+          <div>
+            {SPRINT_JOURNEY.map((s, i) => (
+              <div key={i} onClick={() => setActiveStep(i)} style={{
+                display:"flex", gap:"1.1rem", paddingBottom:"1.75rem",
+                position:"relative", cursor:"pointer",
+                opacity:visible?1:0, transform:visible?"translateX(0)":"translateX(-12px)",
+                transition:`opacity 0.6s ease ${0.1+i*0.08}s, transform 0.6s ease ${0.1+i*0.08}s`,
+              }}>
+                {i < SPRINT_JOURNEY.length - 1 && (
+                  <div style={{ position:"absolute", left:13, top:28, bottom:0,
+                    width:1, background:"rgba(255,255,255,0.06)" }}/>
+                )}
+                <div style={{ flexShrink:0, width:26, height:26, borderRadius:"50%",
+                  background:"#1e2022",
+                  border:`2px solid ${i <= activeStep ? s.color : "rgba(255,255,255,0.1)"}`,
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  position:"relative", zIndex:1, transition:"border-color 0.4s" }}>
+                  <div style={{ width:7, height:7, borderRadius:"50%",
+                    background: i <= activeStep ? s.color : "rgba(255,255,255,0.15)",
+                    transition:"background 0.4s" }}/>
+                </div>
+                <div style={{ paddingTop:2 }}>
+                  <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.55rem", fontWeight:700,
+                    letterSpacing:"0.16em", textTransform:"uppercase",
+                    color: i <= activeStep ? s.color : "rgba(255,255,255,0.2)",
+                    marginBottom:"0.2rem", transition:"color 0.3s" }}>
+                    {s.phase} · {s.week}
+                  </div>
+                  <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem", fontWeight:700,
+                    color: i === activeStep ? "#fff" : "rgba(255,255,255,0.45)",
+                    marginBottom:"0.3rem", transition:"color 0.3s" }}>{s.label}</div>
+                  <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:300,
+                    color:"rgba(255,255,255,0.32)", lineHeight:1.7,
+                    maxHeight: i === activeStep ? "6rem" : "0",
+                    overflow:"hidden", transition:"max-height 0.4s ease" }}>{s.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display:"grid", gridTemplateColumns:`repeat(${SPRINT_JOURNEY.length},1fr)`, gap:"0.4rem" }}>
+            {SPRINT_JOURNEY.map((s, i) => (
+              <div key={i} onClick={() => setActiveStep(i)} style={{
+                padding:"1rem 0.75rem",
+                background: i === activeStep ? "rgba(255,255,255,0.05)" : "transparent",
+                border:`1px solid ${i === activeStep ? s.color + "44" : "transparent"}`,
+                borderRadius:"0.5rem", cursor:"pointer",
+                opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(16px)",
+                transitionProperty:"opacity,transform,background,border-color",
+                transitionDuration:`0.6s,0.6s,0.3s,0.3s`,
+                transitionDelay:`${0.15+i*0.07}s,${0.15+i*0.07}s,0s,0s`,
+              }}>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", fontWeight:600,
+                  letterSpacing:"0.14em", textTransform:"uppercase",
+                  color: i <= activeStep ? s.color : "rgba(255,255,255,0.18)",
+                  marginBottom:"0.35rem", transition:"color 0.3s" }}>{s.week}</div>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:700,
+                  color: i === activeStep ? "#fff" : "rgba(255,255,255,0.38)",
+                  lineHeight:1.35, marginBottom:"0.35rem", transition:"color 0.3s" }}>{s.label}</div>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.65rem", fontWeight:300,
+                  color:"rgba(255,255,255,0.28)", lineHeight:1.65,
+                  maxHeight: i === activeStep ? "6rem" : "2.8rem",
+                  overflow:"hidden", transition:"max-height 0.4s ease" }}>{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
 const SprintProcessSection = () => {
   const [ref, visible] = useScrollReveal(0.08);
   const [activeCard, setActiveCard] = useState(0);
@@ -660,7 +824,6 @@ export default function AmenitySprint() {
   const [filterSize, setFilterSize] = useState("ALL");
   const mobile = useIsMobile();
 
-  const [introRef, introVis] = useScrollReveal(0.08);
   const [tierRef, tierVis] = useScrollReveal(0.06);
   const [projRef, projVis] = useScrollReveal(0.05);
   const [delivRef, delivVis] = useScrollReveal(0.06);
@@ -892,66 +1055,8 @@ export default function AmenitySprint() {
         </div>
       </div>
 
-      {/* ── INTRO ── */}
-      <section id="approach" style={{ padding: mobile?"4rem 5vw":"8rem 6vw", background:"#fff" }}>
-        <div ref={introRef} style={{ maxWidth:1100, margin:"0 auto" }}>
-          <div style={{
-            display:"grid",
-            gridTemplateColumns: mobile ? "1fr" : "1fr 1fr",
-            gap: mobile ? "2.5rem" : "6rem",
-            alignItems:"start"
-          }}>
-            <div>
-              <div style={{ ...fade(introVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
-                letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>What We Do</div>
-              <h2 style={{ ...fade(introVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(2rem,3.5vw,3rem)",
-                lineHeight:1.15, color:"#000", marginBottom:"1.25rem" }}>
-                Design intelligence,<br/>at the speed of<br/>leasing decisions.
-              </h2>
-              <p style={{ ...fade(introVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.9rem",
-                fontWeight:300, color:"#555", lineHeight:1.8, marginBottom:"1rem" }}>
-                Asset Strategy is NELSON's design and real estate consultancy focused on eliminating vacancy, retaining tenants, and making buildings more market competitive.
-              </p>
-              <p style={{ ...fade(introVis,0.28), fontFamily:"'Poppins',sans-serif", fontSize:"0.9rem",
-                fontWeight:300, color:"#555", lineHeight:1.8 }}>
-                Our Amenity Sprint delivers a compelling concept that gives ownership and leasing teams something tangible — before the RFP deadline, before the broker call, before the competitor finishes their renovation.
-              </p>
-              <div style={{ ...fade(introVis,0.36), marginTop:"2rem", display:"flex", gap:"0.75rem", flexWrap:"wrap" }}>
-                {["Tenant Planning","Space Management","Building Repositioning"].map(s=>(
-                  <span key={s} style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.65rem", fontWeight:500,
-                    color:"#000", background:"#f0f0f0", padding:"0.35rem 0.85rem", borderRadius:99 }}>{s}</span>
-                ))}
-              </div>
-            </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-              <div style={{ ...fade(introVis,0.15), borderRadius:"0.5rem", overflow:"hidden" }}>
-                <img 
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg"
-                  alt="Modern amenity lounge with sculptural lighting"
-                  style={{ width:"100%", aspectRatio:"4/3", objectFit:"cover" }}
-                />
-              </div>
-              <div style={{ ...fade(introVis,0.25), display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
-                <div style={{ borderRadius:"0.5rem", overflow:"hidden" }}>
-                  <img 
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-YS9pTq3PGeOOm9zXBQIrbKr9BXQp83.jpeg"
-                    alt="Floor plan axonometric view"
-                    style={{ width:"100%", aspectRatio:"1/1", objectFit:"cover" }}
-                  />
-                </div>
-                <div style={{ borderRadius:"0.5rem", overflow:"hidden" }}>
-                  <img 
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-glrIqPS69Tknu73CvN3HyEvXpjmqL0.jpeg"
-                    alt="CBRE Concourse design language"
-                    style={{ width:"100%", aspectRatio:"1/1", objectFit:"cover" }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── JOURNEY TIMELINE ── */}
+      <LandingJourneySection />
 
       {/* ── SPRINT PROCESS ── */}
       <SprintProcessSection />
