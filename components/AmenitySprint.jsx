@@ -948,7 +948,7 @@ export default function AmenitySprint() {
         padding: mobile ? "88px 5vw 5vh" : "0 6vw 10vh",
         position:"relative", overflow:"hidden",
       }}>
-        {/* Full-bleed background image — masked below the separator bar */}
+        {/* Full-bleed background image */}
         <div style={{
           position:"absolute",
           inset:0,
@@ -956,43 +956,17 @@ export default function AmenitySprint() {
           backgroundSize:"cover",
           backgroundPosition:"center right",
           zIndex:0,
-          WebkitMaskImage:"linear-gradient(to bottom, transparent 0px, transparent 130px, black 175px)",
-          maskImage:"linear-gradient(to bottom, transparent 0px, transparent 130px, black 175px)",
         }}/>
-        {/* Gradient overlay - dark on left, revealing image on right */}
+        {/* Gradient overlay — photo shows through on both sides, text area darkened */}
         <div style={{
           position:"absolute",
           inset:0,
-          background: mobile 
-            ? "linear-gradient(180deg, rgba(30,32,34,0.92) 0%, rgba(30,32,34,0.85) 50%, rgba(30,32,34,0.75) 100%)"
-            : "linear-gradient(90deg, rgba(30,32,34,0.97) 0%, rgba(30,32,34,0.92) 35%, rgba(30,32,34,0.7) 55%, rgba(30,32,34,0.3) 75%, transparent 100%)",
+          background: mobile
+            ? "linear-gradient(180deg, rgba(30,32,34,0.88) 0%, rgba(30,32,34,0.78) 50%, rgba(30,32,34,0.65) 100%)"
+            : "linear-gradient(90deg, rgba(30,32,34,0.82) 0%, rgba(30,32,34,0.68) 40%, rgba(30,32,34,0.32) 62%, rgba(30,32,34,0.06) 82%, transparent 100%)",
           zIndex:1,
-        }}/>
-        {/* Subtle blur on left side for text readability */}
-        <div style={{
-          position:"absolute",
-          top:0, left:0, bottom:0,
-          width: mobile ? "100%" : "60%",
-          backdropFilter:"blur(1px)",
-          zIndex:1,
-          pointerEvents:"none",
         }}/>
 
-        {/* Desktop-only: top metadata bar */}
-        {!mobile && (
-          <div style={{ position:"absolute", top:80, left:"6vw", right:"6vw",
-            display:"flex", justifyContent:"space-between", alignItems:"center",
-            borderBottom:"1px solid rgba(255,255,255,0.12)", paddingBottom:"1rem", zIndex:3 }}>
-            <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:500,
-              letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)" }}>
-              Asset Strategy &amp; Repositioning
-            </span>
-            <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:500,
-              letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)" }}>
-              Minneapolis · Chicago · Atlanta · Philadelphia · Boston
-            </span>
-          </div>
-        )}
 
         {/* Hero copy */}
         <div style={{ maxWidth: mobile ? "100%" : "55vw", position:"relative", zIndex:3 }}>
@@ -1004,7 +978,7 @@ export default function AmenitySprint() {
           <h1 style={{ ...fade(heroIn,0.25), fontFamily:"'Poppins',sans-serif", fontWeight:800,
             fontSize: mobile ? "clamp(2.2rem,9vw,3rem)" : "clamp(2.8rem,5.5vw,5.5rem)",
             lineHeight:1.08, color:"#fff", marginBottom:"1rem" }}>
-            Win the lease<br/><span style={{ color:"#00BADC" }}>before the pitch.</span>
+            Every asset has<br/><span style={{ color:"#00BADC" }}>a better version.</span>
           </h1>
           <p style={{ ...fade(heroIn,0.38), fontFamily:"'Poppins',sans-serif",
             fontSize: mobile ? "0.88rem" : "clamp(0.9rem,1.4vw,1.05rem)",
