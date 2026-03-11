@@ -927,13 +927,11 @@ export default function AmenitySprint() {
         padding: mobile ? "0 5vw" : "0 4vw",
         height:64, display:"flex", alignItems:"center", justifyContent:"space-between",
       }}>
-        <img 
-          src={scrolled 
-            ? "https://nelsonworldwide.com/wp-content/themes/theme/images/nelson-logo.svg" 
-            : "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NELSON_whiteBlueFin-BHENwe28ggL1i46CvcW16xy4UDxTTw.png"
-          } 
-          alt="NELSON" 
-          style={{ height: 24, width: "auto", transition: "opacity 0.3s ease" }}
+        <img
+          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NELSON_whiteBlueFin-BHENwe28ggL1i46CvcW16xy4UDxTTw.png"
+          alt="NELSON"
+          style={{ height: 24, width: "auto", transition: "filter 0.4s ease",
+            filter: scrolled ? "brightness(0)" : "none" }}
         />
         {/* Mobile: just the CTA button */}
         {mobile ? (
@@ -974,7 +972,7 @@ export default function AmenitySprint() {
         padding: mobile ? "88px 5vw 5vh" : "0 6vw 10vh",
         position:"relative", overflow:"hidden",
       }}>
-        {/* Full-bleed background image */}
+        {/* Full-bleed background image — masked below the separator bar */}
         <div style={{
           position:"absolute",
           inset:0,
@@ -982,6 +980,8 @@ export default function AmenitySprint() {
           backgroundSize:"cover",
           backgroundPosition:"center right",
           zIndex:0,
+          WebkitMaskImage:"linear-gradient(to bottom, transparent 0px, transparent 130px, black 175px)",
+          maskImage:"linear-gradient(to bottom, transparent 0px, transparent 130px, black 175px)",
         }}/>
         {/* Gradient overlay - dark on left, revealing image on right */}
         <div style={{
