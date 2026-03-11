@@ -197,7 +197,7 @@ const StatCard = ({ stat, trigger, index }) => {
 // EDITORIAL MASONRY GALLERY
 // ─────────────────────────────────────────────────────────────────────────────
 
-const MasonryGallery = ({ photos, mobile, fallback }) => {
+const MasonryGallery = ({ photos, mobile }) => {
   const colSpan = { hero: 3, large: 2, medium: 1, small: 1 };
 
   if (mobile) {
@@ -207,7 +207,7 @@ const MasonryGallery = ({ photos, mobile, fallback }) => {
           const wide = p.size === "hero" || p.size === "large";
           return (
             <div key={i} style={{ gridColumn: wide ? "1 / -1" : "auto" }}>
-              <Img label={p.label} aspect={wide ? "16/9" : p.aspect} src={p.src || fallback} hover />
+              <Img label={p.label} aspect={wide ? "16/9" : p.aspect} src={p.src} hover />
             </div>
           );
         })}
@@ -222,7 +222,7 @@ const MasonryGallery = ({ photos, mobile, fallback }) => {
           gridColumn: `span ${colSpan[p.size] || 1}`,
           minHeight: p.size === "small" ? 200 : "auto",
         }}>
-          <Img label={p.label} aspect={p.aspect} src={p.src || fallback} hover style={{ height: "100%", minHeight: "100%" }} />
+          <Img label={p.label} aspect={p.aspect} src={p.src} hover style={{ height: "100%", minHeight: "100%" }} />
         </div>
       ))}
     </div>
@@ -535,11 +535,16 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
           transition: "color 0.3s" }}>
           <span style={{ fontSize: "0.8rem" }}>←</span> Sprint Portfolio
         </a>
-        <svg width="80" height="16" viewBox="0 0 80 16" fill="none">
-          <text x="0" y="13" fontFamily="'Poppins',sans-serif" fontWeight="800" fontSize="13"
-            fill={scrolled ? "#000" : "#fff"} letterSpacing="1.5">NELSON</text>
-          <polygon points="58,0.5 64,0.5 61,7" fill="#00BADC"/>
-        </svg>
+        <span style={{
+          fontFamily: "'Poppins',sans-serif", fontWeight: 800, fontSize: "0.85rem",
+          letterSpacing: "0.12em", color: scrolled ? "#222" : "#fff",
+          transition: "color 0.3s", display: "inline-flex", alignItems: "center", gap: "0.25rem",
+        }}>
+          NELSON
+          <svg width="8" height="8" viewBox="0 0 8 8" style={{ marginTop: "-1px" }}>
+            <polygon points="0,0 8,0 4,7" fill="#00BADC"/>
+          </svg>
+        </span>
         <a href="/#contact" style={{ background: "#00BADC",
           fontFamily: "'Poppins',sans-serif", fontSize: "0.62rem", fontWeight: 600, color: "#fff",
           padding: "0.42rem 1rem", borderRadius: "2px", textDecoration: "none",
@@ -567,19 +572,20 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
           background: `linear-gradient(90deg,${sizeColor} 0%,rgba(0,186,220,0.25) 45%,transparent 70%)` }} />
 
         {!mobile && (
-          <div style={{ position: "absolute", right: "5vw", top: "50%", transform: "translateY(-50%)",
+          <div style={{ position: "absolute", right: "5vw", top: "8vh", bottom: "12vh",
             width: "44vw", maxWidth: 620,
-            opacity: heroIn ? 1 : 0, transition: "opacity 1.4s ease 0.25s" }}>
+            opacity: heroIn ? 1 : 0, transition: "opacity 1.4s ease 0.25s",
+            display: "flex", alignItems: "center" }}>
             {P.heroImage ? (
               <img 
                 src={P.heroImage} 
                 alt={`${P.name} — Built Project Hero`}
                 style={{ 
-                  width: "100%", 
-                  aspectRatio: "4/5", 
+                  width: "100%",
+                  maxHeight: "100%",
                   objectFit: "cover",
-                  borderRadius: "2px", 
-                  boxShadow: "0 40px 80px rgba(0,0,0,0.5)" 
+                  borderRadius: "2px",
+                  boxShadow: "0 40px 80px rgba(0,0,0,0.5)"
                 }} 
               />
             ) : (
@@ -729,13 +735,7 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
       <section style={{ background:"#fff", padding:mobile?"4rem 5vw":"7rem 6vw" }}>
         <div ref={conceptRef}>
           <ConceptPhase
-            concept={{
-              ...P.concept,
-              conceptPhotos: P.concept.conceptPhotos?.map(ph => ({
-                ...ph,
-                src: ph.src || P.cardImage,
-              })),
-            }}
+            concept={P.concept}
             sprintDuration={P.sprintDuration}
             visible={conceptVis}
             mobile={mobile}
@@ -788,7 +788,7 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
             </p>
           </div>
           <div style={{ ...fd(galleryVis,0.14) }}>
-            <MasonryGallery photos={P.gallery} mobile={mobile} fallback={P.cardImage} />
+            <MasonryGallery photos={P.gallery} mobile={mobile} />
           </div>
         </div>
       </section>

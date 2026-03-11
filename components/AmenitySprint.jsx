@@ -1143,8 +1143,8 @@ export default function AmenitySprint() {
         <div style={{
           position:"absolute",
           inset:0,
-          background:"linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.5) 100%)",
-          backdropFilter:"blur(2px)",
+          background:"linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.1) 100%)",
+          backdropFilter:"blur(1px)",
           zIndex:1,
         }}/>
         <div ref={tierRef} style={{ maxWidth:1100, margin:"0 auto", position:"relative", zIndex:2 }}>
