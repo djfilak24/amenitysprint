@@ -46,27 +46,28 @@ const C = {
 const ImgPlaceholder = ({ label, aspectRatio = "16/9", style = {} }) => (
   <div style={{
     width:"100%", aspectRatio,
-    background:"linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#1a1a1a 100%)",
-    borderRadius:"0.5rem", display:"flex", flexDirection:"column",
+    background:"linear-gradient(145deg,#282a2c 0%,#1e2022 60%,#252729 100%)",
+    borderRadius:"1.5rem", display:"flex",
     alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden", ...style
   }}>
     <div style={{ position:"absolute", inset:0,
-      backgroundImage:"linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)",
-      backgroundSize:"32px 32px" }}/>
-    {[["0","0"],["0","auto"],["auto","0"],["auto","auto"]].map(([t,b],i) => (
-      <div key={i} style={{
+      backgroundImage:"linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px)",
+      backgroundSize:"28px 28px" }}/>
+    {[0,1,2,3].map(c => (
+      <div key={c} style={{
         position:"absolute",
-        top:t==="0"?12:"auto", bottom:b==="auto"?12:"auto",
-        left:i<2?12:"auto", right:i>=2?12:"auto",
-        width:16, height:16,
-        borderTop:t==="0"?"1.5px solid rgba(0,186,220,0.4)":"none",
-        borderBottom:b==="auto"?"1.5px solid rgba(0,186,220,0.4)":"none",
-        borderLeft:i<2?"1.5px solid rgba(0,186,220,0.4)":"none",
-        borderRight:i>=2?"1.5px solid rgba(0,186,220,0.4)":"none",
+        top: c < 2 ? 14 : "auto", bottom: c >= 2 ? 14 : "auto",
+        left: c % 2 === 0 ? 14 : "auto", right: c % 2 === 1 ? 14 : "auto",
+        width:18, height:18,
+        borderTop: c < 2 ? "1.5px solid rgba(0,186,220,0.5)" : "none",
+        borderBottom: c >= 2 ? "1.5px solid rgba(0,186,220,0.5)" : "none",
+        borderLeft: c % 2 === 0 ? "1.5px solid rgba(0,186,220,0.5)" : "none",
+        borderRight: c % 2 === 1 ? "1.5px solid rgba(0,186,220,0.5)" : "none",
       }}/>
     ))}
-    <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:500,
-      letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.2)", textAlign:"center", padding:"0 1rem" }}>
+    <div style={{ position:"relative", zIndex:1, fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem",
+      fontWeight:500, letterSpacing:"0.18em", textTransform:"uppercase",
+      color:"rgba(255,255,255,0.22)", textAlign:"center", padding:"0 1.5rem" }}>
       {label}
     </div>
   </div>
@@ -811,69 +812,44 @@ const SprintTier = ({ tier, active, onClick }) => {
     <div onClick={onClick}
       onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       style={{
-        position:"relative", borderRadius:"1.5rem", overflow:"hidden",
-        border:active?`2px solid ${sz.color}`:"1px solid rgba(0,0,0,0.08)",
-        background:"#fff", cursor:"pointer",
-        transition:"box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease",
+        borderRadius:"1.75rem",
+        border: active ? `2px solid ${sz.color}` : "1px solid rgba(0,0,0,0.07)",
+        background: active ? "#18191b" : "#fff",
+        cursor:"pointer",
+        transition:"all 0.3s ease",
         boxShadow: active
-          ? `0 12px 40px ${sz.color}44, 0 2px 12px rgba(0,0,0,0.12)`
-          : hov ? "0 8px 28px rgba(0,0,0,0.14)" : "0 2px 10px rgba(0,0,0,0.07)",
-        transform: hov && !active ? "translateY(-3px)" : "none",
+          ? `0 16px 48px ${sz.color}33, 0 4px 16px rgba(0,0,0,0.18)`
+          : hov ? "0 10px 32px rgba(0,0,0,0.13)" : "0 2px 10px rgba(0,0,0,0.06)",
+        transform: hov && !active ? "translateY(-4px)" : "none",
+        padding:"1.75rem 1.75rem 1.5rem",
       }}>
-
-      {/* Card background image – top portion */}
-      <div style={{
-        position:"absolute", top:0, left:0, right:0, bottom:0,
-        backgroundImage:`url(${tier.img})`,
-        backgroundSize:"cover", backgroundPosition:"center top",
-        filter:"brightness(0.88) saturate(0.85)",
-      }}/>
-
-      {/* Gradient: image visible at top → fades to white at bottom */}
-      <div style={{
-        position:"absolute", top:0, left:0, right:0, bottom:0,
-        background: active
-          ? `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 45%, rgba(0,0,0,0.94) 100%)`
-          : "linear-gradient(to bottom, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.0) 25%, rgba(255,255,255,0.65) 55%, rgba(255,255,255,1.0) 75%)",
-      }}/>
-
-      {/* Content layer */}
-      <div style={{ position:"relative", zIndex:2, padding:"1.75rem 1.75rem 1.5rem" }}>
-        {/* Header row */}
-        <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"0.5rem" }}>
-          <div style={{
-            fontFamily:"'Poppins',sans-serif",
-            fontSize: tier.label==="XL" ? "3.75rem" : "4.75rem",
-            fontWeight:800, lineHeight:1, letterSpacing:"-0.03em",
-            color: active ? sz.color : "rgba(255,255,255,0.88)",
-            textShadow: active ? "none" : "0 2px 12px rgba(0,0,0,0.3)",
-          }}>{tier.label}</div>
-          <div style={{
-            fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:700,
-            letterSpacing:"0.14em", textTransform:"uppercase", marginTop:"0.35rem",
-            color: active ? "#fff" : "rgba(255,255,255,0.9)",
-            background: active ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.42)",
-            padding:"0.25rem 0.65rem", borderRadius:99,
-            backdropFilter:"blur(6px)",
-          }}>{sz.name}</div>
-        </div>
-
-        {/* Spacer so text sits in white zone for inactive cards */}
-        <div style={{ height: active ? "0.75rem" : "3.5rem" }}/>
-
+      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"1.75rem" }}>
         <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"1rem", fontWeight:700,
-          color:active?"#fff":"#000", marginBottom:"0.25rem",
-        }}>{tier.range}</div>
+          fontFamily:"'Poppins',sans-serif",
+          fontSize: tier.label==="XL" ? "3.5rem" : "4.5rem",
+          fontWeight:800, lineHeight:1, letterSpacing:"-0.03em",
+          color: active ? sz.color : "rgba(0,0,0,0.09)",
+        }}>{tier.label}</div>
         <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:500,
-          color:active?sz.color:"#888", marginBottom:"0.875rem",
-        }}>{tier.weeks}</div>
-        <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:400,
-          color:active?"rgba(255,255,255,0.65)":"#555", lineHeight:1.75,
-        }}>{tier.desc}</div>
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.56rem", fontWeight:700,
+          letterSpacing:"0.14em", textTransform:"uppercase", marginTop:"0.4rem",
+          color: active ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.38)",
+          background: active ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+          padding:"0.28rem 0.7rem", borderRadius:99,
+        }}>{sz.name}</div>
       </div>
+      <div style={{
+        fontFamily:"'Poppins',sans-serif", fontSize:"1.05rem", fontWeight:700,
+        color: active ? "#fff" : "#0a0a0a", marginBottom:"0.25rem",
+      }}>{tier.range}</div>
+      <div style={{
+        fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:500,
+        color: active ? sz.color : "#999", marginBottom:"0.875rem",
+      }}>{tier.weeks}</div>
+      <div style={{
+        fontFamily:"'Poppins',sans-serif", fontSize:"0.76rem", fontWeight:400,
+        color: active ? "rgba(255,255,255,0.58)" : "#666", lineHeight:1.75,
+      }}>{tier.desc}</div>
     </div>
   );
 };
@@ -1124,57 +1100,47 @@ export default function AmenitySprint() {
       <SprintProcessSection />
 
       {/* ��─ TIERS ── */}
-      <section id="approach-tiers" style={{ 
-        padding: mobile?"4rem 5vw":"7rem 6vw", 
-        position:"relative",
-        overflow:"hidden",
-        minHeight: mobile ? "auto" : "90vh",
+      <section id="approach-tiers" style={{
+        background:"linear-gradient(135deg,#eaeced 0%,#d4d8db 45%,#dfe2e4 100%)",
+        overflow:"hidden", position:"relative",
       }}>
-        {/* Full-bleed background image */}
-        <div style={{
-          position:"absolute",
-          inset:0,
-          backgroundImage:"url('/images/tier-bg.jpg')",
-          backgroundSize:"cover",
-          backgroundPosition:"center",
-          zIndex:0,
-        }}/>
-        {/* Gradient blur overlay */}
-        <div style={{
-          position:"absolute",
-          inset:0,
-          background:"linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.1) 100%)",
-          backdropFilter:"blur(1px)",
-          zIndex:1,
-        }}/>
-        <div ref={tierRef} style={{ maxWidth:1100, margin:"0 auto", position:"relative", zIndex:2 }}>
+        <div ref={tierRef} style={{
+          display:"flex", flexDirection: mobile ? "column" : "row",
+          alignItems: mobile ? "flex-start" : "center",
+          minHeight: mobile ? "auto" : "88vh",
+        }}>
+          {/* Left: text panel */}
           <div style={{
-            display:"grid",
-            gridTemplateColumns: mobile ? "1fr" : "1fr 2fr",
-            gap: mobile ? "2rem" : "5rem",
-            alignItems:"start"
+            flexShrink:0,
+            width: mobile ? "100%" : "38vw",
+            padding: mobile ? "4rem 5vw 2.5rem" : "8rem 5vw 8rem 6vw",
           }}>
-            <div>
-              <div style={{ ...fade(tierVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
-                letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>Scalable Scope</div>
-              <h2 style={{ ...fade(tierVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)",
-                lineHeight:1.15, color:"#fff", marginBottom:"1rem" }}>
-                One size<br/>never fits all.
-              </h2>
-              <p style={{ ...fade(tierVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem",
-                fontWeight:300, color:"rgba(255,255,255,0.7)", lineHeight:1.8 }}>
-                Our S / M / L / XL framework matches scope to your asset, budget, and timeline.
-              </p>
-            </div>
-            <div style={{ ...fade(tierVis,0.15),
-              display:"grid",
-              gridTemplateColumns: mobile ? "1fr 1fr" : "1fr 1fr",
-              gap:"0.875rem" }}>
-              {TIERS.map((t,i)=>(
-                <SprintTier key={t.label} tier={t} active={activeTier===i} onClick={()=>setActiveTier(i)}/>
-              ))}
-            </div>
+            <div style={{ ...fade(tierVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem",
+              fontWeight:600, letterSpacing:"0.2em", textTransform:"uppercase",
+              color:"#00BADC", marginBottom:"1rem" }}>Scalable Scope</div>
+            <h2 style={{ ...fade(tierVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
+              fontSize: mobile?"clamp(2rem,7vw,2.8rem)":"clamp(2rem,3.2vw,3rem)",
+              lineHeight:1.1, color:"#111", marginBottom:"1.25rem" }}>
+              One size<br/>never fits all.
+            </h2>
+            <p style={{ ...fade(tierVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.88rem",
+              fontWeight:400, color:"#666", lineHeight:1.85, maxWidth:320 }}>
+              Our S / M / L / XL framework matches scope to your asset, budget, and timeline.
+            </p>
+          </div>
+
+          {/* Right: 2×2 card grid — extends past right edge for clipped effect */}
+          <div style={{ ...fade(tierVis,0.12),
+            flexShrink:0,
+            width: mobile ? "100%" : "70vw",
+            display:"grid", gridTemplateColumns:"1fr 1fr",
+            gap: mobile ? "0.875rem" : "1.1rem",
+            padding: mobile ? "0 5vw 4rem" : "6rem 0 6rem 2vw",
+            alignContent:"center",
+          }}>
+            {TIERS.map((t,i)=>(
+              <SprintTier key={t.label} tier={t} active={activeTier===i} onClick={()=>setActiveTier(i)}/>
+            ))}
           </div>
         </div>
       </section>

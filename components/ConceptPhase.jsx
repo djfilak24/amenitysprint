@@ -42,41 +42,29 @@ const Img = ({ label, aspect = "4/3", src = null, hover = false, style = {} }) =
   return (
     <div onMouseEnter={() => hover && setHov(true)} onMouseLeave={() => hover && setHov(false)}
       style={{ width: "100%", aspectRatio: aspect,
-        background: hov
-          ? "linear-gradient(145deg,#2e3032 0%,#252729 60%,#2a2c2e 100%)"
-          : "linear-gradient(145deg,#2a2c2e 0%,#1e2022 60%,#252729 100%)",
-        borderRadius: "2px", position: "relative", overflow: "hidden",
-        transition: "background 0.4s ease", cursor: hover ? "pointer" : "default", ...style }}>
+        background: "linear-gradient(145deg,#282a2c 0%,#1e2022 60%,#252729 100%)",
+        borderRadius: "1.5rem", position: "relative", overflow: "hidden",
+        cursor: hover ? "pointer" : "default", ...style }}>
       <div style={{ position: "absolute", inset: 0,
-        backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px)",
-        backgroundSize: "20px 20px" }} />
+        backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px)",
+        backgroundSize: "28px 28px" }} />
       {[0,1,2,3].map(c => (
         <div key={c} style={{
           position: "absolute",
-          top: c < 2 ? 10 : "auto", bottom: c >= 2 ? 10 : "auto",
-          left: c % 2 === 0 ? 10 : "auto", right: c % 2 === 1 ? 10 : "auto",
-          width: 12, height: 12,
-          borderTop: c < 2 ? "1.5px solid rgba(0,186,220,0.28)" : "none",
-          borderBottom: c >= 2 ? "1.5px solid rgba(0,186,220,0.28)" : "none",
-          borderLeft: c % 2 === 0 ? "1.5px solid rgba(0,186,220,0.28)" : "none",
-          borderRight: c % 2 === 1 ? "1.5px solid rgba(0,186,220,0.28)" : "none",
+          top: c < 2 ? 14 : "auto", bottom: c >= 2 ? 14 : "auto",
+          left: c % 2 === 0 ? 14 : "auto", right: c % 2 === 1 ? 14 : "auto",
+          width: 18, height: 18,
+          borderTop: c < 2 ? "1.5px solid rgba(0,186,220,0.5)" : "none",
+          borderBottom: c >= 2 ? "1.5px solid rgba(0,186,220,0.5)" : "none",
+          borderLeft: c % 2 === 0 ? "1.5px solid rgba(0,186,220,0.5)" : "none",
+          borderRight: c % 2 === 1 ? "1.5px solid rgba(0,186,220,0.5)" : "none",
         }} />
       ))}
-      {hover && (
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,186,220,0.06)",
-          border: "1px solid rgba(0,186,220,0.22)",
-          opacity: hov ? 1 : 0, transition: "opacity 0.3s",
-          display: "flex", alignItems: "flex-end", padding: "0.875rem" }}>
-          <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: "0.56rem", fontWeight: 600,
-            letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.88)" }}>
-            {label}
-          </span>
-        </div>
-      )}
-      <div style={{ position: "absolute", bottom: 10, left: 0, right: 0, textAlign: "center",
-        fontFamily: "'Poppins',sans-serif", fontSize: "0.46rem", fontWeight: 500,
-        letterSpacing: "0.14em", textTransform: "uppercase",
-        color: "rgba(255,255,255,0.14)", transition: "color 0.3s" }}>{label}</div>
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
+        fontFamily: "'Poppins',sans-serif", fontSize: "0.55rem", fontWeight: 500,
+        letterSpacing: "0.18em", textTransform: "uppercase",
+        color: hov ? "rgba(255,255,255,0.32)" : "rgba(255,255,255,0.18)",
+        transition: "color 0.3s", textAlign: "center", padding: "0 1.5rem" }}>{label}</div>
     </div>
   );
 };
