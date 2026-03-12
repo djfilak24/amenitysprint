@@ -451,8 +451,8 @@ const LandingJourneySection = () => {
                     marginBottom:"0.3rem", transition:"color 0.3s" }}>{s.label}</div>
                   <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:300,
                     color:"rgba(255,255,255,0.32)", lineHeight:1.7,
-                    maxHeight: i === activeStep ? "6rem" : "0",
-                    overflow:"hidden", transition:"max-height 0.4s ease" }}>{s.desc}</div>
+                    opacity: i === activeStep ? 1 : 0,
+                    transition:"opacity 0.4s ease" }}>{s.desc}</div>
                 </div>
               </div>
             ))}
@@ -479,8 +479,8 @@ const LandingJourneySection = () => {
                   lineHeight:1.35, marginBottom:"0.35rem", transition:"color 0.3s" }}>{s.label}</div>
                 <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.65rem", fontWeight:300,
                   color:"rgba(255,255,255,0.28)", lineHeight:1.65,
-                  maxHeight: i === activeStep ? "6rem" : "2.8rem",
-                  overflow:"hidden", transition:"max-height 0.4s ease" }}>{s.desc}</div>
+                  opacity: i === activeStep ? 1 : 0.35,
+                  transition:"opacity 0.4s ease" }}>{s.desc}</div>
               </div>
             ))}
           </div>
@@ -631,9 +631,9 @@ const SprintProcessSection = () => {
                         marginBottom:"0.5rem", transition:"color 0.3s" }}>{s.title}</div>
                       <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:300,
                         color:activeCard===i?"rgba(255,255,255,0.55)":"rgba(255,255,255,0.25)",
-                        lineHeight:1.75, transition:"color 0.3s",
-                        maxHeight:activeCard===i?"6rem":"3.2rem", overflow:"hidden",
-                        transitionProperty:"color, max-height", transitionDuration:"0.3s, 0.4s" }}>{s.body}</div>
+                        lineHeight:1.75,
+                        opacity:activeCard===i?1:0.4,
+                        transition:"color 0.3s, opacity 0.4s" }}>{s.body}</div>
                     </div>
                   </div>
                 </div>
@@ -684,6 +684,136 @@ const SprintProcessSection = () => {
 
       <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"4rem",
         background:`linear-gradient(to bottom, transparent, ${C.bg})`, pointerEvents:"none" }}/>
+    </section>
+  );
+};
+
+// ── TESTIMONIALS ─────────────────────────────────────────────────────────────
+const TESTIMONIALS = [
+  {
+    quote: "The Sprint process gave us the visual story we needed to walk into every broker meeting with conviction. First new tenant signed within 90 days of delivery.",
+    name: "Sarah T.",
+    title: "VP Asset Management",
+    company: "Midwest REIT",
+    color: "#00BADC",
+  },
+  {
+    quote: "We'd been staring at the same lobby for three years. NELSON came in, ran the Sprint, and in four weeks we had a concept that ownership actually got excited about.",
+    name: "David K.",
+    title: "Principal",
+    company: "CRE Capital Partners",
+    color: "#18988B",
+  },
+  {
+    quote: "The Amenity Matrix alone was worth the engagement. Understanding which interventions move the needle — and which don't — saved us from a very expensive mistake.",
+    name: "Maria R.",
+    title: "Director of Leasing",
+    company: "Commercial Properties Group",
+    color: "#FF7F40",
+  },
+];
+
+const TestimonialsSection = () => {
+  const mobile = useIsMobile();
+  const [ref, visible] = useScrollReveal(0.08);
+  const [active, setActive] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setFading(true);
+      setTimeout(() => {
+        setActive(prev => (prev + 1) % TESTIMONIALS.length);
+        setFading(false);
+      }, 320);
+    }, 4500);
+    return () => clearInterval(id);
+  }, []);
+
+  const t = TESTIMONIALS[active];
+
+  return (
+    <section style={{
+      background: "#191b1d",
+      padding: mobile ? "5rem 5vw" : "9rem 6vw",
+      position: "relative", overflow: "hidden",
+    }}>
+      {/* Subtle dot grid */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        backgroundImage:"radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px)",
+        backgroundSize:"36px 36px" }}/>
+      {/* Accent glow behind active color */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none", transition:"opacity 1.2s ease",
+        background:`radial-gradient(ellipse 60% 50% at 50% 60%, ${t.color}08 0%, transparent 70%)` }}/>
+
+      <div ref={ref} style={{ maxWidth:900, margin:"0 auto", position:"relative" }}>
+        {/* Label */}
+        <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease",
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
+          letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC",
+          marginBottom: mobile ? "2.5rem" : "3.5rem" }}>
+          What Clients Say
+        </div>
+
+        {/* Quote body */}
+        <div style={{
+          opacity: visible ? (fading ? 0 : 1) : 0,
+          transform: fading ? "translateY(6px)" : "translateY(0)",
+          transition: "opacity 0.32s ease, transform 0.32s ease",
+        }}>
+          {/* Giant quote mark */}
+          <div style={{
+            fontFamily:"'Poppins',sans-serif", fontSize: mobile ? "5rem" : "8rem",
+            fontWeight:800, lineHeight:0.7, color:t.color,
+            opacity:0.35, marginBottom: mobile ? "1.25rem" : "1.75rem",
+            userSelect:"none",
+          }}>"</div>
+
+          <p style={{
+            fontFamily:"'Poppins',sans-serif",
+            fontSize: mobile ? "clamp(1.1rem,4.5vw,1.4rem)" : "clamp(1.25rem,2.2vw,1.75rem)",
+            fontWeight:300, lineHeight:1.65,
+            color:"rgba(255,255,255,0.88)",
+            marginBottom: mobile ? "2rem" : "2.75rem",
+            letterSpacing:"-0.01em",
+          }}>{t.quote}</p>
+
+          {/* Attribution */}
+          <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
+            <div style={{
+              width:36, height:36, borderRadius:"50%",
+              background:`${t.color}22`,
+              border:`1.5px solid ${t.color}55`,
+              display:"flex", alignItems:"center", justifyContent:"center",
+              flexShrink:0,
+            }}>
+              <div style={{ width:10, height:10, borderRadius:"50%", background:t.color }} />
+            </div>
+            <div>
+              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:600,
+                color:"#fff" }}>{t.name}</div>
+              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:400,
+                color:"rgba(255,255,255,0.35)", letterSpacing:"0.04em" }}>
+                {t.title} · {t.company}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation dots */}
+        <div style={{ display:"flex", gap:"0.5rem", alignItems:"center",
+          marginTop: mobile ? "2.5rem" : "3.5rem" }}>
+          {TESTIMONIALS.map((_,i) => (
+            <div key={i} onClick={() => { setFading(true); setTimeout(() => { setActive(i); setFading(false); }, 280); }}
+              style={{
+                width: active===i ? 28 : 6, height:6, borderRadius:3,
+                background: active===i ? TESTIMONIALS[i].color : "rgba(255,255,255,0.15)",
+                cursor:"pointer", transition:"all 0.35s cubic-bezier(0.16,1,0.3,1)",
+                boxShadow: active===i ? `0 0 10px ${TESTIMONIALS[i].color}66` : "none",
+              }}/>
+          ))}
+        </div>
+      </div>
     </section>
   );
 };
@@ -970,8 +1100,12 @@ export default function AmenitySprint({ projects = [] }) {
           style={{
             position:"absolute", inset:0,
             width:"100%", height:"100%",
-            objectFit:"cover", objectPosition:"center right",
+            objectFit:"cover",
+            objectPosition: mobile ? "center center" : "center right",
             zIndex:0,
+            transform:"translateZ(0)",
+            willChange:"transform",
+            backfaceVisibility:"hidden",
           }}
         >
           <source src="https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/Untitled%20%282%29.mp4" type="video/mp4" />
@@ -1154,6 +1288,8 @@ export default function AmenitySprint({ projects = [] }) {
       {/* ── SPRINT PROCESS ── */}
       <SprintProcessSection />
 
+      {/* ── TESTIMONIALS ── */}
+      <TestimonialsSection />
 
       {/* ── PROJECTS ── */}
       <section id="projects" style={{

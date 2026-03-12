@@ -59,7 +59,9 @@ const useCountUp = (target, duration = 1600, trigger = false, delay = 0) => {
 const Img = ({ label, aspect = "4/3", src = null, style = {}, hover = false }) => {
   const [hov, setHov] = useState(false);
   const [imgErr, setImgErr] = useState(false);
-  const showReal = src && !imgErr;
+  // Only treat as real if it's an absolute URL — local paths (/images/...) show placeholder immediately
+  const isRealUrl = src && (src.startsWith("http") || src.startsWith("//"));
+  const showReal = isRealUrl && !imgErr;
 
   if (showReal) {
     return (
@@ -538,48 +540,65 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
         </a>
       </nav>
 
-      {/* ── HERO ── */}
+      {/* ── HERO — full bleed ── */}
       <section style={{
         minHeight: mobile ? "88dvh" : "92dvh",
-        background: "linear-gradient(158deg,#252729 0%,#1e2022 55%,#191b1d 100%)",
+        background: "#1e2022",
         position: "relative", overflow: "hidden",
         display: "flex", flexDirection: "column", justifyContent: "flex-end",
         padding: mobile ? "80px 5vw 6vh" : "0 6vw 8vh",
       }}>
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.035) 1px,transparent 1px)",
-          backgroundSize: "28px 28px" }} />
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
-          background: "radial-gradient(ellipse 65% 55% at 80% 50%,rgba(0,186,220,0.07) 0%,transparent 70%)" }} />
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3,
-          background: `linear-gradient(90deg,${sizeColor} 0%,rgba(0,186,220,0.25) 45%,transparent 70%)` }} />
-
-        {!mobile && (
-          <div style={{ position: "absolute", right: "5vw", top: "8vh", bottom: "12vh",
-            width: "44vw", maxWidth: 620,
-            opacity: heroIn ? 1 : 0, transition: "opacity 1.4s ease 0.25s",
-            display: "flex", alignItems: "center" }}>
-            {P.heroImage ? (
-              <img 
-                src={P.heroImage} 
-                alt={`${P.name} — Built Project Hero`}
-                style={{ 
-                  width: "100%",
-                  maxHeight: "100%",
-                  objectFit: "cover",
-                  borderRadius: "2px",
-                  boxShadow: "0 40px 80px rgba(0,0,0,0.5)"
-                }} 
-              />
-            ) : (
-              <Img label={`${P.name} — Built Project Hero`} aspect="4/5"
-                style={{ borderRadius: "2px", boxShadow: "0 40px 80px rgba(0,0,0,0.5)" }} />
-            )}
+        {/* Full-bleed background: real image if available, dark grid placeholder otherwise */}
+        {P.heroImage && (P.heroImage.startsWith("http") || P.heroImage.startsWith("//")) ? (
+          <img
+            src={P.heroImage}
+            alt={P.name}
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover", objectPosition: "center",
+              zIndex: 0,
+              transform: "translateZ(0)",
+            }}
+          />
+        ) : (
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 0,
+            background: "linear-gradient(145deg,#282a2c 0%,#1e2022 60%,#252729 100%)",
+          }}>
+            <div style={{ position: "absolute", inset: 0,
+              backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px)",
+              backgroundSize: "28px 28px" }} />
+            {[0,1,2,3].map(c => (
+              <div key={c} style={{
+                position: "absolute",
+                top: c < 2 ? 20 : "auto", bottom: c >= 2 ? 20 : "auto",
+                left: c % 2 === 0 ? 20 : "auto", right: c % 2 === 1 ? 20 : "auto",
+                width: 24, height: 24,
+                borderTop: c < 2 ? "1.5px solid rgba(0,186,220,0.45)" : "none",
+                borderBottom: c >= 2 ? "1.5px solid rgba(0,186,220,0.45)" : "none",
+                borderLeft: c % 2 === 0 ? "1.5px solid rgba(0,186,220,0.45)" : "none",
+                borderRight: c % 2 === 1 ? "1.5px solid rgba(0,186,220,0.45)" : "none",
+              }} />
+            ))}
           </div>
         )}
 
+        {/* Dark gradient overlay for text legibility */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none",
+          background: mobile
+            ? "linear-gradient(180deg, rgba(20,22,24,0.55) 0%, rgba(20,22,24,0.88) 70%, rgba(20,22,24,0.96) 100%)"
+            : "linear-gradient(90deg, rgba(20,22,24,0.9) 0%, rgba(20,22,24,0.78) 42%, rgba(20,22,24,0.35) 72%, rgba(20,22,24,0.08) 100%)",
+        }} />
+
+        {/* Tier accent line */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, zIndex: 2,
+          background: `linear-gradient(90deg,${sizeColor} 0%,rgba(0,186,220,0.25) 45%,transparent 70%)` }} />
+
+        {/* Breadcrumb */}
         <div style={{ position: "absolute", top: mobile ? 68 : 76, left: mobile ? "5vw" : "6vw",
-          display: "flex", alignItems: "center", gap: "0.5rem",
+          zIndex: 3, display: "flex", alignItems: "center", gap: "0.5rem",
           opacity: heroIn ? 1 : 0, transition: "opacity 0.7s ease 0.15s" }}>
           {["Sprint Portfolio", P.tag, P.name].map((crumb, ci) => (
             <span key={ci} style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
@@ -591,21 +610,8 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
           ))}
         </div>
 
-        <div style={{ maxWidth: mobile ? "100%" : "46vw", position: "relative", zIndex: 2 }}>
-          {mobile && (
-            <div style={{ marginBottom: "1.5rem", opacity: heroIn ? 1 : 0, transition: "opacity 1s ease 0.2s" }}>
-              {P.heroImage ? (
-                <img 
-                  src={P.heroImage} 
-                  alt={`${P.name} — Built Project`}
-                  style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", borderRadius: "2px" }} 
-                />
-              ) : (
-                <Img label={`${P.name} — Built Project`} aspect="16/9" style={{ borderRadius: "2px" }} />
-              )}
-            </div>
-          )}
-
+        {/* Text content */}
+        <div style={{ maxWidth: mobile ? "100%" : "52vw", position: "relative", zIndex: 3 }}>
           <div style={{ opacity: heroIn?1:0, transform: heroIn?"none":"translateY(12px)",
             transition: "all 0.7s ease 0.1s",
             display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", marginBottom: "1.1rem" }}>
@@ -659,12 +665,10 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
         </div>
 
         <div style={{ position: "absolute", bottom: mobile ? 18 : 24, left: "50%", transform: "translateX(-50%)",
-          opacity: heroIn ? 0.38 : 0, transition: "opacity 1s ease 1s",
+          zIndex: 3, opacity: heroIn ? 0.38 : 0, transition: "opacity 1s ease 1s",
           display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem" }}>
           <div style={{ fontFamily: "'Poppins',sans-serif", fontSize: "0.5rem", fontWeight: 500,
-            letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>
-            Scroll
-          </div>
+            letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>Scroll</div>
           <div style={{ width: 1, height: 28,
             background: "linear-gradient(to bottom,rgba(255,255,255,0.4),transparent)" }} />
         </div>
