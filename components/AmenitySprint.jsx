@@ -716,41 +716,41 @@ const ProjectCard = ({ p, delay }) => {
       onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}
       style={{
         display:"block", textDecoration:"none",
-        background:"#fff",
-        border:`1px solid ${hovered ? "rgba(0,0,0,0.14)" : "rgba(0,0,0,0.07)"}`,
-        borderRadius:"1.25rem",
+        background: hovered
+          ? "linear-gradient(160deg,#ffffff 0%,#f8fbfd 100%)"
+          : "linear-gradient(160deg,#ffffff 0%,#f2f6f9 100%)",
+        border:`1px solid ${hovered ? sz.color+"66" : "rgba(0,0,0,0.08)"}`,
+        borderTop:`3px solid ${sz.color}`,
+        borderRadius:"1.5rem",
         overflow:"hidden",
-        opacity:visible?1:0, transform:visible?(hovered?"translateY(-4px)":"translateY(0)"):"translateY(24px)",
+        opacity:visible?1:0, transform:visible?(hovered?"translateY(-5px)":"translateY(0)"):"translateY(28px)",
         transition:`opacity 0.7s ease ${delay}s, transform 0.5s ease, box-shadow 0.4s ease, border-color 0.3s ease`,
         boxShadow:hovered
-          ? `0 20px 50px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.10)`
-          : "0 3px 14px rgba(0,0,0,0.07)",
+          ? `0 28px 64px rgba(0,0,0,0.13), 0 8px 24px ${sz.color}22`
+          : "0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)",
       }}>
-<div style={{ position:"relative", overflow:"hidden" }}>
-  {/* Widescreen 16:9 thumbnail */}
-  <div style={{ width:"100%", aspectRatio:"16/9", position:"relative" }}>
-    <img
-      src={p.img}
-      alt={p.name}
-      style={{
-        width:"100%",
-        height:"100%",
-        objectFit:"cover",
-        objectPosition:"top center",
-        transition:"transform 0.55s ease",
-        transform: hovered ? "scale(1.04)" : "scale(1)",
-        display:"block",
-      }}
-    />
-    {/* Subtle gradient overlay for contrast */}
-    <div style={{
-      position:"absolute", inset:0,
-      background:"linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.18) 100%)",
-      pointerEvents:"none",
-    }}/>
-  </div>
+      <div style={{ position:"relative", overflow:"hidden" }}>
+        {/* Widescreen 16:9 thumbnail */}
+        <div style={{ width:"100%", aspectRatio:"16/9", position:"relative" }}>
+          <img
+            src={p.img}
+            alt={p.name}
+            style={{
+              width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center",
+              transition:"transform 0.55s ease",
+              transform: hovered ? "scale(1.04)" : "scale(1)",
+              display:"block",
+            }}
+          />
+          <div style={{
+            position:"absolute", inset:0,
+            background:"linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.22) 100%)",
+            pointerEvents:"none",
+          }}/>
+        </div>
+        {/* Hover deliverables overlay */}
         <div style={{
-          position:"absolute", inset:0, background:"rgba(0,0,0,0.88)",
+          position:"absolute", inset:0, background:"rgba(0,0,0,0.90)",
           opacity:hovered?1:0, transition:"opacity 0.35s ease",
           display:"flex", flexDirection:"column", justifyContent:"center", padding:"1.5rem",
         }}>
@@ -768,11 +768,6 @@ const ProjectCard = ({ p, delay }) => {
             </div>
           ))}
         </div>
-        <div style={{ position:"absolute", top:12, right:12, background:sz.color, color:"#fff",
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:700,
-          letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.2rem 0.6rem", borderRadius:99 }}>
-          {sz.label}
-        </div>
       </div>
       <div style={{ padding:"1.1rem 1.4rem 1.4rem" }}>
         <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
@@ -780,11 +775,20 @@ const ProjectCard = ({ p, delay }) => {
         <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1.05rem", fontWeight:700,
           color:"#0a0a0a", lineHeight:1.2, marginBottom:"0.3rem" }}>{p.name}</div>
         <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.73rem", fontWeight:400,
-          color:"#777", marginBottom:"0.9rem", lineHeight:1.5 }}>{p.type}</div>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end",
+          color:"#666", marginBottom:"0.9rem", lineHeight:1.5 }}>{p.type}</div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
           borderTop:"1px solid rgba(0,0,0,0.06)", paddingTop:"0.8rem" }}>
-          <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
-            textTransform:"uppercase", letterSpacing:"0.12em", color:"#bbb" }}>{p.city}</div>
+          {/* Tier badge — on card bg for full legibility */}
+          <span style={{
+            background:sz.color, color:"#fff",
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:700,
+            letterSpacing:"0.1em", textTransform:"uppercase",
+            padding:"0.28rem 0.75rem", borderRadius:99,
+            boxShadow:`0 2px 10px ${sz.color}44`,
+            flexShrink:0,
+          }}>
+            {sz.label} · {sz.name}
+          </span>
           <div style={{ textAlign:"right" }}>
             <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:700,
               color:"#111", lineHeight:1 }}>{p.investment}</div>
@@ -1070,9 +1074,6 @@ export default function AmenitySprint() {
       {/* ── JOURNEY TIMELINE ── */}
       <LandingJourneySection />
 
-      {/* ── SPRINT PROCESS ── */}
-      <SprintProcessSection />
-
       {/* ��─ TIERS ── */}
       <section id="approach-tiers" style={{
         background:"linear-gradient(135deg,#eaeced 0%,#d4d8db 45%,#dfe2e4 100%)",
@@ -1119,9 +1120,22 @@ export default function AmenitySprint() {
         </div>
       </section>
 
+      {/* ── SPRINT PROCESS ── */}
+      <SprintProcessSection />
+
+
       {/* ── PROJECTS ── */}
-      <section id="projects" style={{ padding: mobile?"4rem 5vw 5rem":"7rem 6vw 8rem", background:"#1e2022" }}>
-        <div style={{ maxWidth:1200, margin:"0 auto" }}>
+      <section id="projects" style={{
+        padding: mobile?"4rem 5vw 5rem":"7rem 6vw 8rem",
+        backgroundColor:"#eef1f4",
+        backgroundImage:"linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px)",
+        backgroundSize:"40px 40px",
+        position:"relative",
+      }}>
+        {/* Subtle vignette to soften grid edges */}
+        <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+          background:"radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(220,226,232,0.6) 100%)" }}/>
+        <div style={{ maxWidth:1200, margin:"0 auto", position:"relative", zIndex:1 }}>
           <div ref={projRef} style={{ display:"flex", justifyContent:"space-between",
             alignItems: mobile?"flex-start":"flex-end",
             flexDirection: mobile?"column":"row",
@@ -1130,37 +1144,38 @@ export default function AmenitySprint() {
               <div style={{ ...fade(projVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
                 letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.6rem" }}>Sprint Portfolio</div>
               <h2 style={{ ...fade(projVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)", color:"#fff" }}>
+                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)", color:"#111" }}>
                 9 Studies. 5 Markets.
               </h2>
             </div>
             <div style={{ ...fade(projVis,0.15), display:"flex", gap:"0.5rem", flexWrap:"wrap" }}>
               {["ALL","S","M","L","XL"].map(f=>(
                 <button key={f} onClick={()=>setFilterSize(f)} style={{
-                  background:filterSize===f?"#000":"#fff",
-                  border:filterSize===f?"1px solid #000":"1px solid #e0e0e0",
-                  color:filterSize===f?"#fff":"#555",
+                  background:filterSize===f?"#111":"rgba(255,255,255,0.85)",
+                  border:filterSize===f?"1px solid #111":"1px solid rgba(0,0,0,0.14)",
+                  color:filterSize===f?"#fff":"#444",
                   fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
                   letterSpacing:"0.08em", textTransform:"uppercase",
                   padding:"0.35rem 0.85rem", borderRadius:99, cursor:"pointer", transition:"all 0.2s",
+                  backdropFilter:"blur(4px)",
                 }}>{f==="ALL"?"All":`${f}`}</button>
               ))}
             </div>
           </div>
           <div style={{ display:"grid",
             gridTemplateColumns: mobile ? "1fr" : "repeat(auto-fill,minmax(300px,1fr))",
-            gap:"1.1rem" }}>
+            gap:"1.25rem" }}>
             {filteredProjects.map((p,i)=><ProjectCard key={p.id} p={p} delay={mobile?0:0.04*(i%4)}/>)}
           </div>
           {!mobile && (
-            <div style={{ marginTop:"1rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem",
-              fontWeight:400, color:"#aaa", textAlign:"center" }}>
+            <div style={{ marginTop:"1.25rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem",
+              fontWeight:400, color:"#888", textAlign:"center" }}>
               Hover over any project to see deliverables included in that sprint.
             </div>
           )}
           {mobile && (
-            <div style={{ marginTop:"1rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem",
-              fontWeight:400, color:"#aaa", textAlign:"center" }}>
+            <div style={{ marginTop:"1.25rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem",
+              fontWeight:400, color:"#888", textAlign:"center" }}>
               Tap any project card for deliverable details.
             </div>
           )}
