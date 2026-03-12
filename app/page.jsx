@@ -1,4 +1,5 @@
 import AmenitySprint from "../components/AmenitySprint";
+import { getAllProjects } from "../lib/projects";
 
 export const metadata = {
   title: "NELSON Asset Strategy — Amenity Sprint",
@@ -6,5 +7,6 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  return <AmenitySprint />;
+  const projects = getAllProjects();
+  return <AmenitySprint projects={projects} />;
 }

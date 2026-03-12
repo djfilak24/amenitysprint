@@ -710,90 +710,113 @@ const SIZE_CONFIG = {
 const ProjectCard = ({ p, delay }) => {
   const [ref, visible] = useScrollReveal(0.05);
   const [hovered, setHovered] = useState(false);
-  const sz = SIZE_CONFIG[p.size];
+  const sz = SIZE_CONFIG[p.size] || SIZE_CONFIG.M;
+  const imgSrc = p.cardImage || p.img;
+  const typeLabel = p.tagline || p.type || '';
+  const duration = p.sprintDuration || p.duration || '';
+  const deliverables = (p.concept && p.concept.deliverables) || p.deliverables || [];
+  const corners = [['top','left'],['top','right'],['bottom','left'],['bottom','right']];
   return (
     <a ref={ref} href={`/projects/${p.slug}`}
       onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}
       style={{
         display:"block", textDecoration:"none",
-        background: hovered
-          ? "linear-gradient(160deg,#ffffff 0%,#f8fbfd 100%)"
-          : "linear-gradient(160deg,#ffffff 0%,#f2f6f9 100%)",
-        border:`1px solid ${hovered ? sz.color+"66" : "rgba(0,0,0,0.08)"}`,
-        borderTop:`3px solid ${sz.color}`,
+        background:"#faf8f4",
+        border:"1px solid rgba(0,0,0,0.09)",
         borderRadius:"1.5rem",
         overflow:"hidden",
         opacity:visible?1:0, transform:visible?(hovered?"translateY(-5px)":"translateY(0)"):"translateY(28px)",
-        transition:`opacity 0.7s ease ${delay}s, transform 0.5s ease, box-shadow 0.4s ease, border-color 0.3s ease`,
+        transition:`opacity 0.7s ease ${delay}s, transform 0.5s ease, box-shadow 0.4s ease`,
         boxShadow:hovered
-          ? `0 28px 64px rgba(0,0,0,0.13), 0 8px 24px ${sz.color}22`
-          : "0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)",
+          ? `0 28px 56px rgba(0,0,0,0.14), 0 6px 20px ${sz.color}1a`
+          : "0 3px 18px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)",
       }}>
-      <div style={{ position:"relative", overflow:"hidden" }}>
-        {/* Widescreen 16:9 thumbnail */}
-        <div style={{ width:"100%", aspectRatio:"16/9", position:"relative" }}>
-          <img
-            src={p.img}
-            alt={p.name}
-            style={{
+      {/* Tier accent strip — separate element, no border conflict */}
+      <div style={{ height:3, background:sz.color, width:"100%", flexShrink:0,
+        boxShadow:`0 2px 8px ${sz.color}66` }}/>
+      {/* Inset image with mat padding — architectural framing */}
+      <div style={{ padding:"0.75rem 0.75rem 0" }}>
+        <div style={{ borderRadius:"0.875rem", overflow:"hidden", position:"relative", aspectRatio:"16/9" }}>
+          {imgSrc ? (
+            <img src={imgSrc} alt={p.name} style={{
               width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center",
               transition:"transform 0.55s ease",
               transform: hovered ? "scale(1.04)" : "scale(1)",
               display:"block",
-            }}
-          />
-          <div style={{
-            position:"absolute", inset:0,
-            background:"linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.22) 100%)",
-            pointerEvents:"none",
-          }}/>
-        </div>
-        {/* Hover deliverables overlay */}
-        <div style={{
-          position:"absolute", inset:0, background:"rgba(0,0,0,0.90)",
-          opacity:hovered?1:0, transition:"opacity 0.35s ease",
-          display:"flex", flexDirection:"column", justifyContent:"center", padding:"1.5rem",
-        }}>
-          <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:600,
-            letterSpacing:"0.18em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.75rem" }}>
-            Deliverables
-          </div>
-          {p.deliverables.map((d,i) => (
-            <div key={i} style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:400,
-              color:"rgba(255,255,255,0.85)", paddingBottom:"0.4rem",
-              borderBottom:"1px solid rgba(255,255,255,0.07)", marginBottom:"0.4rem",
-              display:"flex", alignItems:"center", gap:"0.5rem" }}>
-              <span style={{ width:4,height:4,borderRadius:"50%",background:"#00BADC",flexShrink:0,display:"inline-block" }}/>
-              {d}
+            }}/>
+          ) : (
+            <div style={{ width:"100%", height:"100%", background:"#e8e4df",
+              display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem",
+                color:"rgba(0,0,0,0.25)", letterSpacing:"0.1em", textTransform:"uppercase" }}>No Image</span>
             </div>
+          )}
+          {/* Blueprint grid overlay */}
+          <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+            backgroundImage:"linear-gradient(rgba(255,255,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.06) 1px,transparent 1px)",
+            backgroundSize:"28px 28px" }}/>
+          {/* Corner bracket embellishments */}
+          {corners.map(([v,h],c)=>(
+            <div key={c} style={{
+              position:"absolute",
+              top: v==='top' ? 9 : 'auto', bottom: v==='bottom' ? 9 : 'auto',
+              left: h==='left' ? 9 : 'auto', right: h==='right' ? 9 : 'auto',
+              width:15, height:15, pointerEvents:"none",
+              borderTop: v==='top' ? '1.5px solid rgba(0,186,220,0.5)' : 'none',
+              borderBottom: v==='bottom' ? '1.5px solid rgba(0,186,220,0.5)' : 'none',
+              borderLeft: h==='left' ? '1.5px solid rgba(0,186,220,0.5)' : 'none',
+              borderRight: h==='right' ? '1.5px solid rgba(0,186,220,0.5)' : 'none',
+            }}/>
           ))}
+          {/* Bottom fade */}
+          <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+            background:"linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.2) 100%)" }}/>
+          {/* Hover deliverables overlay */}
+          <div style={{
+            position:"absolute", inset:0, background:"rgba(0,0,0,0.91)",
+            opacity:hovered?1:0, transition:"opacity 0.32s ease",
+            display:"flex", flexDirection:"column", justifyContent:"center", padding:"1.2rem",
+          }}>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
+              letterSpacing:"0.18em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.6rem" }}>
+              Deliverables
+            </div>
+            {deliverables.slice(0,4).map((d,i) => (
+              <div key={i} style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:400,
+                color:"rgba(255,255,255,0.82)", paddingBottom:"0.33rem",
+                borderBottom:"1px solid rgba(255,255,255,0.07)", marginBottom:"0.33rem",
+                display:"flex", alignItems:"center", gap:"0.45rem" }}>
+                <span style={{ width:3,height:3,borderRadius:"50%",background:"#00BADC",flexShrink:0,display:"inline-block" }}/>
+                {d}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      <div style={{ padding:"1.1rem 1.4rem 1.4rem" }}>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
-          letterSpacing:"0.16em", textTransform:"uppercase", color:"#aaa", marginBottom:"0.3rem" }}>{p.tag}</div>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1.05rem", fontWeight:700,
-          color:"#0a0a0a", lineHeight:1.2, marginBottom:"0.3rem" }}>{p.name}</div>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.73rem", fontWeight:400,
-          color:"#666", marginBottom:"0.9rem", lineHeight:1.5 }}>{p.type}</div>
+      {/* Card info */}
+      <div style={{ padding:"0.875rem 1.2rem 1.2rem" }}>
+        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.56rem", fontWeight:600,
+          letterSpacing:"0.16em", textTransform:"uppercase", color:"#aaa", marginBottom:"0.22rem" }}>{p.tag}</div>
+        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.98rem", fontWeight:700,
+          color:"#0a0a0a", lineHeight:1.2, marginBottom:"0.22rem" }}>{p.name}</div>
+        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:400,
+          color:"#666", marginBottom:"0.8rem", lineHeight:1.45 }}>{typeLabel}</div>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
-          borderTop:"1px solid rgba(0,0,0,0.06)", paddingTop:"0.8rem" }}>
-          {/* Tier badge — on card bg for full legibility */}
+          borderTop:"1px solid rgba(0,0,0,0.07)", paddingTop:"0.7rem" }}>
           <span style={{
             background:sz.color, color:"#fff",
-            fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:700,
-            letterSpacing:"0.1em", textTransform:"uppercase",
-            padding:"0.28rem 0.75rem", borderRadius:99,
-            boxShadow:`0 2px 10px ${sz.color}44`,
-            flexShrink:0,
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:700,
+            letterSpacing:"0.09em", textTransform:"uppercase",
+            padding:"0.22rem 0.65rem", borderRadius:99,
+            boxShadow:`0 2px 8px ${sz.color}44`, flexShrink:0,
           }}>
             {sz.label} · {sz.name}
           </span>
           <div style={{ textAlign:"right" }}>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:700,
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.8rem", fontWeight:700,
               color:"#111", lineHeight:1 }}>{p.investment}</div>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:400,
-              color:"#bbb", marginTop:"0.15rem" }}>{p.duration}</div>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:400,
+              color:"#bbb", marginTop:"0.1rem" }}>{duration}</div>
           </div>
         </div>
       </div>
@@ -859,7 +882,7 @@ const SprintTier = ({ tier, active, onClick }) => {
 };
 
 // ── MAIN ──────────────────────────────��──────────────────────────────────────
-export default function AmenitySprint() {
+export default function AmenitySprint({ projects = [] }) {
   const [scrolled, setScrolled] = useState(false);
   const [heroIn, setHeroIn] = useState(false);
   const [activeTier, setActiveTier] = useState(1);
@@ -883,7 +906,7 @@ export default function AmenitySprint() {
     opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(24px)",
     transition:`opacity 0.8s ease ${delay}s, transform 0.8s ease ${delay}s`,
   });
-  const filteredProjects = filterSize==="ALL" ? PROJECTS : PROJECTS.filter(p=>p.size===filterSize);
+  const filteredProjects = filterSize==="ALL" ? projects : projects.filter(p=>p.size===filterSize);
 
   return (
     <div style={{ fontFamily:"'Poppins',sans-serif", background:"#f7f7f7", color:"#000", overflowX:"hidden" }}>
@@ -1126,16 +1149,15 @@ export default function AmenitySprint() {
 
       {/* ── PROJECTS ── */}
       <section id="projects" style={{
-        padding: mobile?"4rem 5vw 5rem":"7rem 6vw 8rem",
-        backgroundColor:"#eef1f4",
-        backgroundImage:"linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px)",
-        backgroundSize:"40px 40px",
+        padding: mobile?"4rem 4vw 5rem":"6rem 2.5vw 7rem",
+        backgroundColor:"#f7f3ed",
+        backgroundImage:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E\")",
         position:"relative",
       }}>
         {/* Subtle vignette to soften grid edges */}
         <div style={{ position:"absolute", inset:0, pointerEvents:"none",
-          background:"radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(220,226,232,0.6) 100%)" }}/>
-        <div style={{ maxWidth:1200, margin:"0 auto", position:"relative", zIndex:1 }}>
+          background:"radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(240,234,224,0.7) 100%)" }}/>
+        <div style={{ maxWidth:"100%", margin:"0 auto", position:"relative", zIndex:1 }}>
           <div ref={projRef} style={{ display:"flex", justifyContent:"space-between",
             alignItems: mobile?"flex-start":"flex-end",
             flexDirection: mobile?"column":"row",
@@ -1163,9 +1185,9 @@ export default function AmenitySprint() {
             </div>
           </div>
           <div style={{ display:"grid",
-            gridTemplateColumns: mobile ? "1fr" : "repeat(auto-fill,minmax(300px,1fr))",
+            gridTemplateColumns: mobile ? "1fr" : "repeat(auto-fill,minmax(260px,1fr))",
             gap:"1.25rem" }}>
-            {filteredProjects.map((p,i)=><ProjectCard key={p.id} p={p} delay={mobile?0:0.04*(i%4)}/>)}
+            {filteredProjects.map((p,i)=><ProjectCard key={p.slug} p={p} delay={mobile?0:0.04*(i%4)}/>)}
           </div>
           {!mobile && (
             <div style={{ marginTop:"1.25rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem",
