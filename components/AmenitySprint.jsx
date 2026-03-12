@@ -715,15 +715,16 @@ const ProjectCard = ({ p, delay }) => {
   const typeLabel = p.tagline || p.type || '';
   const duration = p.sprintDuration || p.duration || '';
   const deliverables = (p.concept && p.concept.deliverables) || p.deliverables || [];
+  // Corner mount brackets — in the mat zone, on cream bg, fully visible
   const corners = [['top','left'],['top','right'],['bottom','left'],['bottom','right']];
   return (
     <a ref={ref} href={`/projects/${p.slug}`}
       onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}
       style={{
-        display:"block", textDecoration:"none",
+        display:"block", textDecoration:"none", position:"relative",
         background:"#faf8f4",
         border:"1px solid rgba(0,0,0,0.09)",
-        borderRadius:"1.5rem",
+        borderRadius:0,
         overflow:"hidden",
         opacity:visible?1:0, transform:visible?(hovered?"translateY(-5px)":"translateY(0)"):"translateY(28px)",
         transition:`opacity 0.7s ease ${delay}s, transform 0.5s ease, box-shadow 0.4s ease`,
@@ -731,12 +732,25 @@ const ProjectCard = ({ p, delay }) => {
           ? `0 28px 56px rgba(0,0,0,0.14), 0 6px 20px ${sz.color}1a`
           : "0 3px 18px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)",
       }}>
-      {/* Tier accent strip — separate element, no border conflict */}
+      {/* Tier accent strip */}
       <div style={{ height:3, background:sz.color, width:"100%", flexShrink:0,
         boxShadow:`0 2px 8px ${sz.color}66` }}/>
-      {/* Inset image with mat padding — architectural framing */}
+      {/* Corner mount brackets — on cream mat, architectural */}
+      {corners.map(([v,h],c)=>(
+        <div key={c} style={{
+          position:"absolute", zIndex:2, pointerEvents:"none",
+          top: v==='top' ? 10 : 'auto', bottom: v==='bottom' ? 10 : 'auto',
+          left: h==='left' ? 10 : 'auto', right: h==='right' ? 10 : 'auto',
+          width:14, height:14,
+          borderTop: v==='top' ? '1.5px solid rgba(30,32,34,0.28)' : 'none',
+          borderBottom: v==='bottom' ? '1.5px solid rgba(30,32,34,0.28)' : 'none',
+          borderLeft: h==='left' ? '1.5px solid rgba(30,32,34,0.28)' : 'none',
+          borderRight: h==='right' ? '1.5px solid rgba(30,32,34,0.28)' : 'none',
+        }}/>
+      ))}
+      {/* Inset image with mat padding */}
       <div style={{ padding:"0.75rem 0.75rem 0" }}>
-        <div style={{ borderRadius:"0.875rem", overflow:"hidden", position:"relative", aspectRatio:"16/9" }}>
+        <div style={{ borderRadius:0, overflow:"hidden", position:"relative", aspectRatio:"16/9" }}>
           {imgSrc ? (
             <img src={imgSrc} alt={p.name} style={{
               width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center",
@@ -751,26 +765,9 @@ const ProjectCard = ({ p, delay }) => {
                 color:"rgba(0,0,0,0.25)", letterSpacing:"0.1em", textTransform:"uppercase" }}>No Image</span>
             </div>
           )}
-          {/* Blueprint grid overlay */}
-          <div style={{ position:"absolute", inset:0, pointerEvents:"none",
-            backgroundImage:"linear-gradient(rgba(255,255,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.06) 1px,transparent 1px)",
-            backgroundSize:"28px 28px" }}/>
-          {/* Corner bracket embellishments */}
-          {corners.map(([v,h],c)=>(
-            <div key={c} style={{
-              position:"absolute",
-              top: v==='top' ? 9 : 'auto', bottom: v==='bottom' ? 9 : 'auto',
-              left: h==='left' ? 9 : 'auto', right: h==='right' ? 9 : 'auto',
-              width:15, height:15, pointerEvents:"none",
-              borderTop: v==='top' ? '1.5px solid rgba(0,186,220,0.5)' : 'none',
-              borderBottom: v==='bottom' ? '1.5px solid rgba(0,186,220,0.5)' : 'none',
-              borderLeft: h==='left' ? '1.5px solid rgba(0,186,220,0.5)' : 'none',
-              borderRight: h==='right' ? '1.5px solid rgba(0,186,220,0.5)' : 'none',
-            }}/>
-          ))}
           {/* Bottom fade */}
           <div style={{ position:"absolute", inset:0, pointerEvents:"none",
-            background:"linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.2) 100%)" }}/>
+            background:"linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.22) 100%)" }}/>
           {/* Hover deliverables overlay */}
           <div style={{
             position:"absolute", inset:0, background:"rgba(0,0,0,0.91)",
@@ -794,7 +791,7 @@ const ProjectCard = ({ p, delay }) => {
         </div>
       </div>
       {/* Card info */}
-      <div style={{ padding:"0.875rem 1.2rem 1.2rem" }}>
+      <div style={{ padding:"0.875rem 1.2rem 1.25rem" }}>
         <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.56rem", fontWeight:600,
           letterSpacing:"0.16em", textTransform:"uppercase", color:"#aaa", marginBottom:"0.22rem" }}>{p.tag}</div>
         <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.98rem", fontWeight:700,
@@ -1185,7 +1182,7 @@ export default function AmenitySprint({ projects = [] }) {
             </div>
           </div>
           <div style={{ display:"grid",
-            gridTemplateColumns: mobile ? "1fr" : "repeat(auto-fill,minmax(260px,1fr))",
+            gridTemplateColumns: mobile ? "1fr" : "repeat(4, 1fr)",
             gap:"1.25rem" }}>
             {filteredProjects.map((p,i)=><ProjectCard key={p.slug} p={p} delay={mobile?0:0.04*(i%4)}/>)}
           </div>
