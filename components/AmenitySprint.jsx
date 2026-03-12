@@ -974,7 +974,7 @@ export default function AmenitySprint({ projects = [] }) {
             zIndex:0,
           }}
         >
-          <source src="HERO_VIDEO_URL" type="video/mp4" />
+          <source src="https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/Untitled%20%282%29.mp4" type="video/mp4" />
           {/* Fallback image shown if video fails to load */}
           <div style={{
             position:"absolute", inset:0,
@@ -1097,7 +1097,8 @@ export default function AmenitySprint({ projects = [] }) {
 
       {/* ��─ TIERS ── */}
       <section id="approach-tiers" style={{
-        background:"linear-gradient(135deg,#eaeced 0%,#d4d8db 45%,#dfe2e4 100%)",
+        backgroundImage:"url('https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/FSS.jpeg')",
+        backgroundSize:"cover", backgroundPosition:"center",
         overflow:"hidden", position:"relative",
       }}>
         <div ref={tierRef} style={{
