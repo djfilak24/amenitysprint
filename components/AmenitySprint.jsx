@@ -1079,52 +1079,69 @@ const SprintTier = ({ tier, active }) => {
   const sz = SIZE_CONFIG[tier.label];
   return (
     <div style={{
-      borderRadius:"1.75rem",
-      border: active ? `2px solid ${sz.color}` : "1px solid rgba(255,255,255,0.22)",
-      background: active ? "rgba(255,255,255,0.97)" : "rgba(255,255,255,0.78)",
-      backdropFilter:"blur(22px)",
-      WebkitBackdropFilter:"blur(22px)",
+      borderRadius:"2rem",
+      border: active
+        ? `1px solid ${sz.color}88`
+        : "1px solid rgba(255,255,255,0.13)",
+      background: active
+        ? `rgba(8,10,14,0.72)`
+        : "rgba(8,10,14,0.48)",
+      backdropFilter:"blur(32px) saturate(1.3)",
+      WebkitBackdropFilter:"blur(32px) saturate(1.3)",
       transition:"all 0.5s cubic-bezier(0.16,1,0.3,1)",
       boxShadow: active
-        ? `0 0 0 1px ${sz.color}22, 0 28px 60px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,1)`
-        : "0 4px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)",
-      transform: active ? "translateY(-4px) scale(1.01)" : "none",
-      padding:"1.75rem 1.75rem 1.5rem",
+        ? `0 0 0 1px ${sz.color}33, 0 32px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(0,0,0,0.3)`
+        : "0 8px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.08)",
+      transform: active ? "translateY(-3px)" : "none",
+      padding:"2rem 2rem 1.75rem",
+      display:"flex", flexDirection:"column",
+      height:"100%",
+      // Subtle tier-color inner glow on active
+      ...(active ? { backgroundImage:`radial-gradient(ellipse 80% 60% at 50% 100%, ${sz.color}12 0%, transparent 65%)` } : {}),
     }}>
-      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"1.5rem" }}>
+      {/* Top row: letter + badge */}
+      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"auto" }}>
         <div style={{
           fontFamily:"'Poppins',sans-serif",
-          fontSize: tier.label==="XL" ? "3.5rem" : "4.5rem",
+          fontSize: tier.label==="XL" ? "4rem" : "5rem",
           fontWeight:800, lineHeight:1, letterSpacing:"-0.03em",
           color: sz.color,
-          opacity: active ? 1 : 0.65,
+          opacity: active ? 1 : 0.55,
           transition:"opacity 0.5s ease",
+          textShadow: active ? `0 0 40px ${sz.color}66` : "none",
         }}>{tier.label}</div>
         <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:700,
-          letterSpacing:"0.16em", textTransform:"uppercase", marginTop:"0.4rem",
-          color: active ? "#fff" : sz.color,
-          background: active ? sz.color : `${sz.color}18`,
-          border:`1px solid ${sz.color}55`,
-          padding:"0.28rem 0.7rem", borderRadius:99,
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", fontWeight:700,
+          letterSpacing:"0.16em", textTransform:"uppercase", marginTop:"0.5rem",
+          color: active ? "#fff" : "rgba(255,255,255,0.55)",
+          background: active ? `${sz.color}` : "rgba(255,255,255,0.08)",
+          border: active ? "none" : "1px solid rgba(255,255,255,0.12)",
+          padding:"0.3rem 0.75rem", borderRadius:99,
           transition:"all 0.5s ease",
         }}>{sz.name}</div>
       </div>
-      <div style={{
-        fontFamily:"'Poppins',sans-serif", fontSize:"1.1rem", fontWeight:700,
-        color:"#0a0a0a", marginBottom:"0.25rem",
-        opacity: active ? 1 : 0.7, transition:"opacity 0.5s ease",
-      }}>{tier.range}</div>
-      <div style={{
-        fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:600,
-        color: sz.color, marginBottom:"0.875rem",
-        transition:"opacity 0.5s ease",
-      }}>{tier.weeks}</div>
-      <div style={{
-        fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:400,
-        color:"#444", lineHeight:1.75,
-        opacity: active ? 1 : 0.4, transition:"opacity 0.4s ease",
-      }}>{tier.desc}</div>
+
+      {/* Pricing + duration */}
+      <div style={{ marginTop:"1.5rem" }}>
+        <div style={{
+          fontFamily:"'Poppins',sans-serif", fontSize:"1.25rem", fontWeight:800,
+          color:"#fff", marginBottom:"0.2rem",
+          opacity: active ? 1 : 0.75, transition:"opacity 0.5s ease",
+        }}>{tier.range}</div>
+        <div style={{
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", fontWeight:500,
+          color: sz.color, marginBottom:"1.1rem",
+          letterSpacing:"0.02em",
+        }}>{tier.weeks}</div>
+        {/* Hairline divider */}
+        <div style={{ height:1, background:`linear-gradient(90deg, ${sz.color}44, transparent)`,
+          marginBottom:"1.1rem", transition:"opacity 0.5s ease", opacity: active ? 1 : 0.4 }}/>
+        <div style={{
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.76rem", fontWeight:300,
+          color:"rgba(255,255,255,0.65)", lineHeight:1.75,
+          opacity: active ? 1 : 0.45, transition:"opacity 0.4s ease",
+        }}>{tier.desc}</div>
+      </div>
     </div>
   );
 };
@@ -1411,15 +1428,16 @@ export default function AmenitySprint({ projects = [] }) {
         }}/>
         <div ref={tierRef} style={{
           display:"flex", flexDirection: mobile ? "column" : "row",
-          alignItems: mobile ? "flex-start" : "center",
+          alignItems:"stretch",
           minHeight: mobile ? "auto" : "100vh",
           position:"relative", zIndex:1,
         }}>
-          {/* Left: text panel */}
+          {/* Left: text panel — vertically centered */}
           <div style={{
             flexShrink:0,
-            width: mobile ? "100%" : "38vw",
-            padding: mobile ? "4rem 5vw 2.5rem" : "8rem 5vw 8rem 6vw",
+            width: mobile ? "100%" : "34vw",
+            padding: mobile ? "4rem 5vw 2.5rem" : "0 5vw 0 6vw",
+            display:"flex", flexDirection:"column", justifyContent:"center",
           }}>
             <div style={{ ...fade(tierVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem",
               fontWeight:600, letterSpacing:"0.2em", textTransform:"uppercase",
@@ -1435,14 +1453,14 @@ export default function AmenitySprint({ projects = [] }) {
             </p>
           </div>
 
-          {/* Right: 2×2 card grid */}
+          {/* Right: 2×2 card grid — fills full height */}
           <div style={{ ...fade(tierVis,0.12),
-            flexShrink:0,
-            width: mobile ? "100%" : "70vw",
+            flex:1,
             display:"grid", gridTemplateColumns:"1fr 1fr",
-            gap: mobile ? "0.875rem" : "1.1rem",
-            padding: mobile ? "0 5vw 4rem" : "6rem 0 6rem 2vw",
-            alignContent:"center",
+            gridTemplateRows:"1fr 1fr",
+            gap: mobile ? "0.875rem" : "1rem",
+            padding: mobile ? "0 5vw 4rem" : "3rem 3vw 3rem 1.5vw",
+            alignItems:"stretch",
           }}>
             {TIERS.map((t,i)=>(
               <SprintTier key={t.label} tier={t} active={activeTier===i} />
