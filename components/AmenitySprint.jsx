@@ -820,7 +820,7 @@ const TestimonialsSection = () => {
 
 // ── MEET THE LEAD ─────────────────────────────────────────────────────────────
 // Replace with your Vercel Blob URL after uploading: POST /api/blob/upload
-const DAVID_PHOTO_URL = null; // e.g. "https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/david.jpg"
+const DAVID_PHOTO_URL = "https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/David26%27.png";
 
 const MeetTheLeadSection = () => {
   const mobile = useIsMobile();
@@ -1081,65 +1081,80 @@ const SprintTier = ({ tier, active }) => {
     <div style={{
       borderRadius:"2rem",
       border: active
-        ? `1px solid ${sz.color}88`
-        : "1px solid rgba(255,255,255,0.13)",
+        ? `1.5px solid rgba(255,255,255,0.75)`
+        : "1px solid rgba(255,255,255,0.38)",
       background: active
-        ? `rgba(8,10,14,0.72)`
-        : "rgba(8,10,14,0.48)",
-      backdropFilter:"blur(32px) saturate(1.3)",
-      WebkitBackdropFilter:"blur(32px) saturate(1.3)",
-      transition:"all 0.5s cubic-bezier(0.16,1,0.3,1)",
+        ? "rgba(255,255,255,0.82)"
+        : "rgba(250,249,247,0.55)",
+      backdropFilter:"blur(28px) saturate(1.6) brightness(1.08)",
+      WebkitBackdropFilter:"blur(28px) saturate(1.6) brightness(1.08)",
+      transition:"all 0.55s cubic-bezier(0.16,1,0.3,1)",
       boxShadow: active
-        ? `0 0 0 1px ${sz.color}33, 0 32px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(0,0,0,0.3)`
-        : "0 8px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.08)",
-      transform: active ? "translateY(-3px)" : "none",
-      padding:"2rem 2rem 1.75rem",
+        ? `0 24px 56px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(0,0,0,0.04), 0 0 0 1.5px ${sz.color}22`
+        : "0 8px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7)",
+      transform: active ? "translateY(-4px) scale(1.01)" : "scale(1)",
+      padding:"2rem 2rem 2rem",
       display:"flex", flexDirection:"column",
-      height:"100%",
-      // Subtle tier-color inner glow on active
-      ...(active ? { backgroundImage:`radial-gradient(ellipse 80% 60% at 50% 100%, ${sz.color}12 0%, transparent 65%)` } : {}),
+      height:"100%", overflow:"hidden",
+      position:"relative",
     }}>
-      {/* Top row: letter + badge */}
-      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"auto" }}>
+      {/* Tier-color top accent bar */}
+      <div style={{
+        position:"absolute", top:0, left:0, right:0, height:3,
+        background:sz.color,
+        boxShadow:`0 0 12px ${sz.color}66`,
+        opacity: active ? 1 : 0.55,
+        transition:"opacity 0.5s ease",
+        borderRadius:"2rem 2rem 0 0",
+      }}/>
+
+      {/* Tier badge — top right */}
+      <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:"0.5rem", marginTop:"0.25rem" }}>
         <div style={{
-          fontFamily:"'Poppins',sans-serif",
-          fontSize: tier.label==="XL" ? "4rem" : "5rem",
-          fontWeight:800, lineHeight:1, letterSpacing:"-0.03em",
-          color: sz.color,
-          opacity: active ? 1 : 0.55,
-          transition:"opacity 0.5s ease",
-          textShadow: active ? `0 0 40px ${sz.color}66` : "none",
-        }}>{tier.label}</div>
-        <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", fontWeight:700,
-          letterSpacing:"0.16em", textTransform:"uppercase", marginTop:"0.5rem",
-          color: active ? "#fff" : "rgba(255,255,255,0.55)",
-          background: active ? `${sz.color}` : "rgba(255,255,255,0.08)",
-          border: active ? "none" : "1px solid rgba(255,255,255,0.12)",
-          padding:"0.3rem 0.75rem", borderRadius:99,
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.5rem", fontWeight:700,
+          letterSpacing:"0.18em", textTransform:"uppercase",
+          color: active ? "#fff" : sz.color,
+          background: active ? sz.color : `${sz.color}18`,
+          border:`1px solid ${sz.color}44`,
+          padding:"0.25rem 0.7rem", borderRadius:99,
           transition:"all 0.5s ease",
         }}>{sz.name}</div>
       </div>
 
-      {/* Pricing + duration */}
-      <div style={{ marginTop:"1.5rem" }}>
+      {/* HERO LETTER — Playfair Display, massive, fills the card */}
+      <div style={{
+        fontFamily:"'Playfair Display', Georgia, serif",
+        fontSize: tier.label==="XL" ? "clamp(6rem,9vw,10rem)" : "clamp(7rem,10.5vw,12rem)",
+        fontWeight:900,
+        fontStyle:"italic",
+        lineHeight:0.85,
+        color: sz.color,
+        opacity: active ? 1 : 0.7,
+        transition:"all 0.55s ease",
+        letterSpacing:"-0.04em",
+        flex:1,
+        display:"flex", alignItems:"center",
+        // Subtle drop for depth
+        filter: active ? `drop-shadow(0 4px 16px ${sz.color}44)` : "none",
+      }}>{tier.label}</div>
+
+      {/* Bottom info — anchored to bottom */}
+      <div style={{ paddingTop:"1.25rem", borderTop:`1px solid ${sz.color}28` }}>
+        <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.5rem" }}>
+          <div style={{
+            fontFamily:"'Poppins',sans-serif", fontSize:"1.15rem", fontWeight:800,
+            color:"#0a0a0a", letterSpacing:"-0.02em",
+            opacity: active ? 1 : 0.75, transition:"opacity 0.5s",
+          }}>{tier.range}</div>
+          <div style={{
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:600,
+            color: sz.color, letterSpacing:"0.02em",
+          }}>{tier.weeks}</div>
+        </div>
         <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"1.25rem", fontWeight:800,
-          color:"#fff", marginBottom:"0.2rem",
-          opacity: active ? 1 : 0.75, transition:"opacity 0.5s ease",
-        }}>{tier.range}</div>
-        <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", fontWeight:500,
-          color: sz.color, marginBottom:"1.1rem",
-          letterSpacing:"0.02em",
-        }}>{tier.weeks}</div>
-        {/* Hairline divider */}
-        <div style={{ height:1, background:`linear-gradient(90deg, ${sz.color}44, transparent)`,
-          marginBottom:"1.1rem", transition:"opacity 0.5s ease", opacity: active ? 1 : 0.4 }}/>
-        <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.76rem", fontWeight:300,
-          color:"rgba(255,255,255,0.65)", lineHeight:1.75,
-          opacity: active ? 1 : 0.45, transition:"opacity 0.4s ease",
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.73rem", fontWeight:400,
+          color:"#3a3a3a", lineHeight:1.7,
+          opacity: active ? 1 : 0.5, transition:"opacity 0.4s ease",
         }}>{tier.desc}</div>
       </div>
     </div>
@@ -1181,7 +1196,7 @@ export default function AmenitySprint({ projects = [] }) {
   return (
     <div style={{ fontFamily:"'Poppins',sans-serif", background:"#f7f7f7", color:"#000", overflowX:"hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&display=swap');
         *{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
         @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
@@ -1472,9 +1487,6 @@ export default function AmenitySprint({ projects = [] }) {
       {/* ── SPRINT PROCESS ── */}
       <SprintProcessSection />
 
-      {/* ── TESTIMONIALS ── */}
-      <TestimonialsSection />
-
       {/* ── PROJECTS ── */}
       <section id="projects" style={{
         padding: mobile?"4rem 4vw 5rem":"6rem 5vw 7rem",
@@ -1582,6 +1594,9 @@ export default function AmenitySprint({ projects = [] }) {
           </div>
         </div>
       </section>
+
+      {/* ── TESTIMONIALS ── */}
+      <TestimonialsSection />
 
       {/* ── MEET THE LEAD ── */}
       <MeetTheLeadSection />
