@@ -963,15 +963,25 @@ export default function AmenitySprint({ projects = [] }) {
         padding: mobile ? "88px 5vw 5vh" : "0 6vw 10vh",
         position:"relative", overflow:"hidden",
       }}>
-        {/* Full-bleed background image */}
-        <div style={{
-          position:"absolute",
-          inset:0,
-          backgroundImage:"url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg')",
-          backgroundSize:"cover",
-          backgroundPosition:"center right",
-          zIndex:0,
-        }}/>
+        {/* Full-bleed background video — replace HERO_VIDEO_URL with your Vercel Blob video URL */}
+        {/* To upload: POST /api/blob/upload with file + folder:"hero" fields */}
+        <video
+          autoPlay muted loop playsInline
+          style={{
+            position:"absolute", inset:0,
+            width:"100%", height:"100%",
+            objectFit:"cover", objectPosition:"center right",
+            zIndex:0,
+          }}
+        >
+          <source src="HERO_VIDEO_URL" type="video/mp4" />
+          {/* Fallback image shown if video fails to load */}
+          <div style={{
+            position:"absolute", inset:0,
+            backgroundImage:"url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg')",
+            backgroundSize:"cover", backgroundPosition:"center right",
+          }}/>
+        </video>
         {/* Gradient overlay — photo shows through on both sides, text area darkened */}
         <div style={{
           position:"absolute",
