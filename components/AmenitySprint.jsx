@@ -1081,19 +1081,19 @@ const SprintTier = ({ tier, active }) => {
     <div style={{
       borderRadius:"2rem",
       border: active
-        ? `1.5px solid rgba(255,255,255,0.75)`
-        : "1px solid rgba(255,255,255,0.38)",
+        ? `1.5px solid ${sz.color}55`
+        : `1px solid rgba(255,255,255,0.08)`,
       background: active
-        ? "rgba(255,255,255,0.82)"
-        : "rgba(250,249,247,0.55)",
-      backdropFilter:"blur(28px) saturate(1.6) brightness(1.08)",
-      WebkitBackdropFilter:"blur(28px) saturate(1.6) brightness(1.08)",
+        ? `rgba(8,10,14,0.72)`
+        : `rgba(8,10,14,0.48)`,
+      backdropFilter:"blur(32px) saturate(1.4)",
+      WebkitBackdropFilter:"blur(32px) saturate(1.4)",
       transition:"all 0.55s cubic-bezier(0.16,1,0.3,1)",
       boxShadow: active
-        ? `0 24px 56px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(0,0,0,0.04), 0 0 0 1.5px ${sz.color}22`
-        : "0 8px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7)",
+        ? `0 24px 56px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px ${sz.color}22`
+        : "0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)",
       transform: active ? "translateY(-4px) scale(1.01)" : "scale(1)",
-      padding:"2rem 2rem 2rem",
+      padding:"2rem",
       display:"flex", flexDirection:"column",
       height:"100%", overflow:"hidden",
       position:"relative",
@@ -1102,8 +1102,8 @@ const SprintTier = ({ tier, active }) => {
       <div style={{
         position:"absolute", top:0, left:0, right:0, height:3,
         background:sz.color,
-        boxShadow:`0 0 12px ${sz.color}66`,
-        opacity: active ? 1 : 0.55,
+        boxShadow:`0 0 16px ${sz.color}88`,
+        opacity: active ? 1 : 0.4,
         transition:"opacity 0.5s ease",
         borderRadius:"2rem 2rem 0 0",
       }}/>
@@ -1113,48 +1113,48 @@ const SprintTier = ({ tier, active }) => {
         <div style={{
           fontFamily:"'Poppins',sans-serif", fontSize:"0.5rem", fontWeight:700,
           letterSpacing:"0.18em", textTransform:"uppercase",
-          color: active ? "#fff" : sz.color,
-          background: active ? sz.color : `${sz.color}18`,
-          border:`1px solid ${sz.color}44`,
+          color: active ? sz.color : "rgba(255,255,255,0.45)",
+          background: active ? `${sz.color}18` : "rgba(255,255,255,0.06)",
+          border:`1px solid ${active ? sz.color+"44" : "rgba(255,255,255,0.1)"}`,
           padding:"0.25rem 0.7rem", borderRadius:99,
           transition:"all 0.5s ease",
         }}>{sz.name}</div>
       </div>
 
-      {/* HERO LETTER — Playfair Display, massive, fills the card */}
+      {/* HERO LETTER — Poppins 800, massive, fills the card */}
       <div style={{
-        fontFamily:"'Playfair Display', Georgia, serif",
+        fontFamily:"'Poppins',sans-serif",
         fontSize: tier.label==="XL" ? "clamp(6rem,9vw,10rem)" : "clamp(7rem,10.5vw,12rem)",
-        fontWeight:900,
-        fontStyle:"italic",
+        fontWeight:800,
+        fontStyle:"normal",
         lineHeight:0.85,
         color: sz.color,
-        opacity: active ? 1 : 0.7,
+        opacity: active ? 1 : 0.5,
         transition:"all 0.55s ease",
-        letterSpacing:"-0.04em",
+        letterSpacing:"-0.05em",
         flex:1,
         display:"flex", alignItems:"center",
-        // Subtle drop for depth
-        filter: active ? `drop-shadow(0 4px 16px ${sz.color}44)` : "none",
+        filter: active ? `drop-shadow(0 0 32px ${sz.color}66)` : "none",
       }}>{tier.label}</div>
 
-      {/* Bottom info — anchored to bottom */}
-      <div style={{ paddingTop:"1.25rem", borderTop:`1px solid ${sz.color}28` }}>
+      {/* Bottom info */}
+      <div style={{ paddingTop:"1.25rem", borderTop:`1px solid ${sz.color}22` }}>
         <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.5rem" }}>
           <div style={{
             fontFamily:"'Poppins',sans-serif", fontSize:"1.15rem", fontWeight:800,
-            color:"#0a0a0a", letterSpacing:"-0.02em",
-            opacity: active ? 1 : 0.75, transition:"opacity 0.5s",
+            color:"rgba(255,255,255,0.95)", letterSpacing:"-0.02em",
+            opacity: active ? 1 : 0.6, transition:"opacity 0.5s",
           }}>{tier.range}</div>
           <div style={{
             fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:600,
             color: sz.color, letterSpacing:"0.02em",
+            opacity: active ? 1 : 0.6, transition:"opacity 0.5s",
           }}>{tier.weeks}</div>
         </div>
         <div style={{
           fontFamily:"'Poppins',sans-serif", fontSize:"0.73rem", fontWeight:400,
-          color:"#3a3a3a", lineHeight:1.7,
-          opacity: active ? 1 : 0.5, transition:"opacity 0.4s ease",
+          color:"rgba(255,255,255,0.55)", lineHeight:1.7,
+          opacity: active ? 1 : 0.4, transition:"opacity 0.4s ease",
         }}>{tier.desc}</div>
       </div>
     </div>
@@ -1595,11 +1595,11 @@ export default function AmenitySprint({ projects = [] }) {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
-      <TestimonialsSection />
-
       {/* ── MEET THE LEAD ── */}
       <MeetTheLeadSection />
+
+      {/* ── TESTIMONIALS ── */}
+      <TestimonialsSection />
 
       {/* ── CTA ── */}
       <section id="contact" style={{
