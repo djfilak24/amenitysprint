@@ -706,105 +706,93 @@ const ProjectCard = ({ p, delay }) => {
   const typeLabel = p.tagline || p.type || '';
   const duration = p.sprintDuration || p.duration || '';
   const deliverables = (p.concept && p.concept.deliverables) || p.deliverables || [];
-  // Corner mount brackets — in the mat zone, on cream bg, fully visible
-  const corners = [['top','left'],['top','right'],['bottom','left'],['bottom','right']];
   return (
     <a ref={ref} href={`/projects/${p.slug}`}
       onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}
       style={{
         display:"block", textDecoration:"none", position:"relative",
-        background:"#faf8f4",
-        border:"1px solid rgba(0,0,0,0.09)",
-        borderRadius:0,
+        background:"#242628",
+        borderRadius:"1.5rem",
         overflow:"hidden",
-        opacity:visible?1:0, transform:visible?(hovered?"translateY(-5px)":"translateY(0)"):"translateY(28px)",
-        transition:`opacity 0.7s ease ${delay}s, transform 0.5s ease, box-shadow 0.4s ease`,
+        opacity:visible?1:0,
+        transform:visible?(hovered?"translateY(-6px)":"translateY(0)"):"translateY(32px)",
+        transition:`opacity 0.7s ease ${delay}s, transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease`,
         boxShadow:hovered
-          ? `0 28px 56px rgba(0,0,0,0.14), 0 6px 20px ${sz.color}1a`
-          : "0 3px 18px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04)",
+          ? `0 32px 64px rgba(0,0,0,0.55), 0 0 0 1px ${sz.color}55`
+          : "0 4px 24px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)",
       }}>
-      {/* Tier accent strip */}
-      <div style={{ height:3, background:sz.color, width:"100%", flexShrink:0,
-        boxShadow:`0 2px 8px ${sz.color}66` }}/>
-      {/* Corner mount brackets — on cream mat, architectural */}
-      {corners.map(([v,h],c)=>(
-        <div key={c} style={{
-          position:"absolute", zIndex:2, pointerEvents:"none",
-          top: v==='top' ? 10 : 'auto', bottom: v==='bottom' ? 10 : 'auto',
-          left: h==='left' ? 10 : 'auto', right: h==='right' ? 10 : 'auto',
-          width:14, height:14,
-          borderTop: v==='top' ? '1.5px solid rgba(30,32,34,0.28)' : 'none',
-          borderBottom: v==='bottom' ? '1.5px solid rgba(30,32,34,0.28)' : 'none',
-          borderLeft: h==='left' ? '1.5px solid rgba(30,32,34,0.28)' : 'none',
-          borderRight: h==='right' ? '1.5px solid rgba(30,32,34,0.28)' : 'none',
-        }}/>
-      ))}
-      {/* Inset image with mat padding */}
-      <div style={{ padding:"0.75rem 0.75rem 0" }}>
-        <div style={{ borderRadius:0, overflow:"hidden", position:"relative", aspectRatio:"16/9" }}>
-          {imgSrc ? (
-            <img src={imgSrc} alt={p.name} style={{
-              width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center",
-              transition:"transform 0.55s ease",
-              transform: hovered ? "scale(1.04)" : "scale(1)",
-              display:"block",
-            }}/>
-          ) : (
-            <div style={{ width:"100%", height:"100%", background:"#e8e4df",
-              display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem",
-                color:"rgba(0,0,0,0.25)", letterSpacing:"0.1em", textTransform:"uppercase" }}>No Image</span>
-            </div>
-          )}
-          {/* Bottom fade */}
-          <div style={{ position:"absolute", inset:0, pointerEvents:"none",
-            background:"linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.22) 100%)" }}/>
-          {/* Hover deliverables overlay */}
-          <div style={{
-            position:"absolute", inset:0, background:"rgba(0,0,0,0.91)",
-            opacity:hovered?1:0, transition:"opacity 0.32s ease",
-            display:"flex", flexDirection:"column", justifyContent:"center", padding:"1.2rem",
-          }}>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
-              letterSpacing:"0.18em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.6rem" }}>
-              Deliverables
-            </div>
-            {deliverables.slice(0,4).map((d,i) => (
-              <div key={i} style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:400,
-                color:"rgba(255,255,255,0.82)", paddingBottom:"0.33rem",
-                borderBottom:"1px solid rgba(255,255,255,0.07)", marginBottom:"0.33rem",
-                display:"flex", alignItems:"center", gap:"0.45rem" }}>
-                <span style={{ width:3,height:3,borderRadius:"50%",background:"#00BADC",flexShrink:0,display:"inline-block" }}/>
-                {d}
-              </div>
-            ))}
+      {/* Tier color top glow strip */}
+      <div style={{ height:2, background:sz.color, width:"100%",
+        boxShadow:`0 0 16px 2px ${sz.color}88` }}/>
+      {/* Full-bleed image */}
+      <div style={{ position:"relative", aspectRatio:"16/9", overflow:"hidden" }}>
+        {imgSrc ? (
+          <img src={imgSrc} alt={p.name} style={{
+            width:"100%", height:"100%", objectFit:"cover", objectPosition:"top center",
+            transition:"transform 0.6s ease",
+            transform: hovered ? "scale(1.06)" : "scale(1)",
+            display:"block",
+          }}/>
+        ) : (
+          <div style={{ width:"100%", height:"100%",
+            background:"linear-gradient(145deg,#2a2c2e 0%,#1e2022 100%)",
+            display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem",
+              color:"rgba(255,255,255,0.12)", letterSpacing:"0.12em", textTransform:"uppercase" }}>{p.name}</span>
           </div>
+        )}
+        {/* Persistent bottom gradient for name legibility */}
+        <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+          background:"linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.8) 100%)" }}/>
+        {/* Deliverables overlay on hover */}
+        <div style={{
+          position:"absolute", inset:0,
+          background:"rgba(10,10,14,0.94)",
+          opacity:hovered?1:0, transition:"opacity 0.3s ease",
+          display:"flex", flexDirection:"column", justifyContent:"center", padding:"1.5rem",
+        }}>
+          <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:700,
+            letterSpacing:"0.2em", textTransform:"uppercase", color:sz.color, marginBottom:"0.85rem" }}>
+            Sprint Deliverables
+          </div>
+          {deliverables.slice(0,4).map((d,i) => (
+            <div key={i} style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.73rem", fontWeight:400,
+              color:"rgba(255,255,255,0.78)", paddingBottom:"0.38rem",
+              borderBottom:"1px solid rgba(255,255,255,0.07)", marginBottom:"0.38rem",
+              display:"flex", alignItems:"center", gap:"0.5rem" }}>
+              <span style={{ width:3, height:3, borderRadius:"50%", background:sz.color,
+                flexShrink:0, display:"inline-block", boxShadow:`0 0 6px ${sz.color}` }}/>
+              {d}
+            </div>
+          ))}
+          <div style={{ marginTop:"0.9rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem",
+            fontWeight:600, letterSpacing:"0.14em", textTransform:"uppercase",
+            color:"rgba(255,255,255,0.35)" }}>View Case Study →</div>
         </div>
       </div>
-      {/* Card info */}
-      <div style={{ padding:"0.875rem 1.2rem 1.25rem" }}>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.56rem", fontWeight:600,
-          letterSpacing:"0.16em", textTransform:"uppercase", color:"#aaa", marginBottom:"0.22rem" }}>{p.tag}</div>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.98rem", fontWeight:700,
-          color:"#0a0a0a", lineHeight:1.2, marginBottom:"0.22rem" }}>{p.name}</div>
-        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:400,
-          color:"#666", marginBottom:"0.8rem", lineHeight:1.45 }}>{typeLabel}</div>
+      {/* Card metadata */}
+      <div style={{ padding:"1rem 1.25rem 1.25rem" }}>
+        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", fontWeight:600,
+          letterSpacing:"0.18em", textTransform:"uppercase",
+          color:"rgba(255,255,255,0.25)", marginBottom:"0.2rem" }}>{p.tag}</div>
+        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.96rem", fontWeight:700,
+          color:"#fff", lineHeight:1.2, marginBottom:"0.18rem" }}>{p.name}</div>
+        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:400,
+          color:"rgba(255,255,255,0.35)", marginBottom:"0.9rem", lineHeight:1.5 }}>{typeLabel}</div>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
-          borderTop:"1px solid rgba(0,0,0,0.07)", paddingTop:"0.7rem" }}>
+          borderTop:"1px solid rgba(255,255,255,0.07)", paddingTop:"0.75rem" }}>
           <span style={{
             background:sz.color, color:"#fff",
-            fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:700,
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.56rem", fontWeight:700,
             letterSpacing:"0.09em", textTransform:"uppercase",
             padding:"0.22rem 0.65rem", borderRadius:99,
-            boxShadow:`0 2px 8px ${sz.color}44`, flexShrink:0,
-          }}>
-            {sz.label} · {sz.name}
-          </span>
+            boxShadow:`0 2px 10px ${sz.color}55`, flexShrink:0,
+          }}>{sz.label} · {sz.name}</span>
           <div style={{ textAlign:"right" }}>
             <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.8rem", fontWeight:700,
-              color:"#111", lineHeight:1 }}>{p.investment}</div>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:400,
-              color:"#bbb", marginTop:"0.1rem" }}>{duration}</div>
+              color:"#fff", lineHeight:1 }}>{p.investment}</div>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.56rem", fontWeight:400,
+              color:"rgba(255,255,255,0.28)", marginTop:"0.12rem" }}>{duration}</div>
           </div>
         </div>
       </div>
@@ -820,50 +808,57 @@ const TIERS = [
   { label:"XL", range:"Custom", weeks:"6+ weeks", desc:"Large-scale rebranding, infrastructure overhaul, circulation redesign. Full market repositioning for flagship assets.", img:"/images/tier-xl.jpg" },
 ];
 
-const SprintTier = ({ tier, active, onClick }) => {
+const SprintTier = ({ tier, active }) => {
   const sz = SIZE_CONFIG[tier.label];
-  const [hov, setHov] = useState(false);
   return (
-    <div onClick={onClick}
-      onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{
-        borderRadius:"1.75rem",
-        border: active ? `2px solid ${sz.color}` : "1px solid rgba(0,0,0,0.07)",
-        background: active ? "#18191b" : "#fff",
-        cursor:"pointer",
-        transition:"all 0.3s ease",
-        boxShadow: active
-          ? `0 16px 48px ${sz.color}33, 0 4px 16px rgba(0,0,0,0.18)`
-          : hov ? "0 10px 32px rgba(0,0,0,0.13)" : "0 2px 10px rgba(0,0,0,0.06)",
-        transform: hov && !active ? "translateY(-4px)" : "none",
-        padding:"1.75rem 1.75rem 1.5rem",
-      }}>
-      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"1.75rem" }}>
+    <div style={{
+      borderRadius:"1.75rem",
+      border: active ? `1px solid ${sz.color}` : "1px solid rgba(255,255,255,0.08)",
+      background: active ? "rgba(0,0,0,0.68)" : "rgba(0,0,0,0.38)",
+      backdropFilter:"blur(20px)",
+      WebkitBackdropFilter:"blur(20px)",
+      transition:"all 0.5s cubic-bezier(0.16,1,0.3,1)",
+      boxShadow: active
+        ? `0 0 0 1px ${sz.color}44, 0 24px 56px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)`
+        : "0 4px 16px rgba(0,0,0,0.2)",
+      transform: active ? "translateY(-3px)" : "none",
+      padding:"1.75rem 1.75rem 1.5rem",
+    }}>
+      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"1.5rem" }}>
         <div style={{
           fontFamily:"'Poppins',sans-serif",
           fontSize: tier.label==="XL" ? "3.5rem" : "4.5rem",
           fontWeight:800, lineHeight:1, letterSpacing:"-0.03em",
-          color: active ? sz.color : "rgba(0,0,0,0.09)",
+          color: sz.color,
+          opacity: active ? 1 : 0.55,
+          transition:"opacity 0.5s ease",
+          textShadow: active ? `0 0 32px ${sz.color}88` : "none",
         }}>{tier.label}</div>
         <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.56rem", fontWeight:700,
-          letterSpacing:"0.14em", textTransform:"uppercase", marginTop:"0.4rem",
-          color: active ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.38)",
-          background: active ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:700,
+          letterSpacing:"0.16em", textTransform:"uppercase", marginTop:"0.4rem",
+          color: active ? "#fff" : "rgba(255,255,255,0.4)",
+          background: active ? `${sz.color}22` : "rgba(255,255,255,0.07)",
+          border: active ? `1px solid ${sz.color}44` : "1px solid rgba(255,255,255,0.08)",
           padding:"0.28rem 0.7rem", borderRadius:99,
+          transition:"all 0.5s ease",
         }}>{sz.name}</div>
       </div>
       <div style={{
         fontFamily:"'Poppins',sans-serif", fontSize:"1.05rem", fontWeight:700,
-        color: active ? "#fff" : "#0a0a0a", marginBottom:"0.25rem",
+        color:"#fff", marginBottom:"0.25rem",
+        opacity: active ? 1 : 0.6, transition:"opacity 0.5s ease",
       }}>{tier.range}</div>
       <div style={{
         fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:500,
-        color: active ? sz.color : "#999", marginBottom:"0.875rem",
+        color: sz.color, marginBottom:"0.875rem",
+        opacity: active ? 1 : 0.5, transition:"opacity 0.5s ease",
       }}>{tier.weeks}</div>
       <div style={{
-        fontFamily:"'Poppins',sans-serif", fontSize:"0.76rem", fontWeight:400,
-        color: active ? "rgba(255,255,255,0.58)" : "#666", lineHeight:1.75,
+        fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:400,
+        color:"rgba(255,255,255,0.55)", lineHeight:1.75,
+        opacity: active ? 1 : 0, transition:"opacity 0.4s ease",
+        maxHeight: active ? "5rem" : 0, overflow:"hidden",
       }}>{tier.desc}</div>
     </div>
   );
@@ -873,8 +868,13 @@ const SprintTier = ({ tier, active, onClick }) => {
 export default function AmenitySprint({ projects = [] }) {
   const [scrolled, setScrolled] = useState(false);
   const [heroIn, setHeroIn] = useState(false);
-  const [activeTier, setActiveTier] = useState(1);
+  const [activeTier, setActiveTier] = useState(0);
   const [filterSize, setFilterSize] = useState("ALL");
+
+  useEffect(() => {
+    const id = setInterval(() => setActiveTier(prev => (prev + 1) % 4), 2800);
+    return () => clearInterval(id);
+  }, []);
   const mobile = useIsMobile();
 
   const [tierRef, tierVis] = useScrollReveal(0.06);
@@ -1101,10 +1101,19 @@ export default function AmenitySprint({ projects = [] }) {
         backgroundSize:"cover", backgroundPosition:"center",
         overflow:"hidden", position:"relative",
       }}>
+        {/* Dark gradient overlay for readability */}
+        <div style={{
+          position:"absolute", inset:0, zIndex:0,
+          background: mobile
+            ? "linear-gradient(180deg, rgba(20,22,24,0.82) 0%, rgba(20,22,24,0.72) 100%)"
+            : "linear-gradient(90deg, rgba(20,22,24,0.92) 0%, rgba(20,22,24,0.78) 38%, rgba(20,22,24,0.55) 65%, rgba(20,22,24,0.28) 100%)",
+          backdropFilter:"blur(1px)",
+        }}/>
         <div ref={tierRef} style={{
           display:"flex", flexDirection: mobile ? "column" : "row",
           alignItems: mobile ? "flex-start" : "center",
           minHeight: mobile ? "auto" : "88vh",
+          position:"relative", zIndex:1,
         }}>
           {/* Left: text panel */}
           <div style={{
@@ -1117,16 +1126,16 @@ export default function AmenitySprint({ projects = [] }) {
               color:"#00BADC", marginBottom:"1rem" }}>Scalable Scope</div>
             <h2 style={{ ...fade(tierVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
               fontSize: mobile?"clamp(2rem,7vw,2.8rem)":"clamp(2rem,3.2vw,3rem)",
-              lineHeight:1.1, color:"#111", marginBottom:"1.25rem" }}>
+              lineHeight:1.1, color:"#fff", marginBottom:"1.25rem" }}>
               One size<br/>never fits all.
             </h2>
             <p style={{ ...fade(tierVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.88rem",
-              fontWeight:400, color:"#666", lineHeight:1.85, maxWidth:320 }}>
+              fontWeight:400, color:"rgba(255,255,255,0.55)", lineHeight:1.85, maxWidth:320 }}>
               Our S / M / L / XL framework matches scope to your asset, budget, and timeline.
             </p>
           </div>
 
-          {/* Right: 2×2 card grid — extends past right edge for clipped effect */}
+          {/* Right: 2×2 card grid */}
           <div style={{ ...fade(tierVis,0.12),
             flexShrink:0,
             width: mobile ? "100%" : "70vw",
@@ -1136,7 +1145,7 @@ export default function AmenitySprint({ projects = [] }) {
             alignContent:"center",
           }}>
             {TIERS.map((t,i)=>(
-              <SprintTier key={t.label} tier={t} active={activeTier===i} onClick={()=>setActiveTier(i)}/>
+              <SprintTier key={t.label} tier={t} active={activeTier===i} />
             ))}
           </div>
         </div>
@@ -1148,58 +1157,52 @@ export default function AmenitySprint({ projects = [] }) {
 
       {/* ── PROJECTS ── */}
       <section id="projects" style={{
-        padding: mobile?"4rem 4vw 5rem":"6rem 2.5vw 7rem",
-        backgroundColor:"#f7f3ed",
-        backgroundImage:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E\")",
+        padding: mobile?"4rem 4vw 5rem":"6rem 5vw 7rem",
+        background:"#1e2022",
         position:"relative",
       }}>
-        {/* Subtle vignette to soften grid edges */}
-        <div style={{ position:"absolute", inset:0, pointerEvents:"none",
-          background:"radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(240,234,224,0.7) 100%)" }}/>
+        {/* Noise texture */}
+        <div style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex:0,
+          backgroundImage:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")" }}/>
         <div style={{ maxWidth:"100%", margin:"0 auto", position:"relative", zIndex:1 }}>
           <div ref={projRef} style={{ display:"flex", justifyContent:"space-between",
             alignItems: mobile?"flex-start":"flex-end",
             flexDirection: mobile?"column":"row",
-            gap:"1.25rem", marginBottom:"2.5rem" }}>
+            gap:"1.25rem", marginBottom:"2.75rem" }}>
             <div>
               <div style={{ ...fade(projVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
                 letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.6rem" }}>Sprint Portfolio</div>
               <h2 style={{ ...fade(projVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)", color:"#111" }}>
-                9 Studies. 5 Markets.
+                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)", color:"#fff" }}>
+                10 Sprints. 5 Markets.
               </h2>
             </div>
             <div style={{ ...fade(projVis,0.15), display:"flex", gap:"0.5rem", flexWrap:"wrap" }}>
-              {["ALL","S","M","L","XL"].map(f=>(
-                <button key={f} onClick={()=>setFilterSize(f)} style={{
-                  background:filterSize===f?"#111":"rgba(255,255,255,0.85)",
-                  border:filterSize===f?"1px solid #111":"1px solid rgba(0,0,0,0.14)",
-                  color:filterSize===f?"#fff":"#444",
-                  fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
-                  letterSpacing:"0.08em", textTransform:"uppercase",
-                  padding:"0.35rem 0.85rem", borderRadius:99, cursor:"pointer", transition:"all 0.2s",
-                  backdropFilter:"blur(4px)",
-                }}>{f==="ALL"?"All":`${f}`}</button>
-              ))}
+              {["ALL","S","M","L","XL"].map(f=>{
+                const fc = f==="S"?"#18988B":f==="M"?"#00BADC":f==="L"?"#FF7F40":f==="XL"?"#4C0049":null;
+                return (
+                  <button key={f} onClick={()=>setFilterSize(f)} style={{
+                    background: filterSize===f ? (fc||"#fff") : "rgba(255,255,255,0.06)",
+                    border: filterSize===f ? "none" : "1px solid rgba(255,255,255,0.1)",
+                    color: filterSize===f ? "#fff" : "rgba(255,255,255,0.5)",
+                    fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
+                    letterSpacing:"0.1em", textTransform:"uppercase",
+                    padding:"0.35rem 0.9rem", borderRadius:99, cursor:"pointer", transition:"all 0.2s",
+                    boxShadow: filterSize===f && fc ? `0 0 12px ${fc}55` : "none",
+                  }}>{f==="ALL"?"All":f}</button>
+                );
+              })}
             </div>
           </div>
           <div style={{ display:"grid",
             gridTemplateColumns: mobile ? "1fr" : "repeat(4, 1fr)",
             gap:"1.25rem" }}>
-            {filteredProjects.map((p,i)=><ProjectCard key={p.slug} p={p} delay={mobile?0:0.04*(i%4)}/>)}
+            {filteredProjects.map((p,i)=><ProjectCard key={p.slug} p={p} delay={mobile?0:0.05*(i%4)}/>)}
           </div>
-          {!mobile && (
-            <div style={{ marginTop:"1.25rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem",
-              fontWeight:400, color:"#888", textAlign:"center" }}>
-              Hover over any project to see deliverables included in that sprint.
-            </div>
-          )}
-          {mobile && (
-            <div style={{ marginTop:"1.25rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem",
-              fontWeight:400, color:"#888", textAlign:"center" }}>
-              Tap any project card for deliverable details.
-            </div>
-          )}
+          <div style={{ marginTop:"1.75rem", fontFamily:"'Poppins',sans-serif", fontSize:"0.65rem",
+            fontWeight:400, color:"rgba(255,255,255,0.22)", textAlign:"center", letterSpacing:"0.05em" }}>
+            {mobile ? "Tap any project to see sprint deliverables." : "Hover any project to see deliverables — click to view the full case study."}
+          </div>
         </div>
       </section>
 
