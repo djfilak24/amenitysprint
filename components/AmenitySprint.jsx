@@ -818,6 +818,143 @@ const TestimonialsSection = () => {
   );
 };
 
+// ── MEET THE LEAD ─────────────────────────────────────────────────────────────
+// Replace with your Vercel Blob URL after uploading: POST /api/blob/upload
+const DAVID_PHOTO_URL = null; // e.g. "https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/david.jpg"
+
+const MeetTheLeadSection = () => {
+  const mobile = useIsMobile();
+  const [ref, visible] = useScrollReveal(0.08);
+  return (
+    <section style={{ background:"#191b1d", position:"relative", overflow:"hidden" }}>
+      {/* Subtle grid texture */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        backgroundImage:"radial-gradient(circle, rgba(255,255,255,0.022) 1px, transparent 1px)",
+        backgroundSize:"32px 32px" }}/>
+      <div style={{
+        display:"flex", flexDirection: mobile ? "column" : "row",
+        minHeight: mobile ? "auto" : "72vh",
+        alignItems:"stretch",
+      }}>
+        {/* Photo panel */}
+        <div style={{
+          flex: mobile ? "none" : "0 0 44%",
+          position:"relative",
+          minHeight: mobile ? 280 : "auto",
+          overflow:"hidden",
+        }}>
+          {DAVID_PHOTO_URL ? (
+            <img src={DAVID_PHOTO_URL} alt="David Filak — Sprint Lead"
+              style={{ position:"absolute", inset:0, width:"100%", height:"100%",
+                objectFit:"cover", objectPosition:"center top" }}/>
+          ) : (
+            <div style={{ position:"absolute", inset:0,
+              background:"linear-gradient(145deg,#282a2c 0%,#1e2022 60%,#252729 100%)" }}>
+              <div style={{ position:"absolute", inset:0,
+                backgroundImage:"linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px)",
+                backgroundSize:"28px 28px" }}/>
+              {[0,1,2,3].map(c=>(
+                <div key={c} style={{
+                  position:"absolute",
+                  top:c<2?20:"auto", bottom:c>=2?20:"auto",
+                  left:c%2===0?20:"auto", right:c%2===1?20:"auto",
+                  width:24, height:24,
+                  borderTop:c<2?"1.5px solid rgba(0,186,220,0.4)":"none",
+                  borderBottom:c>=2?"1.5px solid rgba(0,186,220,0.4)":"none",
+                  borderLeft:c%2===0?"1.5px solid rgba(0,186,220,0.4)":"none",
+                  borderRight:c%2===1?"1.5px solid rgba(0,186,220,0.4)":"none",
+                }}/>
+              ))}
+              <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column",
+                alignItems:"center", justifyContent:"center", gap:"0.5rem" }}>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:600,
+                  letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(0,186,220,0.5)" }}>
+                  Photo · Upload to Blob
+                </div>
+              </div>
+            </div>
+          )}
+          {/* Right-edge gradient fade into content */}
+          {!mobile && (
+            <div style={{ position:"absolute", top:0, right:0, bottom:0, width:"30%",
+              background:"linear-gradient(to right, transparent, #191b1d)", pointerEvents:"none" }}/>
+          )}
+          {mobile && (
+            <div style={{ position:"absolute", bottom:0, left:0, right:0, height:"40%",
+              background:"linear-gradient(to bottom, transparent, #191b1d)", pointerEvents:"none" }}/>
+          )}
+        </div>
+
+        {/* Content panel */}
+        <div ref={ref} style={{
+          flex:1, display:"flex", flexDirection:"column", justifyContent:"center",
+          padding: mobile ? "2rem 5vw 4rem" : "5rem 6vw 5rem 4vw",
+          position:"relative", zIndex:1,
+        }}>
+          <div style={{ opacity:visible?1:0, transform:visible?"none":"translateY(16px)",
+            transition:"all 0.7s ease",
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
+            letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>
+            Meet Your Sprint Lead
+          </div>
+          <h2 style={{ opacity:visible?1:0, transform:visible?"none":"translateY(18px)",
+            transition:"all 0.75s ease 0.08s",
+            fontFamily:"'Poppins',sans-serif", fontWeight:800,
+            fontSize: mobile?"clamp(1.8rem,7vw,2.4rem)":"clamp(2rem,3vw,2.8rem)",
+            color:"#fff", lineHeight:1.1, marginBottom:"0.5rem" }}>
+            David Filak
+          </h2>
+          <div style={{ opacity:visible?1:0, transition:"all 0.7s ease 0.14s",
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:400,
+            color:"rgba(255,255,255,0.4)", letterSpacing:"0.06em", marginBottom:"1.75rem" }}>
+            Principal, Asset Strategy · NELSON Worldwide
+          </div>
+          <p style={{ opacity:visible?1:0, transform:visible?"none":"translateY(12px)",
+            transition:"all 0.75s ease 0.2s",
+            fontFamily:"'Poppins',sans-serif", fontSize: mobile?"0.88rem":"0.95rem",
+            fontWeight:300, color:"rgba(255,255,255,0.55)", lineHeight:1.85,
+            maxWidth:440, marginBottom:"2.25rem" }}>
+            I've run Amenity Sprints on 40-story Loop towers, suburban flex parks, and everything in between. The Sprint process exists because I was tired of watching owners spend six months deciding whether to spend $800K — when a $10K concept would answer the question in four weeks.
+          </p>
+          {/* Stats row */}
+          <div style={{ opacity:visible?1:0, transition:"all 0.7s ease 0.28s",
+            display:"flex", gap:"2rem", flexWrap:"wrap", marginBottom:"2.5rem",
+            paddingTop:"1.5rem", borderTop:"1px solid rgba(255,255,255,0.07)" }}>
+            {[["10+","Sprints Led"],["5","Markets"],["$400M+","Assets Repositioned"]].map(([v,l])=>(
+              <div key={l}>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1.1rem", fontWeight:800,
+                  color:"#fff" }}>{v}</div>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:500,
+                  color:"rgba(255,255,255,0.28)", letterSpacing:"0.1em", textTransform:"uppercase",
+                  marginTop:2 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+          {/* CTA */}
+          <div style={{ opacity:visible?1:0, transition:"all 0.7s ease 0.34s" }}>
+            <a href="https://app.hubspot.com/meetings/dfilak" target="_blank" rel="noopener noreferrer"
+              style={{
+                display:"inline-flex", alignItems:"center", gap:"0.5rem",
+                background:"#00BADC", color:"#fff", textDecoration:"none",
+                fontFamily:"'Poppins',sans-serif", fontSize:"0.8rem", fontWeight:700,
+                padding:"0.875rem 2rem", borderRadius:9999,
+                boxShadow:"0 0 24px rgba(0,186,220,0.4)",
+                transition:"background 0.2s, transform 0.2s",
+              }}
+              onMouseOver={e=>{e.currentTarget.style.background="#009abb";e.currentTarget.style.transform="translateY(-2px)"}}
+              onMouseOut={e=>{e.currentTarget.style.background="#00BADC";e.currentTarget.style.transform="none"}}
+            >
+              <div style={{ width:7, height:7, borderRadius:"50%", background:"rgba(255,255,255,0.8)",
+                animation:"onlineRing 2s ease-out infinite" }}/>
+              Schedule a Call with David
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // ── PROJECTS DATA ────────────────────────────────────────────────────────────
 const PROJECTS = getAllProjects();
 
@@ -943,15 +1080,15 @@ const SprintTier = ({ tier, active }) => {
   return (
     <div style={{
       borderRadius:"1.75rem",
-      border: active ? `1px solid ${sz.color}` : "1px solid rgba(255,255,255,0.08)",
-      background: active ? "rgba(0,0,0,0.68)" : "rgba(0,0,0,0.38)",
-      backdropFilter:"blur(20px)",
-      WebkitBackdropFilter:"blur(20px)",
+      border: active ? `2px solid ${sz.color}` : "1px solid rgba(255,255,255,0.22)",
+      background: active ? "rgba(255,255,255,0.97)" : "rgba(255,255,255,0.78)",
+      backdropFilter:"blur(22px)",
+      WebkitBackdropFilter:"blur(22px)",
       transition:"all 0.5s cubic-bezier(0.16,1,0.3,1)",
       boxShadow: active
-        ? `0 0 0 1px ${sz.color}44, 0 24px 56px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)`
-        : "0 4px 16px rgba(0,0,0,0.2)",
-      transform: active ? "translateY(-3px)" : "none",
+        ? `0 0 0 1px ${sz.color}22, 0 28px 60px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,1)`
+        : "0 4px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)",
+      transform: active ? "translateY(-4px) scale(1.01)" : "none",
       padding:"1.75rem 1.75rem 1.5rem",
     }}>
       <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"1.5rem" }}>
@@ -960,35 +1097,33 @@ const SprintTier = ({ tier, active }) => {
           fontSize: tier.label==="XL" ? "3.5rem" : "4.5rem",
           fontWeight:800, lineHeight:1, letterSpacing:"-0.03em",
           color: sz.color,
-          opacity: active ? 1 : 0.55,
+          opacity: active ? 1 : 0.65,
           transition:"opacity 0.5s ease",
-          textShadow: active ? `0 0 32px ${sz.color}88` : "none",
         }}>{tier.label}</div>
         <div style={{
           fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:700,
           letterSpacing:"0.16em", textTransform:"uppercase", marginTop:"0.4rem",
-          color: active ? "#fff" : "rgba(255,255,255,0.4)",
-          background: active ? `${sz.color}22` : "rgba(255,255,255,0.07)",
-          border: active ? `1px solid ${sz.color}44` : "1px solid rgba(255,255,255,0.08)",
+          color: active ? "#fff" : sz.color,
+          background: active ? sz.color : `${sz.color}18`,
+          border:`1px solid ${sz.color}55`,
           padding:"0.28rem 0.7rem", borderRadius:99,
           transition:"all 0.5s ease",
         }}>{sz.name}</div>
       </div>
       <div style={{
-        fontFamily:"'Poppins',sans-serif", fontSize:"1.05rem", fontWeight:700,
-        color:"#fff", marginBottom:"0.25rem",
-        opacity: active ? 1 : 0.6, transition:"opacity 0.5s ease",
+        fontFamily:"'Poppins',sans-serif", fontSize:"1.1rem", fontWeight:700,
+        color:"#0a0a0a", marginBottom:"0.25rem",
+        opacity: active ? 1 : 0.7, transition:"opacity 0.5s ease",
       }}>{tier.range}</div>
       <div style={{
-        fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:500,
+        fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:600,
         color: sz.color, marginBottom:"0.875rem",
-        opacity: active ? 1 : 0.5, transition:"opacity 0.5s ease",
+        transition:"opacity 0.5s ease",
       }}>{tier.weeks}</div>
       <div style={{
         fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:400,
-        color:"rgba(255,255,255,0.55)", lineHeight:1.75,
-        opacity: active ? 1 : 0, transition:"opacity 0.4s ease",
-        maxHeight: active ? "5rem" : 0, overflow:"hidden",
+        color:"#444", lineHeight:1.75,
+        opacity: active ? 1 : 0.4, transition:"opacity 0.4s ease",
       }}>{tier.desc}</div>
     </div>
   );
@@ -1034,55 +1169,87 @@ export default function AmenitySprint({ projects = [] }) {
         html{scroll-behavior:smooth;}
         @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
         @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+        @keyframes onlineRing{0%{transform:scale(1);opacity:0.8}70%{transform:scale(2.2);opacity:0}100%{transform:scale(2.2);opacity:0}}
         ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#f7f7f7}::-webkit-scrollbar-thumb{background:#00BADC}
       `}</style>
       <NoiseOverlay />
 
-      {/* ── NAV ── */}
+      {/* ── NAV — dark floating pill ── */}
       <nav style={{
-        position:"fixed", top:0, left:0, right:0, zIndex:1000,
-        background:scrolled?"rgba(255,255,255,0.95)":"transparent",
-        backdropFilter:scrolled?"blur(16px)":"none",
-        borderBottom:scrolled?"1px solid rgba(0,0,0,0.07)":"1px solid transparent",
-        transition:"all 0.4s ease",
-        padding: mobile ? "0 5vw" : "0 4vw",
-        height:64, display:"flex", alignItems:"center", justifyContent:"space-between",
+        position:"fixed", zIndex:1000,
+        top: mobile ? "0.75rem" : "1.25rem",
+        left:"50%", transform:"translateX(-50%)",
+        width: mobile ? "calc(100vw - 2rem)" : "auto",
+        display:"flex", alignItems:"center",
+        gap: mobile ? "0.75rem" : "1.5rem",
+        padding: mobile ? "0 1rem 0 0.875rem" : "0 0.875rem 0 1.25rem",
+        height: mobile ? 52 : 56,
+        background:"rgba(16,18,20,0.88)",
+        backdropFilter:"blur(24px)", WebkitBackdropFilter:"blur(24px)",
+        border:"1px solid rgba(255,255,255,0.1)",
+        borderRadius:9999,
+        boxShadow:`0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05)`,
+        transition:"box-shadow 0.4s ease",
+        justifyContent: mobile ? "space-between" : "flex-start",
       }}>
+        {/* Logo */}
         <img
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NELSON_whiteBlueFin-BHENwe28ggL1i46CvcW16xy4UDxTTw.png"
           alt="NELSON"
-          style={{ height: 24, width: "auto", transition: "filter 0.4s ease",
-            filter: scrolled ? "brightness(0)" : "none" }}
+          style={{ height:22, width:"auto", flexShrink:0 }}
         />
-        {/* Mobile: just the CTA button */}
-        {mobile ? (
-          <button onClick={()=>scrollTo("contact")} style={{
-            background:"#00BADC", border:"none", cursor:"pointer",
-            fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:600, color:"#fff",
-            padding:"0.5rem 1.1rem", borderRadius:4,
-          }}>Start a Sprint</button>
-        ) : (
-          <div style={{ display:"flex", gap:"2rem", alignItems:"center" }}>
+
+        {!mobile && (
+          <>
+            {/* Divider */}
+            <div style={{ width:1, height:18, background:"rgba(255,255,255,0.12)", flexShrink:0 }}/>
+            {/* Nav links */}
             {[["approach","Approach"],["projects","Projects"],["deliverables","Deliverables"]].map(([id,label])=>(
               <button key={id} onClick={()=>scrollTo(id)} style={{
                 background:"none", border:"none", cursor:"pointer",
-                fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", fontWeight:500,
-                letterSpacing:"0.06em", color:scrolled?"#555":"rgba(255,255,255,0.8)", transition:"color 0.2s",
+                fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:500,
+                letterSpacing:"0.06em", color:"rgba(255,255,255,0.55)", transition:"color 0.2s",
+                whiteSpace:"nowrap", padding:"0 0.25rem",
               }}
-                onMouseOver={e=>e.target.style.color="#00BADC"}
-                onMouseOut={e=>e.target.style.color=scrolled?"#555":"rgba(255,255,255,0.8)"}
+                onMouseOver={e=>e.target.style.color="#fff"}
+                onMouseOut={e=>e.target.style.color="rgba(255,255,255,0.55)"}
               >{label}</button>
             ))}
-            <button onClick={()=>scrollTo("contact")} style={{
-              background:"#00BADC", border:"none", cursor:"pointer",
-              fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", fontWeight:600, color:"#fff",
-              padding:"0.55rem 1.4rem", borderRadius:4, transition:"background 0.2s",
-            }}
-              onMouseOver={e=>e.target.style.background="#009abb"}
-              onMouseOut={e=>e.target.style.background="#00BADC"}
-            >Start a Sprint</button>
-          </div>
+          </>
         )}
+
+        {/* Spacer */}
+        {!mobile && <div style={{ flex:1 }}/>}
+
+        {/* Pulsing online indicator */}
+        <div style={{ display:"flex", alignItems:"center", gap:"0.35rem", flexShrink:0 }}>
+          <div style={{ position:"relative", width:8, height:8, flexShrink:0 }}>
+            <div style={{ position:"absolute", inset:0, borderRadius:"50%", background:"#22c55e",
+              animation:"onlineRing 2s ease-out infinite" }}/>
+            <div style={{ width:8, height:8, borderRadius:"50%", background:"#22c55e",
+              position:"relative", zIndex:1 }}/>
+          </div>
+          {!mobile && (
+            <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:600,
+              letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)",
+              whiteSpace:"nowrap" }}>Online</span>
+          )}
+        </div>
+
+        {/* Calendar CTA */}
+        <a href="https://app.hubspot.com/meetings/dfilak" target="_blank" rel="noopener noreferrer"
+          style={{
+            background:"#00BADC", border:"none", cursor:"pointer",
+            fontFamily:"'Poppins',sans-serif", fontSize: mobile?"0.66rem":"0.7rem", fontWeight:700,
+            color:"#fff", padding: mobile?"0.45rem 1rem":"0.5rem 1.25rem",
+            borderRadius:9999, transition:"background 0.2s, transform 0.2s",
+            textDecoration:"none", display:"flex", alignItems:"center", gap:"0.35rem",
+            whiteSpace:"nowrap", flexShrink:0,
+            boxShadow:"0 0 16px rgba(0,186,220,0.35)",
+          }}
+          onMouseOver={e=>{e.currentTarget.style.background="#009abb";e.currentTarget.style.transform="scale(1.03)"}}
+          onMouseOut={e=>{e.currentTarget.style.background="#00BADC";e.currentTarget.style.transform="scale(1)"}}
+        >Book a Call</a>
       </nav>
 
       {/* ── HERO ── */}
@@ -1235,18 +1402,17 @@ export default function AmenitySprint({ projects = [] }) {
         backgroundSize:"cover", backgroundPosition:"center",
         overflow:"hidden", position:"relative",
       }}>
-        {/* Dark gradient overlay for readability */}
+        {/* Gradient overlay — dark on text side, very light on card side */}
         <div style={{
           position:"absolute", inset:0, zIndex:0,
           background: mobile
-            ? "linear-gradient(180deg, rgba(20,22,24,0.82) 0%, rgba(20,22,24,0.72) 100%)"
-            : "linear-gradient(90deg, rgba(20,22,24,0.92) 0%, rgba(20,22,24,0.78) 38%, rgba(20,22,24,0.55) 65%, rgba(20,22,24,0.28) 100%)",
-          backdropFilter:"blur(1px)",
+            ? "linear-gradient(180deg, rgba(20,22,24,0.75) 0%, rgba(20,22,24,0.55) 100%)"
+            : "linear-gradient(90deg, rgba(20,22,24,0.94) 0%, rgba(20,22,24,0.8) 34%, rgba(20,22,24,0.22) 58%, rgba(20,22,24,0.04) 100%)",
         }}/>
         <div ref={tierRef} style={{
           display:"flex", flexDirection: mobile ? "column" : "row",
           alignItems: mobile ? "flex-start" : "center",
-          minHeight: mobile ? "auto" : "88vh",
+          minHeight: mobile ? "auto" : "100vh",
           position:"relative", zIndex:1,
         }}>
           {/* Left: text panel */}
@@ -1398,6 +1564,9 @@ export default function AmenitySprint({ projects = [] }) {
           </div>
         </div>
       </section>
+
+      {/* ── MEET THE LEAD ── */}
+      <MeetTheLeadSection />
 
       {/* ── CTA ── */}
       <section id="contact" style={{
