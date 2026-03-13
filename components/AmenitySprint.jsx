@@ -15,14 +15,28 @@ if (typeof window !== "undefined") {
   }, { passive: true });
 }
 
-const NoiseOverlay = () => (
-  <div style={{ position:'fixed', inset:0, zIndex:9999, pointerEvents:'none', opacity:0.025 }}>
-    <svg width="100%" height="100%">
-      <filter id="noise"><feTurbulence baseFrequency="0.65" numOctaves="4" stitchTiles="stitch"/></filter>
-      <rect width="100%" height="100%" filter="url(#noise)"/>
-    </svg>
-  </div>
-);
+const NoiseOverlay = () => {
+  const mobile = typeof window !== "undefined" && window.innerWidth < 768;
+  // On mobile: CSS repeating dot pattern — zero per-frame cost vs feTurbulence SVG
+  // which forces compositor re-render on every scroll frame in iOS Safari.
+  if (mobile) {
+    return (
+      <div style={{
+        position:"fixed", inset:0, zIndex:9999, pointerEvents:"none", opacity:0.035,
+        backgroundImage:"radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px)",
+        backgroundSize:"3px 3px",
+      }}/>
+    );
+  }
+  return (
+    <div style={{ position:'fixed', inset:0, zIndex:9999, pointerEvents:'none', opacity:0.025 }}>
+      <svg width="100%" height="100%">
+        <filter id="noise"><feTurbulence baseFrequency="0.65" numOctaves="4" stitchTiles="stitch"/></filter>
+        <rect width="100%" height="100%" filter="url(#noise)"/>
+      </svg>
+    </div>
+  );
+};
 
 const useScrollReveal = (threshold = 0.1) => {
   const ref = useRef(null);
@@ -584,7 +598,7 @@ const SprintProcessSection = () => {
                   <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1.1rem", fontWeight:800,
                     color:activeCard===i?"rgba(255,255,255,0.18)":"rgba(255,255,255,0.08)", flexShrink:0, width:36 }}>{s.n}</div>
                   <div style={{ width:activeCard===i?24:16, height:3, background:activeCard===i?s.color:"rgba(255,255,255,0.12)",
-                    borderRadius:2, flexShrink:0, transition:"all 0.35s" }}/>
+                    borderRadius:2, flexShrink:0, transition:"width 0.35s ease, background 0.35s ease" }}/>
                   <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.95rem", fontWeight:700,
                     color:activeCard===i?"#fff":"rgba(255,255,255,0.45)", transition:"color 0.3s", flex:1 }}>{s.title}</div>
                   <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1rem",
@@ -592,24 +606,30 @@ const SprintProcessSection = () => {
                     {activeCard===i ? "−" : "+"}
                   </div>
                 </div>
-                {/* Expanded body + mini card */}
-                {activeCard===i && (
-                  <div style={{ paddingBottom:"1.5rem", paddingLeft:"3.25rem" }}>
-                    <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:300,
-                      color:"rgba(255,255,255,0.5)", lineHeight:1.75, marginBottom:"1.25rem" }}>{s.body}</p>
-                    {/* Animated card — full width on mobile */}
-                    <div style={{ background:"rgba(255,255,255,0.05)", border:`1px solid rgba(255,255,255,0.1)`,
-                      borderRadius:"0.75rem", padding:"1.25rem", position:"relative", overflow:"hidden" }}>
-                      <div style={{ position:"absolute", top:0, left:0, right:0, height:2,
-                        background:s.color, boxShadow:`0 0 10px ${s.color}88` }}/>
-                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
-                        letterSpacing:"0.16em", textTransform:"uppercase", color:s.color, marginBottom:"1rem" }}>
-                        Step {s.n}
+                {/* CSS grid row transition — no DOM mount/unmount, no height jump */}
+                <div style={{
+                  display:"grid",
+                  gridTemplateRows: activeCard===i ? "1fr" : "0fr",
+                  transition:"grid-template-rows 0.42s cubic-bezier(0.16,1,0.3,1)",
+                }}>
+                  <div style={{ overflow:"hidden" }}>
+                    <div style={{ paddingBottom:"1.5rem", paddingLeft:"3.25rem" }}>
+                      <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:300,
+                        color:"rgba(255,255,255,0.5)", lineHeight:1.75, marginBottom:"1.25rem" }}>{s.body}</p>
+                      {/* Animated card — full width on mobile */}
+                      <div style={{ background:"rgba(255,255,255,0.05)", border:`1px solid rgba(255,255,255,0.1)`,
+                        borderRadius:"0.75rem", padding:"1.25rem", position:"relative", overflow:"hidden" }}>
+                        <div style={{ position:"absolute", top:0, left:0, right:0, height:2,
+                          background:s.color, boxShadow:`0 0 10px ${s.color}88` }}/>
+                        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:600,
+                          letterSpacing:"0.16em", textTransform:"uppercase", color:s.color, marginBottom:"1rem" }}>
+                          Step {s.n}
+                        </div>
+                        {cards[i]}
                       </div>
-                      {cards[i]}
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             ))}
             {/* Mobile progress dots */}
@@ -1785,7 +1805,7 @@ export default function AmenitySprint({ projects = [] }) {
         {/* Full-bleed background video — replace HERO_VIDEO_URL with your Vercel Blob video URL */}
         {/* To upload: POST /api/blob/upload with file + folder:"hero" fields */}
         <video
-          autoPlay muted loop playsInline
+          autoPlay muted loop playsInline preload="none"
           style={{
             position:"absolute", inset:0,
             width:"100%", height:"100%",
