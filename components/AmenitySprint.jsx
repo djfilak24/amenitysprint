@@ -373,12 +373,45 @@ const LandingJourneySection = () => {
   const [ref, visible] = useScrollReveal(0.08);
   const [activeStep, setActiveStep] = useState(0);
 
+  // Mobile scroll progress bar — DOM refs only, zero React state during scroll
+  const stepRefs = useRef([]);
+  const progLineRef = useRef(null);
+  const progDotsRef = useRef([]);
+
   // Desktop only: auto-advance timeline. On mobile all steps are always visible.
   useEffect(() => {
     if (!visible || mobile) return;
     const t = setInterval(() => { if (!_isScrolling) setActiveStep(s => (s + 1) % SPRINT_JOURNEY.length); }, 2800);
     return () => clearInterval(t);
   }, [visible, mobile]);
+
+  // Mobile: IntersectionObserver per step — advances progress bar via DOM refs (no setState)
+  useEffect(() => {
+    if (!mobile || !visible) return;
+    const observers = SPRINT_JOURNEY.map((s, i) => {
+      const obs = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        const pct = ((i + 1) / SPRINT_JOURNEY.length) * 100;
+        if (progLineRef.current) {
+          progLineRef.current.style.width = `${pct}%`;
+          progLineRef.current.style.background = `linear-gradient(90deg, #00BADC, ${s.color})`;
+          progLineRef.current.style.boxShadow = `0 0 10px ${s.color}cc, 0 0 22px ${s.color}44`;
+        }
+        progDotsRef.current.forEach((dot, j) => {
+          if (!dot) return;
+          const active = j <= i;
+          const current = j === i;
+          dot.style.background = active ? SPRINT_JOURNEY[j].color : "rgba(255,255,255,0.1)";
+          dot.style.border = `2px solid ${active ? SPRINT_JOURNEY[j].color : "rgba(255,255,255,0.15)"}`;
+          dot.style.boxShadow = current ? `0 0 12px ${SPRINT_JOURNEY[j].color}cc` : "none";
+          dot.style.transform = `translate(-50%,-50%) scale(${current ? 1.6 : active ? 1.1 : 1})`;
+        });
+      }, { threshold: 0.35, rootMargin: "-10% 0px -45% 0px" });
+      if (stepRefs.current[i]) obs.observe(stepRefs.current[i]);
+      return obs;
+    });
+    return () => observers.forEach(o => o.disconnect());
+  }, [mobile, visible]);
 
   const phases = ["Sprint","Design","Build","Outcome"];
   const phaseColors = { Sprint:"#00BADC", Design:"#18988B", Build:"#FF7F40", Outcome:"#FFD53D" };
@@ -453,9 +486,54 @@ const LandingJourneySection = () => {
         {mobile ? (
           // Mobile: all steps fully visible, no cycling, no waiting.
           // Dots show phase colors; descriptions always shown.
+          <>
+          {/* Sticky scroll progress bar — advances via IntersectionObserver DOM refs */}
+          <div style={{
+            position:"sticky", top:58, zIndex:10,
+            marginLeft:"-5vw", marginRight:"-5vw",
+            marginBottom:"2.25rem",
+            padding:"0.7rem 5vw 0.65rem",
+            background:"rgba(30,32,34,0.94)",
+            backdropFilter:"blur(14px)", WebkitBackdropFilter:"blur(14px)",
+            borderBottom:"1px solid rgba(255,255,255,0.07)",
+          }}>
+            {/* Track + dots */}
+            <div style={{ position:"relative", height:2, background:"rgba(255,255,255,0.08)", margin:"0.3rem 0 0.55rem" }}>
+              <div ref={progLineRef} style={{
+                position:"absolute", left:0, top:0, height:"100%", width:"0%",
+                background:"linear-gradient(90deg, #00BADC, #00BADC)",
+                borderRadius:2,
+                transition:"width 0.52s cubic-bezier(0.16,1,0.3,1), background 0.4s ease, box-shadow 0.4s ease",
+              }}/>
+              {SPRINT_JOURNEY.map((s, i) => (
+                <div key={i} ref={el => { progDotsRef.current[i] = el; }} style={{
+                  position:"absolute",
+                  left:`${(i / (SPRINT_JOURNEY.length - 1)) * 100}%`,
+                  top:"50%", transform:"translate(-50%,-50%) scale(1)",
+                  width:8, height:8, borderRadius:"50%",
+                  background:"rgba(255,255,255,0.1)",
+                  border:"2px solid rgba(255,255,255,0.15)",
+                  zIndex:2,
+                  transition:"background 0.4s ease, box-shadow 0.4s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+                }}/>
+              ))}
+            </div>
+            {/* Labels row */}
+            <div style={{ display:"flex", justifyContent:"space-between", gap:"0.25rem" }}>
+              {SPRINT_JOURNEY.map((s, i) => (
+                <div key={i} style={{
+                  fontFamily:"'Poppins',sans-serif", fontSize:"0.38rem", fontWeight:600,
+                  letterSpacing:"0.08em", textTransform:"uppercase",
+                  color:"rgba(255,255,255,0.28)", lineHeight:1.2,
+                  textAlign: i === 0 ? "left" : i === SPRINT_JOURNEY.length-1 ? "right" : "center",
+                  flex:1, minWidth:0, overflow:"hidden",
+                }}>{s.label.split(" ").slice(0,2).join(" ")}</div>
+              ))}
+            </div>
+          </div>
           <div>
             {SPRINT_JOURNEY.map((s, i) => (
-              <div key={i} style={{
+              <div key={i} ref={el => { stepRefs.current[i] = el; }} style={{
                 display:"flex", gap:"1.1rem", paddingBottom:"1.75rem",
                 position:"relative",
                 opacity:visible?1:0,
@@ -485,6 +563,7 @@ const LandingJourneySection = () => {
               </div>
             ))}
           </div>
+          </>
         ) : (
           <div style={{ display:"grid", gridTemplateColumns:`repeat(${SPRINT_JOURNEY.length},1fr)`, gap:"0.4rem" }}>
             {SPRINT_JOURNEY.map((s, i) => (
@@ -1247,13 +1326,14 @@ const TiersAndTestimonialsSection = () => {
   const [barsIn, setBarsIn] = useState(false);
 
   useEffect(() => {
+    if (mobile) return; // static on mobile — no height changes, no section push
     const id = setInterval(() => {
       if (_isScrolling) return;
       setTFading(true);
       setTimeout(() => { setTActive(p => (p + 1) % TESTIMONIALS.length); setTFading(false); }, 320);
     }, 4500);
     return () => clearInterval(id);
-  }, []);
+  }, [mobile]);
 
   useEffect(() => {
     if (!visible) return;
@@ -1336,12 +1416,12 @@ const TiersAndTestimonialsSection = () => {
         transition:"color 0.35s ease" }}>"</div>
       <div style={{ opacity: tFading ? 0 : 1, transform: tFading ? "translateY(6px)" : "translateY(0)",
         transition:"opacity 0.32s ease, transform 0.32s ease",
-        minHeight: mobile ? "10rem" : "8rem" }}>
+        minHeight: mobile ? undefined : "8rem" }}>
         <p style={{ fontFamily:"'Poppins',sans-serif",
           fontSize: mobile ? "clamp(1rem,4vw,1.25rem)" : "clamp(1.1rem,1.6vw,1.4rem)",
           fontWeight:300, lineHeight:1.72, color:"rgba(255,255,255,0.9)",
           marginBottom:"2rem", letterSpacing:"-0.01em",
-          minHeight: mobile ? "8rem" : "6.5rem" }}>{t.quote}</p>
+          minHeight: mobile ? undefined : "6.5rem" }}>{t.quote}</p>
         <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
           <div style={{ width:34, height:34, borderRadius:"50%", background:`${t.color}22`,
             border:`1.5px solid ${t.color}55`, display:"flex", alignItems:"center",
@@ -1762,6 +1842,7 @@ export default function AmenitySprint({ projects = [] }) {
         *{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
         @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+        @keyframes iconPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.78)}}
         @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
         @keyframes onlineRing{0%{transform:scale(1);opacity:0.8}70%{transform:scale(2.2);opacity:0}100%{transform:scale(2.2);opacity:0}}
         ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#f7f7f7}::-webkit-scrollbar-thumb{background:#00BADC}
@@ -1846,17 +1927,11 @@ export default function AmenitySprint({ projects = [] }) {
 
       {/* ── HERO ── */}
       <section style={{
-        // 100svh = small viewport height (stable, address bar never changes it on iOS Safari).
-        // 100dvh changes as the address bar hides, causing the hero to grow and push all
-        // content below on first scroll — the "expand/zoom" effect users report.
         minHeight: mobile ? "100svh" : "100dvh",
         display:"flex", flexDirection:"column",
-        justifyContent: mobile ? "flex-end" : "flex-end",
-        padding: mobile ? "88px 5vw 0" : "0 6vw 0",
         position:"relative", overflow:"hidden",
       }}>
-        {/* Full-bleed background video — replace HERO_VIDEO_URL with your Vercel Blob video URL */}
-        {/* To upload: POST /api/blob/upload with file + folder:"hero" fields */}
+        {/* Full-bleed background video */}
         <video
           autoPlay muted loop playsInline preload="none"
           style={{
@@ -1871,92 +1946,92 @@ export default function AmenitySprint({ projects = [] }) {
           }}
         >
           <source src="https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/Untitled%20%285%29.mp4" type="video/mp4" />
-          {/* Fallback image shown if video fails to load */}
           <div style={{
             position:"absolute", inset:0,
             backgroundImage:"url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg')",
             backgroundSize:"cover", backgroundPosition:"center right",
           }}/>
         </video>
-        {/* Gradient overlay — photo shows through on both sides, text area darkened */}
+        {/* Gradient overlay */}
         <div style={{
-          position:"absolute",
-          inset:0,
+          position:"absolute", inset:0,
           background: mobile
-            ? "linear-gradient(180deg, rgba(30,32,34,0.88) 0%, rgba(30,32,34,0.78) 50%, rgba(30,32,34,0.65) 100%)"
+            ? "linear-gradient(180deg, rgba(30,32,34,0.88) 0%, rgba(30,32,34,0.72) 50%, rgba(30,32,34,0.6) 100%)"
             : "linear-gradient(90deg, rgba(30,32,34,0.82) 0%, rgba(30,32,34,0.68) 40%, rgba(30,32,34,0.32) 62%, rgba(30,32,34,0.06) 82%, transparent 100%)",
           zIndex:1,
         }}/>
 
-
-        {/* Hero copy */}
-        <div style={{ maxWidth: mobile ? "100%" : "55vw", position:"relative", zIndex:3 }}>
-          <div style={{ ...fade(heroIn,0.15), fontFamily:"'Poppins',sans-serif",
-            fontSize: mobile ? "0.6rem" : "0.65rem", fontWeight:600,
-            letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>
-            Amenity Sprint — Rapid Concept Design
+        {/* Hero copy — flex:1 so it fills space above stats bar */}
+        <div style={{
+          flex:1, display:"flex", flexDirection:"column",
+          justifyContent: mobile ? "center" : "flex-end",
+          padding: mobile ? "88px 5vw 2rem" : "0 6vw 3.5rem",
+          position:"relative", zIndex:3,
+        }}>
+          <div style={{ maxWidth: mobile ? "100%" : "55vw" }}>
+            <div style={{ ...fade(heroIn,0.15), fontFamily:"'Poppins',sans-serif",
+              fontSize: mobile ? "0.6rem" : "0.65rem", fontWeight:600,
+              letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>
+              Amenity Sprint — Rapid Concept Design
+            </div>
+            <h1 style={{ ...fade(heroIn,0.25), fontFamily:"'Poppins',sans-serif", fontWeight:800,
+              fontSize: mobile ? "clamp(2.2rem,9vw,3rem)" : "clamp(2.8rem,5.5vw,5.5rem)",
+              lineHeight:1.08, color:"#fff", marginBottom:"1rem" }}>
+              Every asset has<br/><span style={{ color:"#00BADC" }}>a better version.</span>
+            </h1>
+            <p style={{ ...fade(heroIn,0.38), fontFamily:"'Poppins',sans-serif",
+              fontSize: mobile ? "0.88rem" : "clamp(0.9rem,1.4vw,1.05rem)",
+              fontWeight:300, color:"rgba(255,255,255,0.5)", lineHeight:1.8,
+              maxWidth: mobile ? "100%" : 520, marginBottom: mobile ? "2rem" : "2.75rem" }}>
+              NELSON Asset Strategy delivers a full amenity concept — competitive analysis, programming, design language, and visualization — in 2 to 6 weeks. At a price point built for ownership decisions.
+            </p>
+            <div style={{ ...fade(heroIn,0.48), display:"flex", gap:"0.75rem", flexWrap:"wrap",
+              marginBottom: mobile ? "0" : "0" }}>
+              <button onClick={()=>scrollTo("approach")} style={{ background:"#00BADC", border:"none", cursor:"pointer",
+                fontFamily:"'Poppins',sans-serif", fontSize: mobile?"0.78rem":"0.78rem", fontWeight:600, color:"#fff",
+                padding: mobile?"0.8rem 1.6rem":"0.875rem 2rem", borderRadius:4, transition:"background 0.2s" }}
+                onMouseOver={e=>e.currentTarget.style.background="#009abb"}
+                onMouseOut={e=>e.currentTarget.style.background="#00BADC"}
+              >See the Approach</button>
+              <button onClick={()=>scrollTo("projects")} style={{ background:"transparent",
+                border:"1px solid rgba(255,255,255,0.2)", cursor:"pointer",
+                fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:500,
+                color:"rgba(255,255,255,0.8)", padding: mobile?"0.8rem 1.6rem":"0.875rem 2rem", borderRadius:4,
+                transition:"border-color 0.2s, color 0.2s" }}
+                onMouseOver={e=>{e.currentTarget.style.borderColor="#00BADC";e.currentTarget.style.color="#00BADC"}}
+                onMouseOut={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.2)";e.currentTarget.style.color="rgba(255,255,255,0.8)"}}
+              >View Projects</button>
+            </div>
           </div>
-          <h1 style={{ ...fade(heroIn,0.25), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-            fontSize: mobile ? "clamp(2.2rem,9vw,3rem)" : "clamp(2.8rem,5.5vw,5.5rem)",
-            lineHeight:1.08, color:"#fff", marginBottom:"1rem" }}>
-            Every asset has<br/><span style={{ color:"#00BADC" }}>a better version.</span>
-          </h1>
-          <p style={{ ...fade(heroIn,0.38), fontFamily:"'Poppins',sans-serif",
-            fontSize: mobile ? "0.88rem" : "clamp(0.9rem,1.4vw,1.05rem)",
-            fontWeight:300, color:"rgba(255,255,255,0.5)", lineHeight:1.8,
-            maxWidth: mobile ? "100%" : 520, marginBottom: mobile ? "2rem" : "2.75rem" }}>
-            NELSON Asset Strategy delivers a full amenity concept — competitive analysis, programming, design language, and visualization — in 2 to 6 weeks. At a price point built for ownership decisions.
-          </p>
-
-
-
-          <div style={{ ...fade(heroIn,0.48), display:"flex", gap:"0.75rem", flexWrap:"wrap" }}>
-            <button onClick={()=>scrollTo("approach")} style={{ background:"#00BADC", border:"none", cursor:"pointer",
-              fontFamily:"'Poppins',sans-serif", fontSize: mobile?"0.78rem":"0.78rem", fontWeight:600, color:"#fff",
-              padding: mobile?"0.8rem 1.6rem":"0.875rem 2rem", borderRadius:4, transition:"background 0.2s" }}
-              onMouseOver={e=>e.currentTarget.style.background="#009abb"}
-              onMouseOut={e=>e.currentTarget.style.background="#00BADC"}
-            >See the Approach</button>
-            <button onClick={()=>scrollTo("projects")} style={{ background:"transparent",
-              border:"1px solid rgba(255,255,255,0.2)", cursor:"pointer",
-              fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:500,
-              color:"rgba(255,255,255,0.8)", padding: mobile?"0.8rem 1.6rem":"0.875rem 2rem", borderRadius:4,
-              transition:"border-color 0.2s, color 0.2s" }}
-              onMouseOver={e=>{e.currentTarget.style.borderColor="#00BADC";e.currentTarget.style.color="#00BADC"}}
-              onMouseOut={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.2)";e.currentTarget.style.color="rgba(255,255,255,0.8)"}}
-            >View Projects</button>
-          </div>
-
         </div>
 
-        {/* ── HERO STATS BAR — full-bleed at bottom of hero ── */}
-        <div style={{ ...fade(heroIn,0.52),
-          position:"relative", zIndex:3,
+        {/* ── HERO STATS BAR — full-bleed, outside padded copy wrapper ── */}
+        <div style={{ ...fade(heroIn,0.52), position:"relative", zIndex:3,
           display:"grid",
           gridTemplateColumns: mobile ? "1fr 1fr" : "repeat(4,1fr)",
-          borderTop:"1px solid rgba(255,255,255,0.1)",
-          marginTop: mobile ? "auto" : "0",
         }}>
           {[
-            { n:"10+",    l:"Completed Sprints", color:"#00BADC", bg:"rgba(0,186,220,0.10)"   },
-            { n:"5",      l:"Markets",           color:"#18988B", bg:"rgba(24,152,139,0.10)"  },
-            { n:"2–6 wks",l:"Turnaround",        color:"#2FD0E8", bg:"rgba(0,186,220,0.06)"  },
-            { n:"S–XL",   l:"Scalable Scope",    color:"#1DBFB0", bg:"rgba(24,152,139,0.06)" },
-          ].map(({ n, l, color, bg }, i) => (
+            { n:"10+",    l:"Completed Sprints", bg:"rgba(0,186,220,0.22)"   },
+            { n:"5",      l:"Markets",           bg:"rgba(24,152,139,0.22)"  },
+            { n:"2–6 wks",l:"Turnaround",        bg:"rgba(255,127,64,0.18)"  },
+            { n:"S–XL",   l:"Scalable Scope",    bg:"rgba(255,213,61,0.15)"  },
+          ].map(({ n, l, bg }, i) => (
             <div key={l} style={{
-              padding: mobile ? "1.2rem 1.1rem 1.4rem" : "1.75rem 2.5rem",
+              padding: mobile ? "1.2rem 1.25rem 1.5rem" : "1.75rem 2.5rem",
               background: bg,
+              backdropFilter:"blur(8px)", WebkitBackdropFilter:"blur(8px)",
+              borderTop:"1px solid rgba(255,255,255,0.09)",
               borderRight: i < 3 ? "1px solid rgba(255,255,255,0.07)" : "none",
               borderBottom: (mobile && i < 2) ? "1px solid rgba(255,255,255,0.07)" : "none",
             }}>
               <div style={{
                 fontFamily:"'Georgia','Times New Roman',serif",
                 fontSize: mobile ? "clamp(1.7rem,7vw,2.2rem)" : "clamp(1.6rem,2.2vw,2.4rem)",
-                fontWeight:700, color, lineHeight:1, marginBottom:"0.3rem",
+                fontWeight:700, color:"#fff", lineHeight:1, marginBottom:"0.3rem",
               }}>{n}</div>
               <div style={{
                 fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:500,
-                color:"rgba(255,255,255,0.35)", letterSpacing:"0.1em", textTransform:"uppercase",
+                color:"rgba(255,255,255,0.55)", letterSpacing:"0.1em", textTransform:"uppercase",
               }}>{l}</div>
             </div>
           ))}
@@ -2004,17 +2079,18 @@ export default function AmenitySprint({ projects = [] }) {
             </p>
             <div style={{ ...fade(delivVis,0.28), display:"flex", flexDirection:"column" }}>
               {[
-                { icon:"▣", label:"Annotated Floor Plans", desc:"Programmatic zones, adjacencies, and activation areas." },
-                { icon:"◈", label:"3D Renderings", desc:"Photorealistic perspectives that make the vision real." },
-                { icon:"◆", label:"Axonometric Views", desc:"Bird's-eye diagrams showing how the space lives." },
-                { icon:"◉", label:"Design Language", desc:"Materials, mood, and the spatial narrative behind every decision." },
-                { icon:"▷", label:"Animation (select tiers)", desc:"Walkthrough video for board presentations and broker tours." },
-                { icon:"⬡", label:"360° Tours (select tiers)", desc:"Immersive virtual experiences for remote stakeholders." },
+                { icon:"▣", label:"Annotated Floor Plans", desc:"Programmatic zones, adjacencies, and activation areas.", pd:"2.8s", py:"0.1s" },
+                { icon:"◈", label:"3D Renderings", desc:"Photorealistic perspectives that make the vision real.", pd:"3.5s", py:"0.7s" },
+                { icon:"◆", label:"Axonometric Views", desc:"Bird's-eye diagrams showing how the space lives.", pd:"2.3s", py:"1.3s" },
+                { icon:"◉", label:"Design Language", desc:"Materials, mood, and the spatial narrative behind every decision.", pd:"4.0s", py:"0.4s" },
+                { icon:"▷", label:"Animation (select tiers)", desc:"Walkthrough video for board presentations and broker tours.", pd:"3.2s", py:"1.9s" },
+                { icon:"⬡", label:"360° Tours (select tiers)", desc:"Immersive virtual experiences for remote stakeholders.", pd:"2.6s", py:"0.9s" },
               ].map((d,i)=>(
                 <div key={i} style={{ ...fade(delivVis,0.3+i*0.05),
                   display:"flex", gap:"0.875rem", alignItems:"flex-start",
                   padding:"0.75rem 0", borderBottom:`1px solid ${C.border}` }}>
-                  <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem", color:"#00BADC", flexShrink:0, marginTop:2 }}>{d.icon}</span>
+                  <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem", color:"#00BADC", flexShrink:0, marginTop:2,
+                    animation:`iconPulse ${d.pd} ease-in-out ${d.py} infinite` }}>{d.icon}</span>
                   <div>
                     <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:600, color:"#fff" }}>{d.label}</div>
                     <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", fontWeight:300, color:C.textDim, marginTop:2 }}>{d.desc}</div>
