@@ -351,13 +351,13 @@ const LandingJourneySection = () => {
   const phaseColors = { Sprint:"#00BADC", Design:"#18988B", Build:"#FF7F40", Outcome:"#FFD53D" };
 
   return (
-    <section style={{ padding: mobile ? "4rem 5vw" : "8rem 6vw", background:"#1e2022", position:"relative", overflow:"hidden" }}>
+    <section style={{ padding: mobile ? "4rem 5vw" : "8rem 4vw", background:"#1e2022", position:"relative", overflow:"hidden" }}>
       {/* Subtle grid texture */}
       <div style={{ position:"absolute", inset:0, pointerEvents:"none",
         backgroundImage:"linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px)",
         backgroundSize:"48px 48px" }}/>
 
-      <div ref={ref} style={{ maxWidth:1100, margin:"0 auto", position:"relative" }}>
+      <div ref={ref} style={{ maxWidth:1400, margin:"0 auto", position:"relative" }}>
 
         {/* Header */}
         <div style={{ marginBottom: mobile ? "3rem" : "4rem" }}>
@@ -690,63 +690,76 @@ const SprintProcessSection = () => {
 
 // ── TESTIMONIALS ─────────────────────────────────────────────────────────────
 const TESTIMONIALS = [
-  {
-    quote: "The Sprint process gave us the visual story we needed to walk into every broker meeting with conviction. First new tenant signed within 90 days of delivery.",
-    name: "Sarah T.",
-    title: "VP Asset Management",
-    company: "Midwest REIT",
-    color: "#00BADC",
-  },
-  {
-    quote: "We'd been staring at the same lobby for three years. NELSON came in, ran the Sprint, and in four weeks we had a concept that ownership actually got excited about.",
-    name: "David K.",
-    title: "Principal",
-    company: "CRE Capital Partners",
-    color: "#18988B",
-  },
-  {
-    quote: "The Amenity Matrix alone was worth the engagement. Understanding which interventions move the needle — and which don't — saved us from a very expensive mistake.",
-    name: "Maria R.",
-    title: "Director of Leasing",
-    company: "Commercial Properties Group",
-    color: "#FF7F40",
-  },
+  { quote: "The Sprint process gave us the visual story we needed to walk into every broker meeting with conviction. First new tenant signed within 90 days of delivery.", name: "Sarah T.", title: "VP Asset Management", company: "Midwest REIT", color: "#00BADC" },
+  { quote: "We'd been staring at the same lobby for three years. NELSON came in, ran the Sprint, and in four weeks we had a concept that ownership actually got excited about.", name: "David K.", title: "Principal", company: "CRE Capital Partners", color: "#18988B" },
+  { quote: "The Amenity Matrix alone was worth the engagement. Understanding which interventions move the needle — and which don't — saved us from a very expensive mistake.", name: "Maria R.", title: "Director of Leasing", company: "Commercial Properties Group", color: "#FF7F40" },
+];
+
+// Background images cycling behind testimonials — project images with metadata
+const BG_WIPE = [
+  { img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-YS9pTq3PGeOOm9zXBQIrbKr9BXQp83.jpeg", name:"55 West Monroe", type:"Lobby Transformation", tier:"L" },
+  { img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg", name:"241 N 5th", type:"Amenity Repositioning", tier:"L" },
+  { img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-oh4A18thJrrAjfLmhvM5C4TJzZsfq3.jpeg", name:"Two22 Tower", type:"Roof Deck Concept", tier:"M" },
+  { img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-3tVTOHYMNTjMaF04lEslNvttObsczE.jpeg", name:"ZNA Headquarters", type:"Workplace Strategy", tier:"L" },
 ];
 
 const TestimonialsSection = () => {
   const mobile = useIsMobile();
   const [ref, visible] = useScrollReveal(0.08);
-  const [active, setActive] = useState(0);
-  const [fading, setFading] = useState(false);
+  const [tActive, setTActive] = useState(0);
+  const [tFading, setTFading] = useState(false);
 
+  // Background wipe state
+  const [bgCurrent, setBgCurrent] = useState(0);
+  const [bgNext, setBgNext] = useState(null);
+  const [wiping, setWiping] = useState(false);
+
+  // Testimonials cycle: every 4.5s
   useEffect(() => {
     const id = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setActive(prev => (prev + 1) % TESTIMONIALS.length);
-        setFading(false);
-      }, 320);
+      setTFading(true);
+      setTimeout(() => { setTActive(p => (p + 1) % TESTIMONIALS.length); setTFading(false); }, 320);
     }, 4500);
     return () => clearInterval(id);
   }, []);
 
-  const t = TESTIMONIALS[active];
+  // Background wipe: every 5s
+  useEffect(() => {
+    const id = setInterval(() => {
+      const next = (bgCurrent + 1) % BG_WIPE.length;
+      setBgNext(next);
+      setWiping(true);
+      setTimeout(() => { setBgCurrent(next); setBgNext(null); setWiping(false); }, 900);
+    }, 5000);
+    return () => clearInterval(id);
+  }, [bgCurrent]);
+
+  const t = TESTIMONIALS[tActive];
+  const bgMeta = BG_WIPE[bgCurrent];
 
   return (
-    <section style={{
-      background: "#191b1d",
-      padding: mobile ? "5rem 5vw" : "9rem 6vw",
-      position: "relative", overflow: "hidden",
-    }}>
-      {/* Subtle dot grid */}
-      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
-        backgroundImage:"radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px)",
-        backgroundSize:"36px 36px" }}/>
-      {/* Accent glow behind active color */}
-      <div style={{ position:"absolute", inset:0, pointerEvents:"none", transition:"opacity 1.2s ease",
-        background:`radial-gradient(ellipse 60% 50% at 50% 60%, ${t.color}08 0%, transparent 70%)` }}/>
+    <section style={{ position:"relative", overflow:"hidden", minHeight: mobile ? "auto" : "70vh" }}>
+      {/* Background layer: current image */}
+      <div style={{ position:"absolute", inset:0, zIndex:0 }}>
+        <img src={BG_WIPE[bgCurrent].img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center" }}/>
+      </div>
+      {/* Background layer: next image (wipes in from right) */}
+      {bgNext !== null && (
+        <div style={{ position:"absolute", inset:0, zIndex:1,
+          clipPath: wiping ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
+          transition:"clip-path 0.9s cubic-bezier(0.76,0,0.24,1)" }}>
+          <img src={BG_WIPE[bgNext].img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center" }}/>
+        </div>
+      )}
+      {/* Heavy dark overlay for legibility */}
+      <div style={{ position:"absolute", inset:0, zIndex:2,
+        background:"linear-gradient(135deg, rgba(10,12,16,0.92) 0%, rgba(10,12,16,0.75) 55%, rgba(10,12,16,0.55) 100%)" }}/>
 
-      <div ref={ref} style={{ maxWidth:900, margin:"0 auto", position:"relative" }}>
+      {/* Content */}
+      <div ref={ref} style={{ position:"relative", zIndex:3,
+        padding: mobile ? "5rem 5vw" : "9rem 6vw",
+        maxWidth:900, margin:"0 auto" }}>
+
         {/* Label */}
         <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease",
           fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
@@ -755,73 +768,300 @@ const TestimonialsSection = () => {
           What Clients Say
         </div>
 
-        {/* Quote body */}
-        <div style={{
-          opacity: visible ? (fading ? 0 : 1) : 0,
-          transform: fading ? "translateY(6px)" : "translateY(0)",
-          transition: "opacity 0.32s ease, transform 0.32s ease",
-        }}>
-          {/* Giant quote mark */}
-          <div style={{
-            fontFamily:"'Poppins',sans-serif", fontSize: mobile ? "5rem" : "8rem",
+        {/* Quote */}
+        <div style={{ opacity: visible ? (tFading ? 0 : 1) : 0,
+          transform: tFading ? "translateY(6px)" : "translateY(0)",
+          transition:"opacity 0.32s ease, transform 0.32s ease" }}>
+          <div style={{ fontFamily:"'Poppins',sans-serif", fontSize: mobile?"5rem":"8rem",
             fontWeight:800, lineHeight:0.7, color:t.color,
-            opacity:0.35, marginBottom: mobile ? "1.25rem" : "1.75rem",
-            userSelect:"none",
-          }}>"</div>
-
-          <p style={{
-            fontFamily:"'Poppins',sans-serif",
-            fontSize: mobile ? "clamp(1.1rem,4.5vw,1.4rem)" : "clamp(1.25rem,2.2vw,1.75rem)",
-            fontWeight:300, lineHeight:1.65,
-            color:"rgba(255,255,255,0.88)",
-            marginBottom: mobile ? "2rem" : "2.75rem",
-            letterSpacing:"-0.01em",
-          }}>{t.quote}</p>
-
-          {/* Attribution */}
+            opacity:0.35, marginBottom: mobile?"1.25rem":"1.75rem", userSelect:"none" }}>"</div>
+          <p style={{ fontFamily:"'Poppins',sans-serif",
+            fontSize: mobile?"clamp(1.1rem,4.5vw,1.4rem)":"clamp(1.25rem,2.2vw,1.75rem)",
+            fontWeight:300, lineHeight:1.65, color:"rgba(255,255,255,0.92)",
+            marginBottom: mobile?"2rem":"2.75rem", letterSpacing:"-0.01em" }}>{t.quote}</p>
           <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
-            <div style={{
-              width:36, height:36, borderRadius:"50%",
-              background:`${t.color}22`,
-              border:`1.5px solid ${t.color}55`,
-              display:"flex", alignItems:"center", justifyContent:"center",
-              flexShrink:0,
-            }}>
-              <div style={{ width:10, height:10, borderRadius:"50%", background:t.color }} />
+            <div style={{ width:36, height:36, borderRadius:"50%", background:`${t.color}22`,
+              border:`1.5px solid ${t.color}55`, display:"flex", alignItems:"center",
+              justifyContent:"center", flexShrink:0 }}>
+              <div style={{ width:10, height:10, borderRadius:"50%", background:t.color }}/>
             </div>
             <div>
-              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:600,
-                color:"#fff" }}>{t.name}</div>
+              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:600, color:"#fff" }}>{t.name}</div>
               <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:400,
-                color:"rgba(255,255,255,0.35)", letterSpacing:"0.04em" }}>
-                {t.title} · {t.company}
-              </div>
+                color:"rgba(255,255,255,0.38)", letterSpacing:"0.04em" }}>{t.title} · {t.company}</div>
             </div>
           </div>
         </div>
 
         {/* Navigation dots */}
-        <div style={{ display:"flex", gap:"0.5rem", alignItems:"center",
-          marginTop: mobile ? "2.5rem" : "3.5rem" }}>
+        <div style={{ display:"flex", gap:"0.5rem", alignItems:"center", marginTop: mobile?"2.5rem":"3.5rem" }}>
           {TESTIMONIALS.map((_,i) => (
-            <div key={i} onClick={() => { setFading(true); setTimeout(() => { setActive(i); setFading(false); }, 280); }}
-              style={{
-                width: active===i ? 28 : 6, height:6, borderRadius:3,
-                background: active===i ? TESTIMONIALS[i].color : "rgba(255,255,255,0.15)",
+            <div key={i} onClick={() => { setTFading(true); setTimeout(() => { setTActive(i); setTFading(false); }, 280); }}
+              style={{ width:tActive===i?28:6, height:6, borderRadius:3,
+                background:tActive===i?TESTIMONIALS[i].color:"rgba(255,255,255,0.2)",
                 cursor:"pointer", transition:"all 0.35s cubic-bezier(0.16,1,0.3,1)",
-                boxShadow: active===i ? `0 0 10px ${TESTIMONIALS[i].color}66` : "none",
-              }}/>
+                boxShadow:tActive===i?`0 0 10px ${TESTIMONIALS[i].color}66`:"none" }}/>
           ))}
+        </div>
+      </div>
+
+      {/* Project metadata — bottom right, subtle */}
+      {!mobile && (
+        <div style={{ position:"absolute", bottom:"2.5rem", right:"3rem", zIndex:3,
+          display:"flex", flexDirection:"column", alignItems:"flex-end", gap:"0.35rem",
+          opacity: visible ? 0.72 : 0, transition:"opacity 0.7s ease 0.4s" }}>
+          {/* Blur pill behind metadata */}
+          <div style={{ backdropFilter:"blur(16px)", WebkitBackdropFilter:"blur(16px)",
+            background:"rgba(8,10,14,0.55)", border:"1px solid rgba(255,255,255,0.1)",
+            borderRadius:"1rem", padding:"0.65rem 1rem",
+            display:"flex", flexDirection:"column", alignItems:"flex-end", gap:"0.25rem" }}>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.48rem", fontWeight:700,
+              letterSpacing:"0.18em", textTransform:"uppercase",
+              color: SIZE_CONFIG[bgMeta.tier]?.color || "#00BADC" }}>
+              {SIZE_CONFIG[bgMeta.tier]?.name || bgMeta.tier} Tier · {bgMeta.type}
+            </div>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", fontWeight:700,
+              color:"rgba(255,255,255,0.75)" }}>{bgMeta.name}</div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
+
+// ── SPRINT TEAM ───────────────────────────────────────────────────────────────
+const DAVID_PHOTO_URL = "https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/David26%27.png";
+
+const TEAM_MEMBERS = [
+  {
+    name:"David Filak",
+    title:"Associate Principal",
+    dept:"Asset Strategy · NELSON Worldwide",
+    photo:DAVID_PHOTO_URL,
+    bio:"I've run Amenity Sprints on 40-story Loop towers, suburban flex parks, and everything in between. The Sprint process exists because I was tired of watching owners spend six months deciding whether to spend $800K — when a $10K concept answers the question in four weeks.",
+    stats:[["10+","Sprints Led"],["5","Markets"],["$400M+","Assets"]],
+    color:"#00BADC",
+    cta:{ label:"Schedule a Call", href:"https://app.hubspot.com/meetings/dfilak" },
+  },
+  { name:"Team Member", title:"Design Director", dept:"Architecture + Interiors", photo:null, bio:"Placeholder — add team member details here.", stats:[], color:"#18988B", cta:null },
+  { name:"Team Member", title:"Project Lead", dept:"Design Strategy", photo:null, bio:"Placeholder — add team member details here.", stats:[], color:"#FF7F40", cta:null },
+  { name:"Team Member", title:"Strategy Analyst", dept:"Market Research", photo:null, bio:"Placeholder — add team member details here.", stats:[], color:"#2979FF", cta:null },
+];
+
+const SprintTeamSection = () => {
+  const mobile = useIsMobile();
+  const [ref, visible] = useScrollReveal(0.06);
+  const [featured, setFeatured] = useState(0);
+
+  const next = () => setFeatured(f => (f + 1) % TEAM_MEMBERS.length);
+  const f = TEAM_MEMBERS[featured];
+
+  const fadeUp = (delay) => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? "translateY(0)" : "translateY(20px)",
+    transition: `opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+  });
+
+  return (
+    <section style={{ background:"#0b0c0d", position:"relative", overflow:"hidden" }}>
+      {/* Black grid lines */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        backgroundImage:"linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px)",
+        backgroundSize:"60px 60px" }}/>
+      {/* Subtle glow behind featured color */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        background:`radial-gradient(ellipse 55% 45% at 25% 55%, ${f.color}0c 0%, transparent 65%)`,
+        transition:"background 0.7s ease" }}/>
+
+      <div ref={ref} style={{ maxWidth:1400, margin:"0 auto", padding: mobile?"4rem 5vw 5rem":"7rem 4vw 6rem", position:"relative" }}>
+
+        {/* Section heading */}
+        <div style={{ marginBottom: mobile?"2.5rem":"3.5rem" }}>
+          <div style={{ ...fadeUp(0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
+            letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.75rem" }}>
+            AmenitySprint Team
+          </div>
+          <h2 style={{ ...fadeUp(0.08), fontFamily:"'Poppins',sans-serif", fontWeight:800,
+            fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(2rem,3vw,2.8rem)",
+            color:"#fff", lineHeight:1.1, margin:0 }}>
+            The people behind<br/>your sprint.
+          </h2>
+        </div>
+
+        {/* Desktop: featured left + grid right */}
+        {!mobile ? (
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.5rem", alignItems:"start" }}>
+
+            {/* Featured card */}
+            <div style={{ ...fadeUp(0.15), position:"relative", borderRadius:"2rem", overflow:"hidden",
+              border:`1.5px solid ${f.color}44`, boxShadow:`0 24px 56px rgba(0,0,0,0.6), 0 0 40px ${f.color}14`,
+              transition:"border-color 0.5s, box-shadow 0.5s",
+              background:"rgba(255,255,255,0.03)" }}>
+              {/* Accent bar */}
+              <div style={{ height:3, background:f.color, boxShadow:`0 0 16px ${f.color}88` }}/>
+              {/* Photo */}
+              <div style={{ position:"relative", aspectRatio:"4/3", overflow:"hidden" }}>
+                {f.photo ? (
+                  <img src={f.photo} alt={f.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", transition:"opacity 0.4s ease" }} key={featured}/>
+                ) : (
+                  <ImgPlaceholder label="Photo · Upload to Blob" aspectRatio="4/3" style={{ borderRadius:0 }}/>
+                )}
+                <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom,transparent 50%,rgba(11,12,13,0.92) 100%)" }}/>
+                {/* Name overlay at bottom of photo */}
+                <div style={{ position:"absolute", bottom:"1.25rem", left:"1.5rem" }}>
+                  <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1.3rem", fontWeight:800,
+                    color:"#fff", lineHeight:1.1 }}>{f.name}</div>
+                  <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:400,
+                    color:f.color, marginTop:"0.2rem" }}>{f.title}</div>
+                </div>
+              </div>
+              {/* Content */}
+              <div style={{ padding:"1.5rem" }}>
+                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:600,
+                  letterSpacing:"0.14em", textTransform:"uppercase",
+                  color:"rgba(255,255,255,0.25)", marginBottom:"0.85rem" }}>{f.dept}</div>
+                <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:300,
+                  color:"rgba(255,255,255,0.55)", lineHeight:1.8, marginBottom:"1.5rem",
+                  transition:"opacity 0.4s ease" }} key={`bio-${featured}`}>{f.bio}</p>
+                {f.stats.length > 0 && (
+                  <div style={{ display:"flex", gap:"1.75rem", paddingTop:"1.25rem",
+                    borderTop:"1px solid rgba(255,255,255,0.07)", marginBottom:"1.5rem" }}>
+                    {f.stats.map(([v,l]) => (
+                      <div key={l}>
+                        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1rem", fontWeight:800, color:"#fff" }}>{v}</div>
+                        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", fontWeight:500,
+                          color:"rgba(255,255,255,0.25)", letterSpacing:"0.1em", textTransform:"uppercase", marginTop:2 }}>{l}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {f.cta && (
+                  <a href={f.cta.href} target="_blank" rel="noopener noreferrer"
+                    style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem",
+                      background:f.color, color:"#fff", textDecoration:"none",
+                      fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:700,
+                      padding:"0.75rem 1.75rem", borderRadius:9999,
+                      boxShadow:`0 0 20px ${f.color}44`, transition:"transform 0.2s ease" }}
+                    onMouseOver={e=>e.currentTarget.style.transform="translateY(-2px)"}
+                    onMouseOut={e=>e.currentTarget.style.transform="none"}>
+                    <div style={{ width:6, height:6, borderRadius:"50%", background:"rgba(255,255,255,0.8)", animation:"onlineRing 2s ease-out infinite" }}/>
+                    {f.cta.label}
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Right: 2×2 grid of team cards */}
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gridTemplateRows:"1fr 1fr", gap:"1rem", height:"100%" }}>
+              {TEAM_MEMBERS.map((m, i) => {
+                const isF = featured === i;
+                return (
+                  <div key={i} onClick={() => setFeatured(i)}
+                    style={{ ...fadeUp(0.18 + i*0.08),
+                      position:"relative", borderRadius:"1.5rem", overflow:"hidden",
+                      cursor:"pointer", minHeight:180,
+                      border: isF ? `1.5px solid ${m.color}55` : "1px solid rgba(255,255,255,0.07)",
+                      background: isF ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
+                      boxShadow: isF ? `0 8px 32px rgba(0,0,0,0.5), 0 0 20px ${m.color}14` : "none",
+                      transform: isF ? "translateY(-3px)" : "translateY(0)",
+                      transition:"all 0.4s cubic-bezier(0.16,1,0.3,1)",
+                    }}>
+                    {/* Accent bar */}
+                    <div style={{ height:2, background:m.color, opacity: isF ? 1 : 0.35,
+                      boxShadow:`0 0 10px ${m.color}88`, transition:"opacity 0.3s" }}/>
+                    {m.photo ? (
+                      <img src={m.photo} alt={m.name}
+                        style={{ width:"100%", height:"65%", objectFit:"cover", objectPosition:"center top", display:"block" }}/>
+                    ) : (
+                      <div style={{ height:"65%", background:"rgba(255,255,255,0.03)",
+                        backgroundImage:"linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px)",
+                        backgroundSize:"20px 20px", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                        {/* Corner brackets */}
+                        {[0,1,2,3].map(c=>(
+                          <div key={c} style={{ position:"absolute",
+                            top:c<2?10:"auto", bottom:c>=2?10:"auto",
+                            left:c%2===0?10:"auto", right:c%2===1?10:"auto",
+                            width:14, height:14,
+                            borderTop:c<2?`1.5px solid ${m.color}55`:"none",
+                            borderBottom:c>=2?`1.5px solid ${m.color}55`:"none",
+                            borderLeft:c%2===0?`1.5px solid ${m.color}55`:"none",
+                            borderRight:c%2===1?`1.5px solid ${m.color}55`:"none",
+                          }}/>
+                        ))}
+                        <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.48rem", fontWeight:600,
+                          letterSpacing:"0.15em", textTransform:"uppercase", color:"rgba(255,255,255,0.18)" }}>
+                          Photo
+                        </div>
+                      </div>
+                    )}
+                    <div style={{ padding:"0.75rem 0.85rem" }}>
+                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:700,
+                        color: isF ? "#fff" : "rgba(255,255,255,0.55)", transition:"color 0.3s", lineHeight:1.2 }}>{m.name}</div>
+                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem", fontWeight:400,
+                        color: m.color, opacity: isF ? 1 : 0.55, marginTop:"0.2rem", transition:"opacity 0.3s" }}>{m.title}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          /* Mobile: stacked */
+          <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
+            {TEAM_MEMBERS.map((m, i) => {
+              const isF = featured === i;
+              return (
+                <div key={i} onClick={() => setFeatured(i)} style={{ borderRadius:"1.5rem", overflow:"hidden",
+                  border: isF ? `1.5px solid ${m.color}44` : "1px solid rgba(255,255,255,0.07)",
+                  background:"rgba(255,255,255,0.02)", cursor:"pointer", transition:"all 0.3s ease" }}>
+                  <div style={{ height:2, background:m.color, opacity: isF ? 1 : 0.35 }}/>
+                  <div style={{ padding:"1.25rem" }}>
+                    <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.95rem", fontWeight:800,
+                      color: isF ? "#fff" : "rgba(255,255,255,0.5)" }}>{m.name}</div>
+                    <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", color:m.color, marginTop:"0.2rem" }}>{m.title}</div>
+                    {isF && <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.8rem", fontWeight:300,
+                      color:"rgba(255,255,255,0.5)", lineHeight:1.75, marginTop:"0.75rem", marginBottom:0 }}>{m.bio}</p>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Arrow navigation — bottom right */}
+        <div style={{ ...fadeUp(0.45), display:"flex", alignItems:"center", justifyContent:"flex-end",
+          gap:"1rem", marginTop:"2rem" }}>
+          {/* Dots */}
+          <div style={{ display:"flex", gap:"0.5rem" }}>
+            {TEAM_MEMBERS.map((_,i) => (
+              <div key={i} onClick={() => setFeatured(i)} style={{
+                width: featured===i ? 20 : 6, height:6, borderRadius:3,
+                background: featured===i ? TEAM_MEMBERS[featured].color : "rgba(255,255,255,0.15)",
+                cursor:"pointer", transition:"all 0.35s ease" }}/>
+            ))}
+          </div>
+          {/* Arrow button */}
+          <button onClick={next} aria-label="Next team member"
+            style={{ display:"flex", alignItems:"center", justifyContent:"center",
+              width:44, height:44, borderRadius:"50%",
+              background:`rgba(255,255,255,0.06)`,
+              border:`1px solid rgba(255,255,255,0.12)`,
+              cursor:"pointer", transition:"all 0.3s ease",
+              color:"#fff",
+            }}
+            onMouseOver={e=>{ e.currentTarget.style.background=TEAM_MEMBERS[featured].color+"22"; e.currentTarget.style.borderColor=TEAM_MEMBERS[featured].color+"55"; }}
+            onMouseOut={e=>{ e.currentTarget.style.background="rgba(255,255,255,0.06)"; e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"; }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
   );
 };
 
-// ── MEET THE LEAD ─────────────────────────────────────────────────────────────
-// Replace with your Vercel Blob URL after uploading: POST /api/blob/upload
-const DAVID_PHOTO_URL = "https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/David26%27.png";
-
+// ── MEET THE LEAD (legacy — replaced by SprintTeamSection) ────────────────────
 const MeetTheLeadSection = () => {
   const mobile = useIsMobile();
   const [ref, visible] = useScrollReveal(0.08);
@@ -1006,14 +1246,14 @@ const TierScopeSection = () => {
   });
 
   return (
-    <section style={{ background:"#1e2022", padding: mobile ? "5rem 5vw" : "8rem 6vw",
+    <section style={{ background:"#1e2022", padding: mobile ? "5rem 5vw" : "8rem 4vw",
       position:"relative", overflow:"hidden" }}>
       {/* Dot-grid texture matching LandingJourneySection */}
       <div style={{ position:"absolute", inset:0, pointerEvents:"none",
         backgroundImage:"linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px)",
         backgroundSize:"48px 48px" }}/>
 
-      <div ref={ref} style={{ maxWidth:1100, margin:"0 auto", position:"relative" }}>
+      <div ref={ref} style={{ maxWidth:1400, margin:"0 auto", position:"relative" }}>
 
         {/* Header */}
         <div style={{ marginBottom: mobile ? "3rem" : "4rem" }}>
@@ -1544,6 +1784,82 @@ export default function AmenitySprint({ projects = [] }) {
       {/* ── JOURNEY TIMELINE ── */}
       <LandingJourneySection />
 
+      {/* ── DELIVERABLES ── */}
+      <section id="deliverables" style={{
+        padding: mobile ? "4rem 0 4rem 5vw" : "8rem 0 8rem 6vw",
+        background: C.bgSection, overflow:"hidden", position:"relative",
+      }}>
+        <div style={{
+          display:"flex", flexDirection: mobile?"column":"row",
+          alignItems: mobile?"flex-start":"center",
+          gap: mobile?"2.5rem":"0",
+        }}>
+          {/* LEFT: constrained text box */}
+          <div ref={delivRef} style={{
+            flexShrink:0,
+            width: mobile?"100%":"min(460px,34vw)",
+            paddingRight: mobile?"5vw":"4vw",
+          }}>
+            <div style={{ ...fade(delivVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
+              letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>What You Receive</div>
+            <h2 style={{ ...fade(delivVis,0.08), fontFamily:"'Poppins',sans-serif", fontWeight:800,
+              fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,2.6vw,2.8rem)",
+              color:"#fff", lineHeight:1.1, marginBottom:"0.5rem" }}>
+              From briefs<br/>to concepts.
+            </h2>
+            <div style={{ ...fade(delivVis,0.14), fontFamily:"'Poppins',sans-serif", fontWeight:600,
+              fontSize: mobile?"1rem":"clamp(0.95rem,1.4vw,1.15rem)",
+              color:"rgba(255,255,255,0.38)", lineHeight:1.3, marginBottom:"1.5rem",
+              letterSpacing:"-0.01em" }}>
+              Not in months — in weeks.
+            </div>
+            <p style={{ ...fade(delivVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem",
+              fontWeight:300, color:C.textDim, lineHeight:1.8, marginBottom:"2rem" }}>
+              Every sprint delivers fully developed design concepts your team can act on immediately — not wireframes or rough sketches.
+            </p>
+            <div style={{ ...fade(delivVis,0.28), display:"flex", flexDirection:"column" }}>
+              {[
+                { icon:"▣", label:"Annotated Floor Plans", desc:"Programmatic zones, adjacencies, and activation areas." },
+                { icon:"◈", label:"3D Renderings", desc:"Photorealistic perspectives that make the vision real." },
+                { icon:"◆", label:"Axonometric Views", desc:"Bird's-eye diagrams showing how the space lives." },
+                { icon:"◉", label:"Design Language", desc:"Materials, mood, and the spatial narrative behind every decision." },
+                { icon:"▷", label:"Animation (select tiers)", desc:"Walkthrough video for board presentations and broker tours." },
+                { icon:"⬡", label:"360° Tours (select tiers)", desc:"Immersive virtual experiences for remote stakeholders." },
+              ].map((d,i)=>(
+                <div key={i} style={{ ...fade(delivVis,0.3+i*0.05),
+                  display:"flex", gap:"0.875rem", alignItems:"flex-start",
+                  padding:"0.75rem 0", borderBottom:`1px solid ${C.border}` }}>
+                  <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem", color:"#00BADC", flexShrink:0, marginTop:2 }}>{d.icon}</span>
+                  <div>
+                    <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:600, color:"#fff" }}>{d.label}</div>
+                    <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", fontWeight:300, color:C.textDim, marginTop:2 }}>{d.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT: images bleed to the right viewport edge */}
+          {!mobile && (
+            <div style={{ ...fade(delivVis,0.18), flex:1, minWidth:0, paddingLeft:"2.5vw", display:"flex", flexDirection:"column", gap:"1rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"1.5fr 1fr", gap:"1rem" }}>
+                <ImgPlaceholder label="3D Rendering — Interior Perspective" aspectRatio="4/3" style={{ borderRadius:"1.5rem 0 0 1.5rem" }}/>
+                <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
+                  <ImgPlaceholder label="Axon / Floor Plan" aspectRatio="1/1" style={{ borderRadius:"1.5rem 0 0 1.5rem" }}/>
+                  <ImgPlaceholder label="Design Language Board" aspectRatio="1/1" style={{ borderRadius:"1.5rem 0 0 1.5rem" }}/>
+                </div>
+              </div>
+              <ImgPlaceholder label="Animation / 360 Tour Still" aspectRatio="21/6" style={{ borderRadius:"1.5rem 0 0 1.5rem" }}/>
+            </div>
+          )}
+          {mobile && (
+            <div style={{ ...fade(delivVis,0.18), width:"100%", paddingRight:"5vw" }}>
+              <ImgPlaceholder label="3D Rendering" aspectRatio="16/9"/>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ── TIERS ── */}
       <TierScopeSection />
 
@@ -1601,65 +1917,8 @@ export default function AmenitySprint({ projects = [] }) {
         </div>
       </section>
 
-      {/* ── DELIVERABLES ── */}
-      <section id="deliverables" style={{ padding: mobile?"4rem 5vw":"8rem 6vw", background:C.bgSection }}>
-        <div ref={delivRef} style={{ maxWidth:1100, margin:"0 auto" }}>
-          <div style={{
-            display:"grid",
-            gridTemplateColumns: mobile ? "1fr" : "1fr 1fr",
-            gap: mobile ? "2.5rem" : "6rem",
-            alignItems:"center"
-          }}>
-            <div>
-              <div style={{ ...fade(delivVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
-                letterSpacing:"0.2em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>What You Receive</div>
-              <h2 style={{ ...fade(delivVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-                fontSize: mobile?"clamp(1.7rem,6vw,2.2rem)":"clamp(1.8rem,3vw,2.5rem)",
-                color:"#fff", lineHeight:1.2, marginBottom:"1.25rem" }}>
-                Visual assets<br/>that tell stories.
-              </h2>
-              <p style={{ ...fade(delivVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.88rem",
-                fontWeight:300, color:C.textDim, lineHeight:1.8, marginBottom:"2rem" }}>
-                Every sprint delivers fully developed design concepts your team can use immediately — not wireframes or rough sketches.
-              </p>
-              <div style={{ ...fade(delivVis,0.28), display:"flex", flexDirection:"column" }}>
-                {[
-                  { icon:"▣", label:"Annotated Floor Plans", desc:"Programmatic zones, adjacencies, and activation areas." },
-                  { icon:"◈", label:"3D Renderings", desc:"Photorealistic perspectives that make the vision real." },
-                  { icon:"◆", label:"Axonometric Views", desc:"Bird's-eye diagrams showing how the space lives." },
-                  { icon:"◉", label:"Design Language", desc:"Materials, mood, and the spatial narrative behind every decision." },
-                  { icon:"▷", label:"Animation (select tiers)", desc:"Walkthrough video for board presentations and broker tours." },
-                  { icon:"⬡", label:"360° Tours (select tiers)", desc:"Immersive virtual experiences for remote stakeholders." },
-                ].map((d,i)=>(
-                  <div key={i} style={{ ...fade(delivVis,0.3+i*0.06),
-                    display:"flex", gap:"0.875rem", alignItems:"flex-start",
-                    padding:"0.875rem 0", borderBottom:`1px solid ${C.border}` }}>
-                    <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem", color:"#00BADC", flexShrink:0, marginTop:2 }}>{d.icon}</span>
-                    <div>
-                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem", fontWeight:600, color:"#fff" }}>{d.label}</div>
-                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.75rem", fontWeight:300, color:C.textDim, marginTop:2 }}>{d.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Image grid — hidden on mobile to avoid clutter, shown on desktop */}
-            {!mobile && (
-              <div style={{ ...fade(delivVis,0.2), display:"flex", flexDirection:"column", gap:"1rem" }}>
-                <ImgPlaceholder label="3D Rendering — Interior Perspective" aspectRatio="4/3"/>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
-                  <ImgPlaceholder label="Axon / Floor Plan" aspectRatio="1/1"/>
-                  <ImgPlaceholder label="Design Language Board" aspectRatio="1/1"/>
-                </div>
-                <ImgPlaceholder label="Animation / 360 Tour Still" aspectRatio="16/7"/>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ── MEET THE LEAD ── */}
-      <MeetTheLeadSection />
+      {/* ── SPRINT TEAM ── */}
+      <SprintTeamSection />
 
       {/* ── TESTIMONIALS ── */}
       <TestimonialsSection />
