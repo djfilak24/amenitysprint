@@ -1326,7 +1326,7 @@ const TiersAndTestimonialsSection = () => {
   const [barsIn, setBarsIn] = useState(false);
 
   useEffect(() => {
-    if (mobile) return; // static on mobile — no height changes, no section push
+    if (mobile) return; // static on mobile — arrows used instead
     const id = setInterval(() => {
       if (_isScrolling) return;
       setTFading(true);
@@ -1334,6 +1334,14 @@ const TiersAndTestimonialsSection = () => {
     }, 4500);
     return () => clearInterval(id);
   }, [mobile]);
+
+  const advanceTestimonial = (dir) => {
+    setTFading(true);
+    setTimeout(() => {
+      setTActive(p => (p + dir + TESTIMONIALS.length) % TESTIMONIALS.length);
+      setTFading(false);
+    }, 280);
+  };
 
   useEffect(() => {
     if (!visible) return;
@@ -1435,7 +1443,19 @@ const TiersAndTestimonialsSection = () => {
           </div>
         </div>
       </div>
-      <div style={{ display:"flex", gap:"0.5rem", alignItems:"center", marginTop: mobile ? "2rem" : "2.75rem" }}>
+      <div style={{ display:"flex", gap:"0.75rem", alignItems:"center", marginTop: mobile ? "2rem" : "2.75rem" }}>
+        {/* Prev arrow */}
+        <button onClick={() => advanceTestimonial(-1)} style={{
+          background:"none", border:"1px solid rgba(255,255,255,0.15)", borderRadius:"50%",
+          width:32, height:32, cursor:"pointer", flexShrink:0,
+          display:"flex", alignItems:"center", justifyContent:"center",
+          color:"rgba(255,255,255,0.55)", fontSize:"1rem", lineHeight:1,
+          transition:"border-color 0.2s, color 0.2s",
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor=t.color; e.currentTarget.style.color=t.color; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor="rgba(255,255,255,0.15)"; e.currentTarget.style.color="rgba(255,255,255,0.55)"; }}
+        >‹</button>
+        {/* Dot indicators */}
         {TESTIMONIALS.map((_,i) => (
           <div key={i} onClick={() => { setTFading(true); setTimeout(() => { setTActive(i); setTFading(false); }, 280); }}
             style={{ width:tActive===i?28:6, height:6, borderRadius:3,
@@ -1443,6 +1463,17 @@ const TiersAndTestimonialsSection = () => {
               cursor:"pointer", transition:"all 0.35s cubic-bezier(0.16,1,0.3,1)",
               boxShadow:tActive===i?`0 0 10px ${TESTIMONIALS[i].color}66`:"none" }}/>
         ))}
+        {/* Next arrow */}
+        <button onClick={() => advanceTestimonial(1)} style={{
+          background:"none", border:"1px solid rgba(255,255,255,0.15)", borderRadius:"50%",
+          width:32, height:32, cursor:"pointer", flexShrink:0,
+          display:"flex", alignItems:"center", justifyContent:"center",
+          color:"rgba(255,255,255,0.55)", fontSize:"1rem", lineHeight:1,
+          transition:"border-color 0.2s, color 0.2s",
+        }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor=t.color; e.currentTarget.style.color=t.color; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor="rgba(255,255,255,0.15)"; e.currentTarget.style.color="rgba(255,255,255,0.55)"; }}
+        >›</button>
       </div>
     </div>
   );
