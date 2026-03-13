@@ -373,11 +373,12 @@ const LandingJourneySection = () => {
   const [ref, visible] = useScrollReveal(0.08);
   const [activeStep, setActiveStep] = useState(0);
 
+  // Desktop only: auto-advance timeline. On mobile all steps are always visible.
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || mobile) return;
     const t = setInterval(() => { if (!_isScrolling) setActiveStep(s => (s + 1) % SPRINT_JOURNEY.length); }, 2800);
     return () => clearInterval(t);
-  }, [visible]);
+  }, [visible, mobile]);
 
   const phases = ["Sprint","Design","Build","Outcome"];
   const phaseColors = { Sprint:"#00BADC", Design:"#18988B", Build:"#FF7F40", Outcome:"#FFD53D" };
@@ -408,7 +409,8 @@ const LandingJourneySection = () => {
           </h2>
         </div>
 
-        {/* Phase labels */}
+        {/* Phase labels + progress track — desktop only */}
+        {!mobile && (<>
         <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease 0.2s", display:"flex", marginBottom:"0.5rem" }}>
           {phases.map(phase => {
             const pSteps = SPRINT_JOURNEY.filter(s => s.phase === phase);
@@ -421,8 +423,6 @@ const LandingJourneySection = () => {
             );
           })}
         </div>
-
-        {/* Progress track */}
         <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease 0.25s",
           position:"relative", height:2, background:"rgba(255,255,255,0.07)", marginBottom:"2.5rem" }}>
           <div style={{
@@ -442,49 +442,45 @@ const LandingJourneySection = () => {
               borderRadius:"50%",
               background: i <= activeStep ? s.color : "#1e2022",
               border:`2px solid ${i <= activeStep ? s.color : "rgba(255,255,255,0.15)"}`,
-              cursor:"pointer", transition:"all 0.3s ease", zIndex:2,
+              cursor:"pointer", transition:"width 0.3s ease, height 0.3s ease, background 0.3s ease", zIndex:2,
               boxShadow: i === activeStep ? `0 0 12px ${s.color}99` : "none",
             }}/>
           ))}
         </div>
+        </>)}
 
         {/* Step cards */}
         {mobile ? (
+          // Mobile: all steps fully visible, no cycling, no waiting.
+          // Dots show phase colors; descriptions always shown.
           <div>
             {SPRINT_JOURNEY.map((s, i) => (
-              <div key={i} onClick={() => setActiveStep(i)} style={{
+              <div key={i} style={{
                 display:"flex", gap:"1.1rem", paddingBottom:"1.75rem",
-                position:"relative", cursor:"pointer",
-                opacity:visible?1:0, transform:visible?"translateX(0)":"translateX(-12px)",
-                transition:`opacity 0.6s ease ${0.1+i*0.08}s, transform 0.6s ease ${0.1+i*0.08}s`,
+                position:"relative",
+                opacity:visible?1:0,
+                transition:`opacity 0.5s ease ${0.08+i*0.06}s`,
               }}>
                 {i < SPRINT_JOURNEY.length - 1 && (
                   <div style={{ position:"absolute", left:13, top:28, bottom:0,
-                    width:1, background:"rgba(255,255,255,0.06)" }}/>
+                    width:1, background:`${s.color}33` }}/>
                 )}
                 <div style={{ flexShrink:0, width:26, height:26, borderRadius:"50%",
-                  background:"#1e2022",
-                  border:`2px solid ${i <= activeStep ? s.color : "rgba(255,255,255,0.1)"}`,
+                  background:"#1e2022", border:`2px solid ${s.color}`,
                   display:"flex", alignItems:"center", justifyContent:"center",
-                  position:"relative", zIndex:1, transition:"border-color 0.4s" }}>
-                  <div style={{ width:7, height:7, borderRadius:"50%",
-                    background: i <= activeStep ? s.color : "rgba(255,255,255,0.15)",
-                    transition:"background 0.4s" }}/>
+                  position:"relative", zIndex:1 }}>
+                  <div style={{ width:7, height:7, borderRadius:"50%", background:s.color }}/>
                 </div>
                 <div style={{ paddingTop:2 }}>
                   <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.55rem", fontWeight:700,
                     letterSpacing:"0.16em", textTransform:"uppercase",
-                    color: i <= activeStep ? s.color : "rgba(255,255,255,0.2)",
-                    marginBottom:"0.2rem", transition:"color 0.3s" }}>
+                    color:s.color, marginBottom:"0.2rem" }}>
                     {s.phase} · {s.week}
                   </div>
                   <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.85rem", fontWeight:700,
-                    color: i === activeStep ? "#fff" : "rgba(255,255,255,0.45)",
-                    marginBottom:"0.3rem", transition:"color 0.3s" }}>{s.label}</div>
+                    color:"#fff", marginBottom:"0.3rem" }}>{s.label}</div>
                   <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.74rem", fontWeight:300,
-                    color:"rgba(255,255,255,0.32)", lineHeight:1.7,
-                    opacity: i === activeStep ? 1 : 0,
-                    transition:"opacity 0.4s ease" }}>{s.desc}</div>
+                    color:"rgba(255,255,255,0.45)", lineHeight:1.7 }}>{s.desc}</div>
                 </div>
               </div>
             ))}
@@ -529,7 +525,14 @@ const SprintProcessSection = () => {
 
   useEffect(() => {
     if (!visible) return;
-    const t = setInterval(() => { if (!_isScrolling) setActiveCard(c => (c+1)%3); }, 4000);
+    // Cycle once: 0 → 1 → 2, then stop. No infinite loop that fights the user.
+    let advances = 0;
+    const t = setInterval(() => {
+      if (_isScrolling) return;
+      if (advances >= 2) { clearInterval(t); return; }
+      advances++;
+      setActiveCard(c => (c + 1) % 3);
+    }, 4000);
     return () => clearInterval(t);
   }, [visible]);
 
@@ -764,8 +767,10 @@ const SprintTeamSection = () => {
 
   const fadeUp = (delay) => ({
     opacity: visible ? 1 : 0,
-    transform: visible ? "translateY(0)" : "translateY(20px)",
-    transition: `opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+    transform: visible ? "translateY(0)" : (mobile ? "translateY(0)" : "translateY(20px)"),
+    transition: mobile
+      ? `opacity 0.6s ease ${delay}s`
+      : `opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
   });
 
   return (
@@ -912,21 +917,61 @@ const SprintTeamSection = () => {
             </div>
           </div>
         ) : (
-          /* Mobile: stacked */
-          <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
+          /* Mobile: stacked with headshot */
+          <div style={{ display:"flex", flexDirection:"column", gap:"0.875rem" }}>
             {TEAM_MEMBERS.map((m, i) => {
               const isF = featured === i;
+              const initials = m.name.split(" ").map(w=>w[0]).join("").slice(0,2);
               return (
                 <div key={i} onClick={() => setFeatured(i)} style={{ borderRadius:"1.5rem", overflow:"hidden",
-                  border: isF ? `1.5px solid ${m.color}44` : "1px solid rgba(255,255,255,0.07)",
-                  background:"rgba(255,255,255,0.02)", cursor:"pointer", transition:"all 0.3s ease" }}>
-                  <div style={{ height:2, background:m.color, opacity: isF ? 1 : 0.35 }}/>
-                  <div style={{ padding:"1.25rem" }}>
-                    <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.95rem", fontWeight:800,
-                      color: isF ? "#fff" : "rgba(255,255,255,0.5)" }}>{m.name}</div>
-                    <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", color:m.color, marginTop:"0.2rem" }}>{m.title}</div>
-                    {isF && <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.8rem", fontWeight:300,
-                      color:"rgba(255,255,255,0.5)", lineHeight:1.75, marginTop:"0.75rem", marginBottom:0 }}>{m.bio}</p>}
+                  border: isF ? `1.5px solid ${m.color}55` : "1px solid rgba(255,255,255,0.07)",
+                  background: isF ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
+                  cursor:"pointer", transition:"border-color 0.3s ease, background 0.3s ease" }}>
+                  <div style={{ height:2, background:m.color, opacity: isF ? 1 : 0.3,
+                    boxShadow: isF ? `0 0 8px ${m.color}88` : "none", transition:"opacity 0.3s, box-shadow 0.3s" }}/>
+                  <div style={{ padding:"1rem 1.1rem", display:"flex", gap:"0.875rem", alignItems:"flex-start" }}>
+                    {/* Headshot / avatar */}
+                    <div style={{ flexShrink:0, width:52, height:52, borderRadius:"50%", overflow:"hidden",
+                      border:`2px solid ${m.color}55`, background:`${m.color}18` }}>
+                      {m.photo ? (
+                        <img src={m.photo} alt={m.name} style={{ width:"100%", height:"100%",
+                          objectFit:"cover", objectPosition:"center top" }}/>
+                      ) : (
+                        <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center",
+                          justifyContent:"center", fontFamily:"'Poppins',sans-serif", fontSize:"1rem",
+                          fontWeight:700, color:m.color }}>{initials}</div>
+                      )}
+                    </div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.9rem", fontWeight:800,
+                        color: isF ? "#fff" : "rgba(255,255,255,0.55)", transition:"color 0.3s" }}>{m.name}</div>
+                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.65rem", color:m.color,
+                        marginTop:"0.15rem", fontWeight:500 }}>{m.title}</div>
+                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem",
+                        color:"rgba(255,255,255,0.28)", marginTop:"0.1rem" }}>{m.dept}</div>
+                    </div>
+                  </div>
+                  {/* Expanded bio + stats on active card */}
+                  <div style={{ display:"grid", gridTemplateRows: isF ? "1fr" : "0fr",
+                    transition:"grid-template-rows 0.38s cubic-bezier(0.16,1,0.3,1)" }}>
+                    <div style={{ overflow:"hidden" }}>
+                      <div style={{ padding:"0 1.1rem 1.1rem" }}>
+                        <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:300,
+                          color:"rgba(255,255,255,0.5)", lineHeight:1.75, margin:"0 0 0.875rem" }}>{m.bio}</p>
+                        {m.stats.length > 0 && (
+                          <div style={{ display:"flex", gap:"1.25rem" }}>
+                            {m.stats.map(([n,l]) => (
+                              <div key={l}>
+                                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"1rem",
+                                  fontWeight:800, color:m.color }}>{n}</div>
+                                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem",
+                                  color:"rgba(255,255,255,0.3)", letterSpacing:"0.06em" }}>{l}</div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
@@ -1198,7 +1243,7 @@ const TiersAndTestimonialsSection = () => {
   const [tActive, setTActive] = useState(0);
   const [tFading, setTFading] = useState(false);
   // Tiers
-  const [tiersActive, setTiersActive] = useState(0);
+  const [tiersActive, setTiersActive] = useState(null);
   const [barsIn, setBarsIn] = useState(false);
 
   useEffect(() => {
@@ -1213,16 +1258,18 @@ const TiersAndTestimonialsSection = () => {
   useEffect(() => {
     if (!visible) return;
     const bt = setTimeout(() => setBarsIn(true), 500);
-    const ti = setInterval(() => { if (!_isScrolling) setTiersActive(a => (a + 1) % 4); }, 3200);
-    return () => { clearTimeout(bt); clearInterval(ti); };
+    return () => clearTimeout(bt);
+    // No auto-cycle — all four tiers shown equally; user clicks to focus one.
   }, [visible]);
 
   const t = TESTIMONIALS[tActive];
 
   const fadeUp = (delay) => ({
     opacity: visible ? 1 : 0,
-    transform: visible ? "translateY(0)" : "translateY(28px)",
-    transition: `opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+    transform: visible ? "translateY(0)" : (mobile ? "translateY(0)" : "translateY(28px)"),
+    transition: mobile
+      ? `opacity 0.6s ease ${delay}s`
+      : `opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
   });
 
   const TierCard = ({ tier, i }) => {
@@ -1288,7 +1335,8 @@ const TiersAndTestimonialsSection = () => {
         color:t.color, opacity:0.3, marginBottom:"0.25rem", userSelect:"none",
         transition:"color 0.35s ease" }}>"</div>
       <div style={{ opacity: tFading ? 0 : 1, transform: tFading ? "translateY(6px)" : "translateY(0)",
-        transition:"opacity 0.32s ease, transform 0.32s ease" }}>
+        transition:"opacity 0.32s ease, transform 0.32s ease",
+        minHeight: mobile ? "10rem" : "8rem" }}>
         <p style={{ fontFamily:"'Poppins',sans-serif",
           fontSize: mobile ? "clamp(1rem,4vw,1.25rem)" : "clamp(1.1rem,1.6vw,1.4rem)",
           fontWeight:300, lineHeight:1.72, color:"rgba(255,255,255,0.9)",
@@ -1697,9 +1745,13 @@ export default function AmenitySprint({ projects = [] }) {
   }, []);
 
   const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior:"smooth" });
+  // On mobile: opacity-only — no translateY to avoid the "pop/expand" on section entry.
   const fade = (vis, delay=0) => ({
-    opacity:vis?1:0, transform:vis?"translateY(0)":"translateY(24px)",
-    transition:`opacity 0.8s ease ${delay}s, transform 0.8s ease ${delay}s`,
+    opacity: vis ? 1 : 0,
+    transform: vis ? "translateY(0)" : (mobile ? "translateY(0)" : "translateY(24px)"),
+    transition: mobile
+      ? `opacity 0.7s ease ${delay}s`
+      : `opacity 0.8s ease ${delay}s, transform 0.8s ease ${delay}s`,
   });
   const filteredProjects = filterSize==="ALL" ? projects : projects.filter(p=>p.size===filterSize);
 
@@ -1771,11 +1823,9 @@ export default function AmenitySprint({ projects = [] }) {
             <div style={{ width:8, height:8, borderRadius:"50%", background:"#22c55e",
               position:"relative", zIndex:1 }}/>
           </div>
-          {!mobile && (
-            <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:600,
-              letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)",
-              whiteSpace:"nowrap" }}>Online</span>
-          )}
+          <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:600,
+            letterSpacing:"0.12em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)",
+            whiteSpace:"nowrap" }}>Online</span>
         </div>
 
         {/* Calendar CTA */}
@@ -1796,10 +1846,13 @@ export default function AmenitySprint({ projects = [] }) {
 
       {/* ── HERO ── */}
       <section style={{
-        minHeight:"100dvh",
+        // 100svh = small viewport height (stable, address bar never changes it on iOS Safari).
+        // 100dvh changes as the address bar hides, causing the hero to grow and push all
+        // content below on first scroll — the "expand/zoom" effect users report.
+        minHeight: mobile ? "100svh" : "100dvh",
         display:"flex", flexDirection:"column",
-        justifyContent: mobile ? "center" : "flex-end",
-        padding: mobile ? "88px 5vw 5vh" : "0 6vw 10vh",
+        justifyContent: mobile ? "flex-end" : "flex-end",
+        padding: mobile ? "88px 5vw 0" : "0 6vw 0",
         position:"relative", overflow:"hidden",
       }}>
         {/* Full-bleed background video — replace HERO_VIDEO_URL with your Vercel Blob video URL */}
@@ -1874,23 +1927,39 @@ export default function AmenitySprint({ projects = [] }) {
             >View Projects</button>
           </div>
 
-          {/* Stats row */}
-          <div style={{ ...fade(heroIn,0.58),
-            display:"grid",
-            gridTemplateColumns: mobile ? "1fr 1fr" : "repeat(4,auto)",
-            gap: mobile ? "1.25rem 2rem" : "0 2.5rem",
-            marginTop: mobile ? "2.5rem" : "3.5rem",
-            paddingTop: mobile ? "2rem" : "2rem",
-            borderTop:"1px solid rgba(255,255,255,0.07)" }}>
-            {[["10+","Completed Sprints"],["5","Markets"],["2–6 wks","Turnaround"],["S–XL","Scalable Scope"]].map(([n,l])=>(
-              <div key={l}>
-                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize: mobile?"1.2rem":"1.4rem",
-                  fontWeight:800, color:"#fff", lineHeight:1 }}>{n}</div>
-                <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.6rem", fontWeight:400,
-                  color:"rgba(255,255,255,0.3)", marginTop:4, letterSpacing:"0.04em" }}>{l}</div>
-              </div>
-            ))}
-          </div>
+        </div>
+
+        {/* ── HERO STATS BAR — full-bleed at bottom of hero ── */}
+        <div style={{ ...fade(heroIn,0.52),
+          position:"relative", zIndex:3,
+          display:"grid",
+          gridTemplateColumns: mobile ? "1fr 1fr" : "repeat(4,1fr)",
+          borderTop:"1px solid rgba(255,255,255,0.1)",
+          marginTop: mobile ? "auto" : "0",
+        }}>
+          {[
+            { n:"10+",    l:"Completed Sprints", color:"#00BADC", bg:"rgba(0,186,220,0.10)"   },
+            { n:"5",      l:"Markets",           color:"#18988B", bg:"rgba(24,152,139,0.10)"  },
+            { n:"2–6 wks",l:"Turnaround",        color:"#2FD0E8", bg:"rgba(0,186,220,0.06)"  },
+            { n:"S–XL",   l:"Scalable Scope",    color:"#1DBFB0", bg:"rgba(24,152,139,0.06)" },
+          ].map(({ n, l, color, bg }, i) => (
+            <div key={l} style={{
+              padding: mobile ? "1.2rem 1.1rem 1.4rem" : "1.75rem 2.5rem",
+              background: bg,
+              borderRight: i < 3 ? "1px solid rgba(255,255,255,0.07)" : "none",
+              borderBottom: (mobile && i < 2) ? "1px solid rgba(255,255,255,0.07)" : "none",
+            }}>
+              <div style={{
+                fontFamily:"'Georgia','Times New Roman',serif",
+                fontSize: mobile ? "clamp(1.7rem,7vw,2.2rem)" : "clamp(1.6rem,2.2vw,2.4rem)",
+                fontWeight:700, color, lineHeight:1, marginBottom:"0.3rem",
+              }}>{n}</div>
+              <div style={{
+                fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:500,
+                color:"rgba(255,255,255,0.35)", letterSpacing:"0.1em", textTransform:"uppercase",
+              }}>{l}</div>
+            </div>
+          ))}
         </div>
       </section>
 

@@ -22,10 +22,11 @@ const useScrollReveal = (threshold = 0.07) => {
 };
 
 const useIsMobile = () => {
-  const [mobile, setMobile] = useState(false);
+  const [mobile, setMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
   useEffect(() => {
     const check = () => setMobile(window.innerWidth < 768);
-    check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
@@ -484,8 +485,10 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
 
   const fd = (vis, delay = 0) => ({
     opacity: vis ? 1 : 0,
-    transform: vis ? "translateY(0)" : "translateY(22px)",
-    transition: `opacity 0.75s ease ${delay}s, transform 0.75s ease ${delay}s`,
+    transform: vis ? "translateY(0)" : (mobile ? "translateY(0)" : "translateY(22px)"),
+    transition: mobile
+      ? `opacity 0.65s ease ${delay}s`
+      : `opacity 0.75s ease ${delay}s, transform 0.75s ease ${delay}s`,
   });
 
   const sizeColors = { S: "#18988B", M: "#00BADC", L: "#FF7F40", XL: "#4C0049" };
@@ -612,8 +615,8 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
 
         {/* Text content */}
         <div style={{ maxWidth: mobile ? "100%" : "52vw", position: "relative", zIndex: 3 }}>
-          <div style={{ opacity: heroIn?1:0, transform: heroIn?"none":"translateY(12px)",
-            transition: "all 0.7s ease 0.1s",
+          <div style={{ opacity: heroIn?1:0, transform: heroIn?"none":(mobile?"none":"translateY(12px)"),
+            transition: mobile ? "opacity 0.7s ease 0.1s" : "opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s",
             display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", marginBottom: "1.1rem" }}>
             <span style={{ background: sizeColor, color: "#fff",
               fontFamily: "'Poppins',sans-serif", fontSize: "0.58rem", fontWeight: 700,
@@ -625,29 +628,29 @@ export default function ProjectPage({ slug = "55-west-monroe" }) {
             </span>
           </div>
 
-          <h1 style={{ opacity: heroIn?1:0, transform: heroIn?"none":"translateY(18px)",
-            transition: "all 0.75s ease 0.18s",
+          <h1 style={{ opacity: heroIn?1:0, transform: heroIn?"none":(mobile?"none":"translateY(18px)"),
+            transition: mobile ? "opacity 0.75s ease 0.18s" : "opacity 0.75s ease 0.18s, transform 0.75s ease 0.18s",
             fontFamily: "'Poppins',sans-serif", fontWeight: 800,
             fontSize: mobile ? "clamp(2rem,8vw,2.8rem)" : "clamp(2.8rem,4.5vw,4.6rem)",
             lineHeight: 1.03, color: "#fff", marginBottom: "0.6rem" }}>{P.name}</h1>
 
-          <div style={{ opacity: heroIn?1:0, transform: heroIn?"none":"translateY(16px)",
-            transition: "all 0.75s ease 0.24s",
+          <div style={{ opacity: heroIn?1:0, transform: heroIn?"none":(mobile?"none":"translateY(16px)"),
+            transition: mobile ? "opacity 0.75s ease 0.24s" : "opacity 0.75s ease 0.24s, transform 0.75s ease 0.24s",
             fontFamily: "'Poppins',sans-serif",
             fontSize: mobile ? "1rem" : "1.2rem", fontStyle: "italic",
             fontWeight: 300, color: "#00BADC", marginBottom: "0.85rem" }}>
             "{P.tagline}"
           </div>
 
-          <p style={{ opacity: heroIn?1:0, transform: heroIn?"none":"translateY(14px)",
-            transition: "all 0.75s ease 0.3s",
+          <p style={{ opacity: heroIn?1:0, transform: heroIn?"none":(mobile?"none":"translateY(14px)"),
+            transition: mobile ? "opacity 0.75s ease 0.3s" : "opacity 0.75s ease 0.3s, transform 0.75s ease 0.3s",
             fontFamily: "'Poppins',sans-serif",
             fontSize: mobile ? "0.85rem" : "0.95rem", fontWeight: 300,
             color: "rgba(255,255,255,0.45)", lineHeight: 1.85,
             maxWidth: 480, marginBottom: "1.75rem" }}>{P.unlockHeadline}</p>
 
-          <div style={{ opacity: heroIn?1:0, transform: heroIn?"none":"translateY(12px)",
-            transition: "all 0.75s ease 0.38s",
+          <div style={{ opacity: heroIn?1:0, transform: heroIn?"none":(mobile?"none":"translateY(12px)"),
+            transition: mobile ? "opacity 0.75s ease 0.38s" : "opacity 0.75s ease 0.38s, transform 0.75s ease 0.38s",
             display: "grid",
             gridTemplateColumns: mobile ? "1fr 1fr" : "repeat(4,auto)",
             gap: mobile ? "1rem 2rem" : "0 2.5rem",
