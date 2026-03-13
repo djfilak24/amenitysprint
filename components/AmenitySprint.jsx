@@ -962,7 +962,7 @@ const SIZE_CONFIG = {
   S:{ label:"S", name:"Targeted", color:"#18988B" },
   M:{ label:"M", name:"Strategic", color:"#00BADC" },
   L:{ label:"L", name:"Comprehensive", color:"#FF7F40" },
-  XL:{ label:"XL", name:"Transformative", color:"#4C0049" },
+  XL:{ label:"XL", name:"Transformative", color:"#2979FF" },
 };
 
 const ProjectCard = ({ p, delay }) => {
@@ -1067,94 +1067,111 @@ const ProjectCard = ({ p, delay }) => {
   );
 };
 
-// REPLACE these img paths with your actual images placed in /public/images/
 const TIERS = [
-  { label:"S", range:"$2K–$6K", weeks:"2–3 weeks", desc:"Targeted upgrades with immediate impact — entry refresh, signage, lighting, finish improvements. Fast ROI, minimal disruption.", img:"/images/tier-s.jpg" },
-  { label:"M", range:"$5K–$10K", weeks:"2.5–4 weeks", desc:"Significant public-space improvements that open revenue opportunities and solve internal building problems.", img:"/images/tier-m.jpg" },
-  { label:"L", range:"$8K–$15K", weeks:"4–6 weeks", desc:"High-investment repositioning that substantially elevates current and future real estate value.", img:"/images/tier-l.jpg" },
-  { label:"XL", range:"Custom", weeks:"6+ weeks", desc:"Large-scale rebranding, infrastructure overhaul, circulation redesign. Full market repositioning for flagship assets.", img:"/images/tier-xl.jpg" },
+  { label:"S", range:"$2K–$6K", weeks:"2–3 weeks", desc:"Targeted upgrades with immediate impact — entry refresh, signage, lighting, finish improvements. Fast ROI, minimal disruption.", img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/AS1.png" },
+  { label:"M", range:"$5K–$10K", weeks:"2.5–4 weeks", desc:"Significant public-space improvements that open revenue opportunities and solve internal building problems.", img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/CW1.jpeg" },
+  { label:"L", range:"$8K–$15K", weeks:"4–6 weeks", desc:"High-investment repositioning that substantially elevates current and future real estate value.", img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/21_0003493_000_N11_medium.jpg" },
+  { label:"XL", range:"Custom", weeks:"6+ weeks", desc:"Large-scale rebranding, infrastructure overhaul, circulation redesign. Full market repositioning for flagship assets.", img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/ATT_Tower_Minneapolis_01.jpg" },
 ];
 
 const SprintTier = ({ tier, active }) => {
   const sz = SIZE_CONFIG[tier.label];
+  const [hovered, setHovered] = useState(false);
+  const on = active || hovered;
   return (
-    <div style={{
-      borderRadius:"2rem",
-      border: active
-        ? `1.5px solid ${sz.color}55`
-        : `1px solid rgba(255,255,255,0.08)`,
-      background: active
-        ? `rgba(8,10,14,0.72)`
-        : `rgba(8,10,14,0.48)`,
-      backdropFilter:"blur(32px) saturate(1.4)",
-      WebkitBackdropFilter:"blur(32px) saturate(1.4)",
-      transition:"all 0.55s cubic-bezier(0.16,1,0.3,1)",
-      boxShadow: active
-        ? `0 24px 56px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px ${sz.color}22`
-        : "0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)",
-      transform: active ? "translateY(-4px) scale(1.01)" : "scale(1)",
-      padding:"2rem",
-      display:"flex", flexDirection:"column",
-      height:"100%", overflow:"hidden",
-      position:"relative",
-    }}>
-      {/* Tier-color top accent bar */}
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position:"relative",
+        borderRadius:"2rem",
+        overflow:"hidden",
+        height:"100%",
+        cursor:"pointer",
+        transition:"transform 0.55s cubic-bezier(0.16,1,0.3,1), box-shadow 0.55s ease",
+        transform: on ? "translateY(-5px) scale(1.02)" : "scale(1)",
+        boxShadow: on
+          ? `0 28px 56px rgba(0,0,0,0.65), 0 0 0 1.5px ${sz.color}55`
+          : "0 8px 28px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06)",
+      }}>
+
+      {/* Full-bleed background image */}
+      <img src={tier.img} alt={tier.label} style={{
+        position:"absolute", inset:0,
+        width:"100%", height:"100%",
+        objectFit:"cover",
+        transition:"transform 0.7s cubic-bezier(0.16,1,0.3,1)",
+        transform: on ? "scale(1.08)" : "scale(1)",
+      }}/>
+
+      {/* Dark scrim — bottom-heavy gradient for text legibility */}
+      <div style={{
+        position:"absolute", inset:0,
+        background: on
+          ? "linear-gradient(to top, rgba(8,10,14,0.97) 0%, rgba(8,10,14,0.75) 45%, rgba(8,10,14,0.12) 80%, transparent 100%)"
+          : "linear-gradient(to top, rgba(8,10,14,0.93) 0%, rgba(8,10,14,0.6) 42%, rgba(8,10,14,0.06) 72%, transparent 100%)",
+        transition:"background 0.5s ease",
+      }}/>
+
+      {/* Top accent bar */}
       <div style={{
         position:"absolute", top:0, left:0, right:0, height:3,
         background:sz.color,
-        boxShadow:`0 0 16px ${sz.color}88`,
-        opacity: active ? 1 : 0.4,
+        boxShadow:`0 0 18px ${sz.color}99`,
+        opacity: on ? 1 : 0.45,
         transition:"opacity 0.5s ease",
         borderRadius:"2rem 2rem 0 0",
       }}/>
 
-      {/* Tier badge — top right */}
-      <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:"0.5rem", marginTop:"0.25rem" }}>
-        <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.5rem", fontWeight:700,
-          letterSpacing:"0.18em", textTransform:"uppercase",
-          color: active ? sz.color : "rgba(255,255,255,0.45)",
-          background: active ? `${sz.color}18` : "rgba(255,255,255,0.06)",
-          border:`1px solid ${active ? sz.color+"44" : "rgba(255,255,255,0.1)"}`,
-          padding:"0.25rem 0.7rem", borderRadius:99,
-          transition:"all 0.5s ease",
-        }}>{sz.name}</div>
-      </div>
-
-      {/* HERO LETTER — Poppins 800, massive, fills the card */}
+      {/* Tier letter — large watermark top-left */}
       <div style={{
+        position:"absolute", top:"1.1rem", left:"1.4rem",
         fontFamily:"'Poppins',sans-serif",
-        fontSize: tier.label==="XL" ? "clamp(6rem,9vw,10rem)" : "clamp(7rem,10.5vw,12rem)",
+        fontSize: tier.label==="XL" ? "clamp(4rem,6.5vw,7rem)" : "clamp(4.5rem,7.5vw,8rem)",
         fontWeight:800,
         fontStyle:"normal",
-        lineHeight:0.85,
-        color: sz.color,
-        opacity: active ? 1 : 0.5,
-        transition:"all 0.55s ease",
+        lineHeight:1,
+        color:sz.color,
+        opacity: on ? 0.95 : 0.5,
+        filter: on ? `drop-shadow(0 0 28px ${sz.color}88)` : "none",
+        transition:"opacity 0.5s ease, filter 0.5s ease",
         letterSpacing:"-0.05em",
-        flex:1,
-        display:"flex", alignItems:"center",
-        filter: active ? `drop-shadow(0 0 32px ${sz.color}66)` : "none",
+        userSelect:"none",
+        pointerEvents:"none",
       }}>{tier.label}</div>
 
-      {/* Bottom info */}
-      <div style={{ paddingTop:"1.25rem", borderTop:`1px solid ${sz.color}22` }}>
-        <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.5rem" }}>
+      {/* Bottom content overlay */}
+      <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"1.4rem" }}>
+        {/* Tier name badge */}
+        <div style={{
+          display:"inline-block",
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.5rem", fontWeight:700,
+          letterSpacing:"0.18em", textTransform:"uppercase",
+          color:sz.color,
+          background:`${sz.color}1A`,
+          border:`1px solid ${sz.color}44`,
+          padding:"0.22rem 0.65rem", borderRadius:99,
+          marginBottom:"0.6rem",
+        }}>{sz.name}</div>
+
+        {/* Price + duration */}
+        <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.42rem" }}>
           <div style={{
-            fontFamily:"'Poppins',sans-serif", fontSize:"1.15rem", fontWeight:800,
-            color:"rgba(255,255,255,0.95)", letterSpacing:"-0.02em",
-            opacity: active ? 1 : 0.6, transition:"opacity 0.5s",
+            fontFamily:"'Poppins',sans-serif", fontSize:"1.05rem", fontWeight:800,
+            color:"rgba(255,255,255,0.97)", letterSpacing:"-0.02em",
           }}>{tier.range}</div>
           <div style={{
-            fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:600,
-            color: sz.color, letterSpacing:"0.02em",
-            opacity: active ? 1 : 0.6, transition:"opacity 0.5s",
+            fontFamily:"'Poppins',sans-serif", fontSize:"0.63rem", fontWeight:600,
+            color:sz.color, letterSpacing:"0.02em",
           }}>{tier.weeks}</div>
         </div>
+
+        {/* Description */}
         <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.73rem", fontWeight:400,
-          color:"rgba(255,255,255,0.55)", lineHeight:1.7,
-          opacity: active ? 1 : 0.4, transition:"opacity 0.4s ease",
+          fontFamily:"'Poppins',sans-serif", fontSize:"0.69rem", fontWeight:400,
+          color:"rgba(255,255,255,0.62)", lineHeight:1.65,
+          opacity: on ? 1 : 0.5,
+          transition:"opacity 0.4s ease",
         }}>{tier.desc}</div>
       </div>
     </div>
