@@ -695,139 +695,7 @@ const TESTIMONIALS = [
   { quote: "The Amenity Matrix alone was worth the engagement. Understanding which interventions move the needle — and which don't — saved us from a very expensive mistake.", name: "Maria R.", title: "Director of Leasing", company: "Commercial Properties Group", color: "#FF7F40" },
 ];
 
-// Background images cycling behind testimonials — project images with metadata
-const BG_WIPE = [
-  { img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-YS9pTq3PGeOOm9zXBQIrbKr9BXQp83.jpeg", name:"55 West Monroe", type:"Lobby Transformation", tier:"L" },
-  { img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/22_0000716_000_N5_medium-m4fS8AmlXfInTVjcQUVXfg6kpNJxsd.jpg", name:"241 N 5th", type:"Amenity Repositioning", tier:"L" },
-  { img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-oh4A18thJrrAjfLmhvM5C4TJzZsfq3.jpeg", name:"Two22 Tower", type:"Roof Deck Concept", tier:"M" },
-  { img:"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image.png-3tVTOHYMNTjMaF04lEslNvttObsczE.jpeg", name:"ZNA Headquarters", type:"Workplace Strategy", tier:"L" },
-];
-
-const TestimonialsSection = () => {
-  const mobile = useIsMobile();
-  const [ref, visible] = useScrollReveal(0.08);
-  const [tActive, setTActive] = useState(0);
-  const [tFading, setTFading] = useState(false);
-
-  // Background wipe state
-  const [bgCurrent, setBgCurrent] = useState(0);
-  const [bgNext, setBgNext] = useState(null);
-  const [wiping, setWiping] = useState(false);
-
-  // Testimonials cycle: every 4.5s
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTFading(true);
-      setTimeout(() => { setTActive(p => (p + 1) % TESTIMONIALS.length); setTFading(false); }, 320);
-    }, 4500);
-    return () => clearInterval(id);
-  }, []);
-
-  // Background wipe: every 5s
-  useEffect(() => {
-    const id = setInterval(() => {
-      const next = (bgCurrent + 1) % BG_WIPE.length;
-      setBgNext(next);
-      setWiping(true);
-      setTimeout(() => { setBgCurrent(next); setBgNext(null); setWiping(false); }, 900);
-    }, 5000);
-    return () => clearInterval(id);
-  }, [bgCurrent]);
-
-  const t = TESTIMONIALS[tActive];
-  const bgMeta = BG_WIPE[bgCurrent];
-
-  return (
-    <section style={{ position:"relative", overflow:"hidden", minHeight: mobile ? "auto" : "70vh" }}>
-      {/* Background layer: current image */}
-      <div style={{ position:"absolute", inset:0, zIndex:0 }}>
-        <img src={BG_WIPE[bgCurrent].img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center" }}/>
-      </div>
-      {/* Background layer: next image (wipes in from right) */}
-      {bgNext !== null && (
-        <div style={{ position:"absolute", inset:0, zIndex:1,
-          clipPath: wiping ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
-          transition:"clip-path 0.9s cubic-bezier(0.76,0,0.24,1)" }}>
-          <img src={BG_WIPE[bgNext].img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center" }}/>
-        </div>
-      )}
-      {/* Heavy dark overlay for legibility */}
-      <div style={{ position:"absolute", inset:0, zIndex:2,
-        background:"linear-gradient(135deg, rgba(10,12,16,0.92) 0%, rgba(10,12,16,0.75) 55%, rgba(10,12,16,0.55) 100%)" }}/>
-
-      {/* Content */}
-      <div ref={ref} style={{ position:"relative", zIndex:3,
-        padding: mobile ? "5rem 5vw" : "9rem 6vw",
-        maxWidth:900, margin:"0 auto" }}>
-
-        {/* Label */}
-        <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease",
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
-          letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC",
-          marginBottom: mobile ? "2.5rem" : "3.5rem" }}>
-          What Clients Say
-        </div>
-
-        {/* Quote */}
-        <div style={{ opacity: visible ? (tFading ? 0 : 1) : 0,
-          transform: tFading ? "translateY(6px)" : "translateY(0)",
-          transition:"opacity 0.32s ease, transform 0.32s ease" }}>
-          <div style={{ fontFamily:"'Poppins',sans-serif", fontSize: mobile?"5rem":"8rem",
-            fontWeight:800, lineHeight:0.7, color:t.color,
-            opacity:0.35, marginBottom: mobile?"1.25rem":"1.75rem", userSelect:"none" }}>"</div>
-          <p style={{ fontFamily:"'Poppins',sans-serif",
-            fontSize: mobile?"clamp(1.1rem,4.5vw,1.4rem)":"clamp(1.25rem,2.2vw,1.75rem)",
-            fontWeight:300, lineHeight:1.65, color:"rgba(255,255,255,0.92)",
-            marginBottom: mobile?"2rem":"2.75rem", letterSpacing:"-0.01em" }}>{t.quote}</p>
-          <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
-            <div style={{ width:36, height:36, borderRadius:"50%", background:`${t.color}22`,
-              border:`1.5px solid ${t.color}55`, display:"flex", alignItems:"center",
-              justifyContent:"center", flexShrink:0 }}>
-              <div style={{ width:10, height:10, borderRadius:"50%", background:t.color }}/>
-            </div>
-            <div>
-              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.82rem", fontWeight:600, color:"#fff" }}>{t.name}</div>
-              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:400,
-                color:"rgba(255,255,255,0.38)", letterSpacing:"0.04em" }}>{t.title} · {t.company}</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation dots */}
-        <div style={{ display:"flex", gap:"0.5rem", alignItems:"center", marginTop: mobile?"2.5rem":"3.5rem" }}>
-          {TESTIMONIALS.map((_,i) => (
-            <div key={i} onClick={() => { setTFading(true); setTimeout(() => { setTActive(i); setTFading(false); }, 280); }}
-              style={{ width:tActive===i?28:6, height:6, borderRadius:3,
-                background:tActive===i?TESTIMONIALS[i].color:"rgba(255,255,255,0.2)",
-                cursor:"pointer", transition:"all 0.35s cubic-bezier(0.16,1,0.3,1)",
-                boxShadow:tActive===i?`0 0 10px ${TESTIMONIALS[i].color}66`:"none" }}/>
-          ))}
-        </div>
-      </div>
-
-      {/* Project metadata — bottom right, subtle */}
-      {!mobile && (
-        <div style={{ position:"absolute", bottom:"2.5rem", right:"3rem", zIndex:3,
-          display:"flex", flexDirection:"column", alignItems:"flex-end", gap:"0.35rem",
-          opacity: visible ? 0.72 : 0, transition:"opacity 0.7s ease 0.4s" }}>
-          {/* Blur pill behind metadata */}
-          <div style={{ backdropFilter:"blur(16px)", WebkitBackdropFilter:"blur(16px)",
-            background:"rgba(8,10,14,0.55)", border:"1px solid rgba(255,255,255,0.1)",
-            borderRadius:"1rem", padding:"0.65rem 1rem",
-            display:"flex", flexDirection:"column", alignItems:"flex-end", gap:"0.25rem" }}>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.48rem", fontWeight:700,
-              letterSpacing:"0.18em", textTransform:"uppercase",
-              color: SIZE_CONFIG[bgMeta.tier]?.color || "#00BADC" }}>
-              {SIZE_CONFIG[bgMeta.tier]?.name || bgMeta.tier} Tier · {bgMeta.type}
-            </div>
-            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", fontWeight:700,
-              color:"rgba(255,255,255,0.75)" }}>{bgMeta.name}</div>
-          </div>
-        </div>
-      )}
-    </section>
-  );
-};
+// TestimonialsSection is merged into TiersAndTestimonialsSection (defined after TIERS data)
 
 // ── SPRINT TEAM ───────────────────────────────────────────────────────────────
 const DAVID_PHOTO_URL = "https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/David26%27.png";
@@ -1220,7 +1088,249 @@ const TIERS = [
     img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/ATT_Tower_Minneapolis_01.jpg" },
 ];
 
-// ── TIER SCOPE SECTION ────────────────────────────────────────────────────────
+// ── SCROLL CARD STRIP ─────────────────────────────────────────────────────────
+const SCROLL_CARD_LABELS = [
+  "Competitive Analysis","Design Language","Visualization","Floor Plans",
+  "Amenity Sprint","Lobby Activation","Roof Deck Concept","Tenant Lounge",
+  "Building Reposition","Campus Study","3D Rendering","Axon View",
+  "Site Analysis","Material Board",
+];
+
+const ScrollCardStrip = () => {
+  const [scrollY, setScrollY] = useState(0);
+  useEffect(() => {
+    let raf;
+    const onScroll = () => { raf = requestAnimationFrame(() => setScrollY(window.scrollY)); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf); };
+  }, []);
+
+  const row1 = [...SCROLL_CARD_LABELS.slice(0,7), ...SCROLL_CARD_LABELS.slice(0,7)];
+  const row2 = [...SCROLL_CARD_LABELS.slice(7), ...SCROLL_CARD_LABELS.slice(7)];
+  const shift1 =  scrollY * 0.055;
+  const shift2 = -scrollY * 0.055;
+
+  const card = (label, i) => (
+    <div key={i} style={{
+      flexShrink:0, width:210, height:138, borderRadius:"1.5rem",
+      background:"linear-gradient(145deg,#242628 0%,#1c1e20 100%)",
+      border:"1px solid rgba(255,255,255,0.07)",
+      position:"relative", overflow:"hidden",
+      display:"flex", alignItems:"flex-end", padding:"0.8rem 0.9rem",
+    }}>
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        backgroundImage:"linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px)",
+        backgroundSize:"22px 22px" }}/>
+      <div style={{ position:"absolute", top:9, left:9, width:13, height:13,
+        borderTop:"1px solid rgba(0,186,220,0.35)", borderLeft:"1px solid rgba(0,186,220,0.35)" }}/>
+      <div style={{ position:"absolute", bottom:9, right:9, width:13, height:13,
+        borderBottom:"1px solid rgba(0,186,220,0.35)", borderRight:"1px solid rgba(0,186,220,0.35)" }}/>
+      <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.54rem", fontWeight:600,
+        letterSpacing:"0.13em", textTransform:"uppercase", color:"rgba(255,255,255,0.52)",
+        position:"relative", zIndex:1, lineHeight:1.35 }}>{label}</span>
+    </div>
+  );
+
+  return (
+    <div style={{ background:"#1e2022", padding:"3.5rem 0", overflow:"hidden",
+      borderTop:"1px solid rgba(255,255,255,0.05)", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
+      <div style={{ display:"flex", gap:"1rem", marginBottom:"1rem",
+        transform:`translateX(${shift1}px)`, willChange:"transform" }}>
+        {row1.map((l,i) => card(l,i))}
+      </div>
+      <div style={{ display:"flex", gap:"1rem",
+        transform:`translateX(${shift2}px)`, willChange:"transform" }}>
+        {row2.map((l,i) => card(l,i))}
+      </div>
+    </div>
+  );
+};
+
+// ── TIERS + TESTIMONIALS COMBINED ─────────────────────────────────────────────
+const TiersAndTestimonialsSection = () => {
+  const mobile = useIsMobile();
+  const [ref, visible] = useScrollReveal(0.06);
+  // Testimonials
+  const [tActive, setTActive] = useState(0);
+  const [tFading, setTFading] = useState(false);
+  // Tiers
+  const [tiersActive, setTiersActive] = useState(0);
+  const [barsIn, setBarsIn] = useState(false);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setTFading(true);
+      setTimeout(() => { setTActive(p => (p + 1) % TESTIMONIALS.length); setTFading(false); }, 320);
+    }, 4500);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+    const bt = setTimeout(() => setBarsIn(true), 500);
+    const ti = setInterval(() => setTiersActive(a => (a + 1) % 4), 3200);
+    return () => { clearTimeout(bt); clearInterval(ti); };
+  }, [visible]);
+
+  const t = TESTIMONIALS[tActive];
+
+  const fadeUp = (delay) => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? "translateY(0)" : "translateY(28px)",
+    transition: `opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+  });
+
+  const TierCard = ({ tier, i }) => {
+    const sz = SIZE_CONFIG[tier.label];
+    const isActive = tiersActive === i;
+    return (
+      <div style={{ opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(28px)",
+        transition:`opacity 0.7s ease ${0.2+i*0.1}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${0.2+i*0.1}s` }}>
+        <div onClick={() => setTiersActive(i)} style={{
+          position:"relative", borderRadius:"1.5rem", overflow:"hidden", cursor:"pointer",
+          border: isActive ? `1.5px solid ${sz.color}55` : "1px solid rgba(255,255,255,0.07)",
+          boxShadow: isActive ? `0 16px 40px rgba(0,0,0,0.55), 0 0 28px ${sz.color}18` : "0 4px 16px rgba(0,0,0,0.3)",
+          transform: isActive ? "translateY(-4px)" : "translateY(0)",
+          transition:"all 0.4s cubic-bezier(0.16,1,0.3,1)",
+          minHeight: mobile ? 190 : 210,
+        }}>
+          <div style={{ position:"relative", height: mobile ? 100 : 115, overflow:"hidden" }}>
+            <img src={tier.img} alt={tier.label} style={{ width:"100%", height:"100%", objectFit:"cover",
+              transform: isActive ? "scale(1.07)" : "scale(1)", transition:"transform 0.65s ease" }}/>
+            <div style={{ position:"absolute", inset:0,
+              background:"linear-gradient(to bottom, transparent 30%, rgba(8,10,14,0.88) 100%)" }}/>
+            <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:sz.color,
+              boxShadow:`0 0 14px ${sz.color}99`, opacity: isActive ? 1 : 0.4,
+              borderRadius:"1.5rem 1.5rem 0 0" }}/>
+            <div style={{ position:"absolute", bottom:"0.5rem", left:"0.9rem",
+              fontFamily:"'Poppins',sans-serif",
+              fontSize: tier.label==="XL" ? "clamp(1.8rem,2.5vw,2.6rem)" : "clamp(1.9rem,2.7vw,2.8rem)",
+              fontWeight:800, lineHeight:1, letterSpacing:"-0.04em",
+              color:sz.color, opacity: isActive ? 1 : 0.55,
+              filter: isActive ? `drop-shadow(0 0 14px ${sz.color}99)` : "none",
+              transition:"opacity 0.4s, filter 0.4s", userSelect:"none" }}>{tier.label}</div>
+          </div>
+          <div style={{ padding:"0.8rem 0.9rem 0.9rem",
+            background: isActive ? "rgba(8,10,14,0.65)" : "rgba(8,10,14,0.5)",
+            transition:"background 0.4s ease" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"0.4rem" }}>
+              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.44rem", fontWeight:700,
+                letterSpacing:"0.15em", textTransform:"uppercase", color:sz.color,
+                background:`${sz.color}18`, border:`1px solid ${sz.color}33`,
+                padding:"0.15rem 0.45rem", borderRadius:99 }}>{sz.name}</div>
+              <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.56rem", fontWeight:600,
+                color:"rgba(255,255,255,0.38)" }}>{tier.weeks}</div>
+            </div>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.9rem", fontWeight:800,
+              color:"rgba(255,255,255,0.95)", letterSpacing:"-0.02em", marginBottom:"0.6rem" }}>{tier.range}</div>
+            <div style={{ height:2, background:"rgba(255,255,255,0.07)", borderRadius:1, overflow:"hidden" }}>
+              <div style={{ height:"100%", width: barsIn ? `${tier.barPct}%` : "0%",
+                background:`linear-gradient(90deg, ${sz.color}66, ${sz.color})`, borderRadius:1,
+                boxShadow: isActive ? `0 0 10px ${sz.color}88` : "none",
+                transition:`width 1s cubic-bezier(0.16,1,0.3,1) ${0.08*i}s, box-shadow 0.4s ease` }}/>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const TestimonialBlock = ({ pad }) => (
+    <div style={{ padding: pad, display:"flex", flexDirection:"column", justifyContent:"center" }}>
+      <div style={{ ...fadeUp(0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
+        letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC",
+        marginBottom: mobile ? "1.5rem" : "2.5rem" }}>What Clients Say</div>
+      <div style={{ ...fadeUp(0.06), fontFamily:"Georgia,'Times New Roman',serif",
+        fontSize: mobile ? "5.5rem" : "9rem", lineHeight:0.75, fontWeight:400,
+        color:t.color, opacity:0.3, marginBottom:"0.25rem", userSelect:"none",
+        transition:"color 0.35s ease" }}>"</div>
+      <div style={{ opacity: tFading ? 0 : 1, transform: tFading ? "translateY(6px)" : "translateY(0)",
+        transition:"opacity 0.32s ease, transform 0.32s ease" }}>
+        <p style={{ fontFamily:"'Poppins',sans-serif",
+          fontSize: mobile ? "clamp(1rem,4vw,1.25rem)" : "clamp(1.1rem,1.6vw,1.4rem)",
+          fontWeight:300, lineHeight:1.72, color:"rgba(255,255,255,0.9)",
+          marginBottom:"2rem", letterSpacing:"-0.01em" }}>{t.quote}</p>
+        <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
+          <div style={{ width:34, height:34, borderRadius:"50%", background:`${t.color}22`,
+            border:`1.5px solid ${t.color}55`, display:"flex", alignItems:"center",
+            justifyContent:"center", flexShrink:0 }}>
+            <div style={{ width:9, height:9, borderRadius:"50%", background:t.color }}/>
+          </div>
+          <div>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.8rem", fontWeight:600, color:"#fff" }}>{t.name}</div>
+            <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.66rem", fontWeight:400,
+              color:"rgba(255,255,255,0.38)", letterSpacing:"0.04em" }}>{t.title} · {t.company}</div>
+          </div>
+        </div>
+      </div>
+      <div style={{ display:"flex", gap:"0.5rem", alignItems:"center", marginTop: mobile ? "2rem" : "2.75rem" }}>
+        {TESTIMONIALS.map((_,i) => (
+          <div key={i} onClick={() => { setTFading(true); setTimeout(() => { setTActive(i); setTFading(false); }, 280); }}
+            style={{ width:tActive===i?28:6, height:6, borderRadius:3,
+              background:tActive===i?TESTIMONIALS[i].color:"rgba(255,255,255,0.2)",
+              cursor:"pointer", transition:"all 0.35s cubic-bezier(0.16,1,0.3,1)",
+              boxShadow:tActive===i?`0 0 10px ${TESTIMONIALS[i].color}66`:"none" }}/>
+        ))}
+      </div>
+    </div>
+  );
+
+  const TiersBlock = ({ pad }) => (
+    <div style={{ padding: pad, display:"flex", flexDirection:"column", justifyContent:"center" }}>
+      <div style={{ ...fadeUp(0.12), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
+        letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"0.75rem" }}>Scalable Scope</div>
+      <h2 style={{ ...fadeUp(0.18), fontFamily:"'Poppins',sans-serif", fontWeight:800,
+        fontSize: mobile ? "clamp(1.6rem,6vw,2rem)" : "clamp(1.8rem,2.4vw,2.4rem)",
+        color:"#fff", lineHeight:1.1, marginBottom: mobile ? "1.5rem" : "2rem" }}>
+        One size<br/>never fits all.
+      </h2>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap: mobile ? "0.75rem" : "1rem" }}>
+        {TIERS.map((tier, i) => <TierCard key={tier.label} tier={tier} i={i}/>)}
+      </div>
+      <div style={{ ...fadeUp(0.5), display:"flex", alignItems:"center", gap:"1.25rem", marginTop:"1.25rem" }}>
+        {TIERS.map((tier, i) => {
+          const sz = SIZE_CONFIG[tier.label];
+          return (
+            <div key={tier.label} onClick={() => setTiersActive(i)}
+              style={{ display:"flex", alignItems:"center", gap:"0.4rem",
+                cursor:"pointer", opacity: tiersActive===i ? 1 : 0.35, transition:"opacity 0.3s ease" }}>
+              <div style={{ width:7, height:7, borderRadius:"50%", background:sz.color,
+                boxShadow: tiersActive===i ? `0 0 8px ${sz.color}` : "none", transition:"box-shadow 0.3s ease" }}/>
+              <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.48rem", fontWeight:600,
+                letterSpacing:"0.1em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)" }}>{tier.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+    <section ref={ref} style={{ background:"#191b1d", position:"relative", overflow:"hidden" }}>
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        backgroundImage:"linear-gradient(rgba(255,255,255,0.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.014) 1px,transparent 1px)",
+        backgroundSize:"48px 48px" }}/>
+      {mobile ? (
+        <div style={{ padding:"5rem 5vw" }}>
+          <TestimonialBlock pad="0 0 3.5rem 0"/>
+          <div style={{ height:"1px", background:"rgba(255,255,255,0.07)", marginBottom:"3.5rem" }}/>
+          <TiersBlock pad="0"/>
+        </div>
+      ) : (
+        <div style={{ display:"flex", alignItems:"stretch", minHeight:"78vh" }}>
+          <div style={{ width:"44%", borderRight:"1px solid rgba(255,255,255,0.07)", flexShrink:0 }}>
+            <TestimonialBlock pad="8rem 4vw 8rem 5vw"/>
+          </div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <TiersBlock pad="8rem 5vw 8rem 4vw"/>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
+
+// ── LEGACY STUB (replaced) ─────────────────────────────────────────────────────
 const TierScopeSection = () => {
   const mobile = useIsMobile();
   const [ref, visible] = useScrollReveal(0.08);
@@ -1740,46 +1850,8 @@ export default function AmenitySprint({ projects = [] }) {
         </div>
       </section>
 
-      {/* ── MARQUEE ── */}
-      <div style={{ background:"#2a2d30", padding:"1.1rem 0", overflow:"hidden", borderTop:"1px solid rgba(255,255,255,0.06)", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
-        <div style={{ display:"flex", gap:"1.5rem", animation:"marquee 50s linear infinite", whiteSpace:"nowrap", width:"max-content" }}>
-          {[...Array(3)].map((_,r)=>(
-            [
-              {name:"Amenity Sprint", icon:"M13 10V3L4 14h7v7l9-11h-7z"},
-              {name:"Lobby Activation", icon:"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"},
-              {name:"Roof Deck Concept", icon:"M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"},
-              {name:"Tenant Lounge", icon:"M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"},
-              {name:"Building Reposition", icon:"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"},
-              {name:"Campus Study", icon:"M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"},
-              {name:"Competitive Analysis", icon:"M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"},
-              {name:"Design Language", icon:"M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"},
-              {name:"Visualization", icon:"M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"},
-              {name:"Floor Plans", icon:"M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"},
-            ].map((item,i)=>(
-              <span key={`${r}-${i}`} style={{ 
-                fontFamily:"'Poppins',sans-serif", 
-                fontSize:"0.6rem", 
-                fontWeight:600, 
-                letterSpacing:"0.12em", 
-                textTransform:"uppercase", 
-                color:"#fff",
-                background:"rgba(0,186,220,0.12)",
-                padding:"0.45rem 1rem 0.45rem 0.7rem",
-                borderRadius:99,
-                border:"1px solid rgba(0,186,220,0.3)",
-                display:"inline-flex",
-                alignItems:"center",
-                gap:"0.5rem",
-              }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00BADC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d={item.icon}/>
-                </svg>
-                {item.name}
-              </span>
-            ))
-          ))}
-        </div>
-      </div>
+      {/* ── SCROLL CARD STRIP ── */}
+      <ScrollCardStrip />
 
       {/* ── JOURNEY TIMELINE ── */}
       <LandingJourneySection />
@@ -1797,7 +1869,7 @@ export default function AmenitySprint({ projects = [] }) {
           {/* LEFT: constrained text box */}
           <div ref={delivRef} style={{
             flexShrink:0,
-            width: mobile?"100%":"min(460px,34vw)",
+            width: mobile?"100%":"min(560px,44vw)",
             paddingRight: mobile?"5vw":"4vw",
           }}>
             <div style={{ ...fade(delivVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
@@ -1860,8 +1932,8 @@ export default function AmenitySprint({ projects = [] }) {
         </div>
       </section>
 
-      {/* ── TIERS ── */}
-      <TierScopeSection />
+      {/* ── TIERS + TESTIMONIALS ── */}
+      <TiersAndTestimonialsSection />
 
       {/* ── SPRINT PROCESS ── */}
       <SprintProcessSection />
@@ -1920,8 +1992,7 @@ export default function AmenitySprint({ projects = [] }) {
       {/* ── SPRINT TEAM ── */}
       <SprintTeamSection />
 
-      {/* ── TESTIMONIALS ── */}
-      <TestimonialsSection />
+      {/* TESTIMONIALS merged into TiersAndTestimonialsSection above */}
 
       {/* ── CTA ── */}
       <section id="contact" style={{
