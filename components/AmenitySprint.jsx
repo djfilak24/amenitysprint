@@ -907,7 +907,7 @@ const MeetTheLeadSection = () => {
           <div style={{ opacity:visible?1:0, transition:"all 0.7s ease 0.14s",
             fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:400,
             color:"rgba(255,255,255,0.4)", letterSpacing:"0.06em", marginBottom:"1.75rem" }}>
-            Principal, Asset Strategy · NELSON Worldwide
+            Associate Principal, Asset Strategy · NELSON Worldwide
           </div>
           <p style={{ opacity:visible?1:0, transform:visible?"none":"translateY(12px)",
             transition:"all 0.75s ease 0.2s",
@@ -1067,131 +1067,14 @@ const ProjectCard = ({ p, delay }) => {
   );
 };
 
-const TIERS = [
-  { label:"S", range:"$2K–$6K", weeks:"2–3 weeks", desc:"Targeted upgrades with immediate impact — entry refresh, signage, lighting, finish improvements. Fast ROI, minimal disruption.", img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/AS1.png" },
-  { label:"M", range:"$5K–$10K", weeks:"2.5–4 weeks", desc:"Significant public-space improvements that open revenue opportunities and solve internal building problems.", img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/CW1.jpeg" },
-  { label:"L", range:"$8K–$15K", weeks:"4–6 weeks", desc:"High-investment repositioning that substantially elevates current and future real estate value.", img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/21_0003493_000_N11_medium.jpg" },
-  { label:"XL", range:"Custom", weeks:"6+ weeks", desc:"Large-scale rebranding, infrastructure overhaul, circulation redesign. Full market repositioning for flagship assets.", img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/ATT_Tower_Minneapolis_01.jpg" },
-];
-
-const SprintTier = ({ tier, active }) => {
-  const sz = SIZE_CONFIG[tier.label];
-  const [hovered, setHovered] = useState(false);
-  const on = active || hovered;
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position:"relative",
-        borderRadius:"2rem",
-        overflow:"hidden",
-        height:"100%",
-        cursor:"pointer",
-        transition:"transform 0.55s cubic-bezier(0.16,1,0.3,1), box-shadow 0.55s ease",
-        transform: on ? "translateY(-5px) scale(1.02)" : "scale(1)",
-        boxShadow: on
-          ? `0 28px 56px rgba(0,0,0,0.65), 0 0 0 1.5px ${sz.color}55`
-          : "0 8px 28px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06)",
-      }}>
-
-      {/* Full-bleed background image */}
-      <img src={tier.img} alt={tier.label} style={{
-        position:"absolute", inset:0,
-        width:"100%", height:"100%",
-        objectFit:"cover",
-        transition:"transform 0.7s cubic-bezier(0.16,1,0.3,1)",
-        transform: on ? "scale(1.08)" : "scale(1)",
-      }}/>
-
-      {/* Dark scrim — bottom-heavy gradient for text legibility */}
-      <div style={{
-        position:"absolute", inset:0,
-        background: on
-          ? "linear-gradient(to top, rgba(8,10,14,0.97) 0%, rgba(8,10,14,0.75) 45%, rgba(8,10,14,0.12) 80%, transparent 100%)"
-          : "linear-gradient(to top, rgba(8,10,14,0.93) 0%, rgba(8,10,14,0.6) 42%, rgba(8,10,14,0.06) 72%, transparent 100%)",
-        transition:"background 0.5s ease",
-      }}/>
-
-      {/* Top accent bar */}
-      <div style={{
-        position:"absolute", top:0, left:0, right:0, height:3,
-        background:sz.color,
-        boxShadow:`0 0 18px ${sz.color}99`,
-        opacity: on ? 1 : 0.45,
-        transition:"opacity 0.5s ease",
-        borderRadius:"2rem 2rem 0 0",
-      }}/>
-
-      {/* Tier letter — large watermark top-left */}
-      <div style={{
-        position:"absolute", top:"1.1rem", left:"1.4rem",
-        fontFamily:"'Poppins',sans-serif",
-        fontSize: tier.label==="XL" ? "clamp(4rem,6.5vw,7rem)" : "clamp(4.5rem,7.5vw,8rem)",
-        fontWeight:800,
-        fontStyle:"normal",
-        lineHeight:1,
-        color:sz.color,
-        opacity: on ? 0.95 : 0.5,
-        filter: on ? `drop-shadow(0 0 28px ${sz.color}88)` : "none",
-        transition:"opacity 0.5s ease, filter 0.5s ease",
-        letterSpacing:"-0.05em",
-        userSelect:"none",
-        pointerEvents:"none",
-      }}>{tier.label}</div>
-
-      {/* Bottom content overlay */}
-      <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"1.4rem" }}>
-        {/* Tier name badge */}
-        <div style={{
-          display:"inline-block",
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.5rem", fontWeight:700,
-          letterSpacing:"0.18em", textTransform:"uppercase",
-          color:sz.color,
-          background:`${sz.color}1A`,
-          border:`1px solid ${sz.color}44`,
-          padding:"0.22rem 0.65rem", borderRadius:99,
-          marginBottom:"0.6rem",
-        }}>{sz.name}</div>
-
-        {/* Price + duration */}
-        <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.42rem" }}>
-          <div style={{
-            fontFamily:"'Poppins',sans-serif", fontSize:"1.05rem", fontWeight:800,
-            color:"rgba(255,255,255,0.97)", letterSpacing:"-0.02em",
-          }}>{tier.range}</div>
-          <div style={{
-            fontFamily:"'Poppins',sans-serif", fontSize:"0.63rem", fontWeight:600,
-            color:sz.color, letterSpacing:"0.02em",
-          }}>{tier.weeks}</div>
-        </div>
-
-        {/* Description */}
-        <div style={{
-          fontFamily:"'Poppins',sans-serif", fontSize:"0.69rem", fontWeight:400,
-          color:"rgba(255,255,255,0.62)", lineHeight:1.65,
-          opacity: on ? 1 : 0.5,
-          transition:"opacity 0.4s ease",
-        }}>{tier.desc}</div>
-      </div>
-    </div>
-  );
-};
 
 // ── MAIN ──────────────────────────────��──────────────────────────────────────
 export default function AmenitySprint({ projects = [] }) {
   const [scrolled, setScrolled] = useState(false);
   const [heroIn, setHeroIn] = useState(false);
-  const [activeTier, setActiveTier] = useState(0);
   const [filterSize, setFilterSize] = useState("ALL");
-
-  useEffect(() => {
-    const id = setInterval(() => setActiveTier(prev => (prev + 1) % 4), 2800);
-    return () => clearInterval(id);
-  }, []);
   const mobile = useIsMobile();
 
-  const [tierRef, tierVis] = useScrollReveal(0.06);
   const [projRef, projVis] = useScrollReveal(0.05);
   const [delivRef, delivVis] = useScrollReveal(0.06);
   const [ctaRef, ctaVis] = useScrollReveal(0.1);
@@ -1446,60 +1329,6 @@ export default function AmenitySprint({ projects = [] }) {
       <LandingJourneySection />
 
       {/* ��─ TIERS ── */}
-      <section id="approach-tiers" style={{
-        backgroundImage:"url('https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/FSS.jpeg')",
-        backgroundSize:"cover", backgroundPosition:"center",
-        overflow:"hidden", position:"relative",
-      }}>
-        {/* Gradient overlay — dark on text side, very light on card side */}
-        <div style={{
-          position:"absolute", inset:0, zIndex:0,
-          background: mobile
-            ? "linear-gradient(180deg, rgba(20,22,24,0.75) 0%, rgba(20,22,24,0.55) 100%)"
-            : "linear-gradient(90deg, rgba(20,22,24,0.94) 0%, rgba(20,22,24,0.8) 34%, rgba(20,22,24,0.22) 58%, rgba(20,22,24,0.04) 100%)",
-        }}/>
-        <div ref={tierRef} style={{
-          display:"flex", flexDirection: mobile ? "column" : "row",
-          alignItems:"stretch",
-          minHeight: mobile ? "auto" : "100vh",
-          position:"relative", zIndex:1,
-        }}>
-          {/* Left: text panel — vertically centered */}
-          <div style={{
-            flexShrink:0,
-            width: mobile ? "100%" : "34vw",
-            padding: mobile ? "4rem 5vw 2.5rem" : "0 5vw 0 6vw",
-            display:"flex", flexDirection:"column", justifyContent:"center",
-          }}>
-            <div style={{ ...fade(tierVis,0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem",
-              fontWeight:600, letterSpacing:"0.2em", textTransform:"uppercase",
-              color:"#00BADC", marginBottom:"1rem" }}>Scalable Scope</div>
-            <h2 style={{ ...fade(tierVis,0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
-              fontSize: mobile?"clamp(2rem,7vw,2.8rem)":"clamp(2rem,3.2vw,3rem)",
-              lineHeight:1.1, color:"#fff", marginBottom:"1.25rem" }}>
-              One size<br/>never fits all.
-            </h2>
-            <p style={{ ...fade(tierVis,0.2), fontFamily:"'Poppins',sans-serif", fontSize:"0.88rem",
-              fontWeight:400, color:"rgba(255,255,255,0.55)", lineHeight:1.85, maxWidth:320 }}>
-              Our S / M / L / XL framework matches scope to your asset, budget, and timeline.
-            </p>
-          </div>
-
-          {/* Right: 2×2 card grid — fills full height */}
-          <div style={{ ...fade(tierVis,0.12),
-            flex:1,
-            display:"grid", gridTemplateColumns:"1fr 1fr",
-            gridTemplateRows:"1fr 1fr",
-            gap: mobile ? "0.875rem" : "1rem",
-            padding: mobile ? "0 5vw 4rem" : "3rem 3vw 3rem 1.5vw",
-            alignItems:"stretch",
-          }}>
-            {TIERS.map((t,i)=>(
-              <SprintTier key={t.label} tier={t} active={activeTier===i} />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── SPRINT PROCESS ── */}
       <SprintProcessSection />
