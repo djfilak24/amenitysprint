@@ -1773,7 +1773,7 @@ export default function AmenitySprint({ projects = [] }) {
             backfaceVisibility:"hidden",
           }}
         >
-          <source src="https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/Untitled%20%282%29.mp4" type="video/mp4" />
+          <source src="https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/Untitled%20%285%29.mp4" type="video/mp4" />
           {/* Fallback image shown if video fails to load */}
           <div style={{
             position:"absolute", inset:0,
