@@ -373,10 +373,10 @@ const LandingJourneySection = () => {
   const [ref, visible] = useScrollReveal(0.08);
   const [activeStep, setActiveStep] = useState(0);
 
-  // Mobile scroll progress bar — DOM refs only, zero React state during scroll
+  // Mobile scroll progress — DOM refs only, zero React state during scroll
   const stepRefs = useRef([]);
-  const progLineRef = useRef(null);
-  const progDotsRef = useRef([]);
+  const dotRingRefs = useRef([]);
+  const connectorRefs = useRef([]);
 
   // Desktop only: auto-advance timeline. On mobile all steps are always visible.
   useEffect(() => {
@@ -385,28 +385,41 @@ const LandingJourneySection = () => {
     return () => clearInterval(t);
   }, [visible, mobile]);
 
-  // Mobile: IntersectionObserver per step — advances progress bar via DOM refs (no setState)
+  // Mobile: IntersectionObserver per step — lights up connectors + dot rings via DOM refs (no setState)
   useEffect(() => {
     if (!mobile || !visible) return;
     const observers = SPRINT_JOURNEY.map((s, i) => {
       const obs = new IntersectionObserver(([entry]) => {
         if (!entry.isIntersecting) return;
-        const pct = ((i + 1) / SPRINT_JOURNEY.length) * 100;
-        if (progLineRef.current) {
-          progLineRef.current.style.width = `${pct}%`;
-          progLineRef.current.style.background = `linear-gradient(90deg, #00BADC, ${s.color})`;
-          progLineRef.current.style.boxShadow = `0 0 10px ${s.color}cc, 0 0 22px ${s.color}44`;
-        }
-        progDotsRef.current.forEach((dot, j) => {
-          if (!dot) return;
-          const active = j <= i;
-          const current = j === i;
-          dot.style.background = active ? SPRINT_JOURNEY[j].color : "rgba(255,255,255,0.1)";
-          dot.style.border = `2px solid ${active ? SPRINT_JOURNEY[j].color : "rgba(255,255,255,0.15)"}`;
-          dot.style.boxShadow = current ? `0 0 12px ${SPRINT_JOURNEY[j].color}cc` : "none";
-          dot.style.transform = `translate(-50%,-50%) scale(${current ? 1.6 : active ? 1.1 : 1})`;
+        // Connector lines: j < i = fully lit (you've passed through them)
+        connectorRefs.current.forEach((line, j) => {
+          if (!line) return;
+          if (j < i) {
+            line.style.background = SPRINT_JOURNEY[j].color;
+            line.style.boxShadow = `0 0 6px ${SPRINT_JOURNEY[j].color}99`;
+          } else {
+            line.style.background = `${SPRINT_JOURNEY[j].color}28`;
+            line.style.boxShadow = "none";
+          }
         });
-      }, { threshold: 0.35, rootMargin: "-10% 0px -45% 0px" });
+        // Dot rings: j < i = lit, j === i = current glow, j > i = dim
+        dotRingRefs.current.forEach((ring, j) => {
+          if (!ring) return;
+          if (j < i) {
+            ring.style.border = `2px solid ${SPRINT_JOURNEY[j].color}`;
+            ring.style.boxShadow = `0 0 8px ${SPRINT_JOURNEY[j].color}66`;
+            ring.style.background = `${SPRINT_JOURNEY[j].color}18`;
+          } else if (j === i) {
+            ring.style.border = `2px solid ${SPRINT_JOURNEY[j].color}`;
+            ring.style.boxShadow = `0 0 16px ${SPRINT_JOURNEY[j].color}bb`;
+            ring.style.background = `${SPRINT_JOURNEY[j].color}28`;
+          } else {
+            ring.style.border = `2px solid ${SPRINT_JOURNEY[j].color}44`;
+            ring.style.boxShadow = "none";
+            ring.style.background = "#1e2022";
+          }
+        });
+      }, { threshold: 0.4, rootMargin: "0px 0px -40% 0px" });
       if (stepRefs.current[i]) obs.observe(stepRefs.current[i]);
       return obs;
     });
@@ -484,53 +497,7 @@ const LandingJourneySection = () => {
 
         {/* Step cards */}
         {mobile ? (
-          // Mobile: all steps fully visible, no cycling, no waiting.
-          // Dots show phase colors; descriptions always shown.
-          <>
-          {/* Sticky scroll progress bar — advances via IntersectionObserver DOM refs */}
-          <div style={{
-            position:"sticky", top:58, zIndex:10,
-            marginLeft:"-5vw", marginRight:"-5vw",
-            marginBottom:"2.25rem",
-            padding:"0.7rem 5vw 0.65rem",
-            background:"rgba(30,32,34,0.94)",
-            backdropFilter:"blur(14px)", WebkitBackdropFilter:"blur(14px)",
-            borderBottom:"1px solid rgba(255,255,255,0.07)",
-          }}>
-            {/* Track + dots */}
-            <div style={{ position:"relative", height:2, background:"rgba(255,255,255,0.08)", margin:"0.3rem 0 0.55rem" }}>
-              <div ref={progLineRef} style={{
-                position:"absolute", left:0, top:0, height:"100%", width:"0%",
-                background:"linear-gradient(90deg, #00BADC, #00BADC)",
-                borderRadius:2,
-                transition:"width 0.52s cubic-bezier(0.16,1,0.3,1), background 0.4s ease, box-shadow 0.4s ease",
-              }}/>
-              {SPRINT_JOURNEY.map((s, i) => (
-                <div key={i} ref={el => { progDotsRef.current[i] = el; }} style={{
-                  position:"absolute",
-                  left:`${(i / (SPRINT_JOURNEY.length - 1)) * 100}%`,
-                  top:"50%", transform:"translate(-50%,-50%) scale(1)",
-                  width:8, height:8, borderRadius:"50%",
-                  background:"rgba(255,255,255,0.1)",
-                  border:"2px solid rgba(255,255,255,0.15)",
-                  zIndex:2,
-                  transition:"background 0.4s ease, box-shadow 0.4s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-                }}/>
-              ))}
-            </div>
-            {/* Labels row */}
-            <div style={{ display:"flex", justifyContent:"space-between", gap:"0.25rem" }}>
-              {SPRINT_JOURNEY.map((s, i) => (
-                <div key={i} style={{
-                  fontFamily:"'Poppins',sans-serif", fontSize:"0.38rem", fontWeight:600,
-                  letterSpacing:"0.08em", textTransform:"uppercase",
-                  color:"rgba(255,255,255,0.28)", lineHeight:1.2,
-                  textAlign: i === 0 ? "left" : i === SPRINT_JOURNEY.length-1 ? "right" : "center",
-                  flex:1, minWidth:0, overflow:"hidden",
-                }}>{s.label.split(" ").slice(0,2).join(" ")}</div>
-              ))}
-            </div>
-          </div>
+          // Mobile: all steps visible. Connector lines + dot rings light up as you scroll past each step.
           <div>
             {SPRINT_JOURNEY.map((s, i) => (
               <div key={i} ref={el => { stepRefs.current[i] = el; }} style={{
@@ -539,14 +506,22 @@ const LandingJourneySection = () => {
                 opacity:visible?1:0,
                 transition:`opacity 0.5s ease ${0.08+i*0.06}s`,
               }}>
+                {/* Vertical connector — lights up when next step enters view */}
                 {i < SPRINT_JOURNEY.length - 1 && (
-                  <div style={{ position:"absolute", left:13, top:28, bottom:0,
-                    width:1, background:`${s.color}33` }}/>
+                  <div ref={el => { connectorRefs.current[i] = el; }} style={{
+                    position:"absolute", left:13, top:28, bottom:0,
+                    width:2, background:`${s.color}28`,
+                    transition:"background 0.55s ease, box-shadow 0.55s ease",
+                  }}/>
                 )}
-                <div style={{ flexShrink:0, width:26, height:26, borderRadius:"50%",
-                  background:"#1e2022", border:`2px solid ${s.color}`,
+                {/* Dot ring — glows when this step is in view */}
+                <div ref={el => { dotRingRefs.current[i] = el; }} style={{
+                  flexShrink:0, width:26, height:26, borderRadius:"50%",
+                  background:"#1e2022", border:`2px solid ${s.color}44`,
                   display:"flex", alignItems:"center", justifyContent:"center",
-                  position:"relative", zIndex:1 }}>
+                  position:"relative", zIndex:1,
+                  transition:"border-color 0.45s ease, box-shadow 0.45s ease, background 0.45s ease",
+                }}>
                   <div style={{ width:7, height:7, borderRadius:"50%", background:s.color }}/>
                 </div>
                 <div style={{ paddingTop:2 }}>
@@ -563,7 +538,6 @@ const LandingJourneySection = () => {
               </div>
             ))}
           </div>
-          </>
         ) : (
           <div style={{ display:"grid", gridTemplateColumns:`repeat(${SPRINT_JOURNEY.length},1fr)`, gap:"0.4rem" }}>
             {SPRINT_JOURNEY.map((s, i) => (
