@@ -965,6 +965,222 @@ const SIZE_CONFIG = {
   XL:{ label:"XL", name:"Transformative", color:"#2979FF" },
 };
 
+const TIERS = [
+  { label:"S", range:"$2K–$6K",  weeks:"2–3 wks", barPct:22,
+    desc:"Targeted upgrades with immediate impact — entry refresh, signage, lighting, finish improvements. Fast ROI, minimal disruption.",
+    img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/AS1.png" },
+  { label:"M", range:"$5K–$10K", weeks:"2.5–4 wks", barPct:50,
+    desc:"Significant public-space improvements that open revenue opportunities and solve specific internal building problems.",
+    img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/CW1.jpeg" },
+  { label:"L", range:"$8K–$15K", weeks:"4–6 wks", barPct:76,
+    desc:"High-investment repositioning that substantially elevates current and future real estate value through full spatial transformation.",
+    img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/21_0003493_000_N11_medium.jpg" },
+  { label:"XL", range:"Custom",  weeks:"6+ wks", barPct:100,
+    desc:"Large-scale rebranding, infrastructure overhaul, and circulation redesign. Full market repositioning for flagship assets.",
+    img:"https://wjwrbcw7qoosooaa.public.blob.vercel-storage.com/ATT_Tower_Minneapolis_01.jpg" },
+];
+
+// ── TIER SCOPE SECTION ────────────────────────────────────────────────────────
+const TierScopeSection = () => {
+  const mobile = useIsMobile();
+  const [ref, visible] = useScrollReveal(0.08);
+  const [active, setActive] = useState(0);
+  const [barsIn, setBarsIn] = useState(false);
+
+  useEffect(() => {
+    if (!visible) return;
+    const t = setTimeout(() => setBarsIn(true), 500);
+    return () => clearTimeout(t);
+  }, [visible]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const t = setInterval(() => setActive(a => (a + 1) % 4), 3200);
+    return () => clearInterval(t);
+  }, [visible]);
+
+  const fadeUp = (delay) => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? "translateY(0)" : "translateY(28px)",
+    transition: `opacity 0.7s ease ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+  });
+
+  return (
+    <section style={{ background:"#1e2022", padding: mobile ? "5rem 5vw" : "8rem 6vw",
+      position:"relative", overflow:"hidden" }}>
+      {/* Dot-grid texture matching LandingJourneySection */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none",
+        backgroundImage:"linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px)",
+        backgroundSize:"48px 48px" }}/>
+
+      <div ref={ref} style={{ maxWidth:1100, margin:"0 auto", position:"relative" }}>
+
+        {/* Header */}
+        <div style={{ marginBottom: mobile ? "3rem" : "4rem" }}>
+          <div style={{ ...fadeUp(0), fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem",
+            fontWeight:600, letterSpacing:"0.22em", textTransform:"uppercase",
+            color:"#00BADC", marginBottom:"1rem" }}>Scalable Scope</div>
+          <h2 style={{ ...fadeUp(0.1), fontFamily:"'Poppins',sans-serif", fontWeight:800,
+            fontSize: mobile ? "clamp(1.7rem,7vw,2.2rem)" : "clamp(2rem,4vw,3rem)",
+            color:"#fff", lineHeight:1.1, margin:0 }}>
+            One size<br/>never fits all.
+          </h2>
+          <p style={{ ...fadeUp(0.18), fontFamily:"'Poppins',sans-serif", fontSize:"0.88rem",
+            fontWeight:400, color:"rgba(255,255,255,0.42)", lineHeight:1.8,
+            marginTop:"1rem", maxWidth:460, marginBottom:0 }}>
+            Match scope to your asset, budget, and timeline — every tier delivers the same concept-ready package.
+          </p>
+        </div>
+
+        {/* Scope axis label */}
+        <div style={{ ...fadeUp(0.24), display:"flex", alignItems:"center",
+          gap:"0.75rem", marginBottom:"0.75rem" }}>
+          <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.5rem", fontWeight:600,
+            letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.18)" }}>
+            Scope / Investment
+          </span>
+          <div style={{ flex:1, height:"1px", background:"rgba(255,255,255,0.06)" }}/>
+          <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.5rem", fontWeight:600,
+            letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(255,255,255,0.18)" }}>
+            Duration →
+          </span>
+        </div>
+
+        {/* 4-tier card grid */}
+        <div style={{ display:"grid",
+          gridTemplateColumns: mobile ? "1fr 1fr" : "1fr 1fr 1fr 1fr",
+          gap: mobile ? "0.875rem" : "1.25rem" }}>
+          {TIERS.map((tier, i) => {
+            const sz = SIZE_CONFIG[tier.label];
+            const isActive = active === i;
+            return (
+              /* Outer: scroll-reveal wrapper */
+              <div key={tier.label} style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? "translateY(0)" : "translateY(36px)",
+                transition: `opacity 0.7s ease ${0.15 + i*0.1}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${0.15 + i*0.1}s`,
+              }}>
+                {/* Inner: interactive card */}
+                <div onClick={() => setActive(i)} style={{
+                  position:"relative", borderRadius:"1.75rem", overflow:"hidden",
+                  cursor:"pointer",
+                  border: isActive ? `1.5px solid ${sz.color}55` : "1px solid rgba(255,255,255,0.07)",
+                  boxShadow: isActive
+                    ? `0 20px 48px rgba(0,0,0,0.55), 0 0 32px ${sz.color}18`
+                    : "0 4px 20px rgba(0,0,0,0.35)",
+                  transform: isActive ? "translateY(-5px)" : "translateY(0)",
+                  transition:"border-color 0.4s ease, box-shadow 0.45s ease, transform 0.45s cubic-bezier(0.16,1,0.3,1)",
+                  minHeight: mobile ? 220 : 300,
+                  display:"flex", flexDirection:"column",
+                }}>
+
+                  {/* Photo — top half */}
+                  <div style={{ position:"relative", height: mobile ? 108 : 155, overflow:"hidden", flexShrink:0 }}>
+                    <img src={tier.img} alt={tier.label} style={{
+                      width:"100%", height:"100%", objectFit:"cover",
+                      transition:"transform 0.65s ease",
+                      transform: isActive ? "scale(1.07)" : "scale(1)",
+                    }}/>
+                    {/* Gradient to bleed into content area */}
+                    <div style={{ position:"absolute", inset:0,
+                      background:"linear-gradient(to bottom, transparent 30%, rgba(8,10,14,0.88) 100%)" }}/>
+                    {/* Tier accent bar */}
+                    <div style={{ position:"absolute", top:0, left:0, right:0, height:3,
+                      background:sz.color, boxShadow:`0 0 14px ${sz.color}99`,
+                      opacity: isActive ? 1 : 0.4, transition:"opacity 0.4s ease",
+                      borderRadius:"1.75rem 1.75rem 0 0" }}/>
+                    {/* Large tier letter */}
+                    <div style={{
+                      position:"absolute", bottom:"0.55rem", left:"1rem",
+                      fontFamily:"'Poppins',sans-serif",
+                      fontSize: tier.label==="XL" ? "clamp(2rem,3.2vw,3rem)" : "clamp(2.2rem,3.5vw,3.4rem)",
+                      fontWeight:800, lineHeight:1, letterSpacing:"-0.04em",
+                      color:sz.color,
+                      opacity: isActive ? 1 : 0.55,
+                      filter: isActive ? `drop-shadow(0 0 18px ${sz.color}99)` : "none",
+                      transition:"opacity 0.4s, filter 0.4s",
+                      userSelect:"none", pointerEvents:"none",
+                    }}>{tier.label}</div>
+                  </div>
+
+                  {/* Content — bottom */}
+                  <div style={{ padding:"0.9rem 1rem 1rem", flex:1, display:"flex", flexDirection:"column",
+                    background: isActive ? "rgba(8,10,14,0.65)" : "rgba(8,10,14,0.5)",
+                    transition:"background 0.4s ease" }}>
+
+                    {/* Name badge + weeks */}
+                    <div style={{ display:"flex", alignItems:"center",
+                      justifyContent:"space-between", marginBottom:"0.45rem" }}>
+                      <div style={{
+                        fontFamily:"'Poppins',sans-serif", fontSize:"0.46rem", fontWeight:700,
+                        letterSpacing:"0.16em", textTransform:"uppercase",
+                        color:sz.color, background:`${sz.color}18`,
+                        border:`1px solid ${sz.color}33`, padding:"0.18rem 0.5rem", borderRadius:99,
+                      }}>{sz.name}</div>
+                      <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.58rem",
+                        fontWeight:600, color:"rgba(255,255,255,0.38)",
+                        letterSpacing:"0.02em" }}>{tier.weeks}</div>
+                    </div>
+
+                    {/* Price */}
+                    <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.92rem", fontWeight:800,
+                      color:"rgba(255,255,255,0.95)", letterSpacing:"-0.02em",
+                      marginBottom:"0.7rem" }}>{tier.range}</div>
+
+                    {/* Animated scope bar */}
+                    <div style={{ height:2, background:"rgba(255,255,255,0.07)", borderRadius:1,
+                      marginBottom:"0.75rem", overflow:"hidden" }}>
+                      <div style={{
+                        height:"100%",
+                        width: barsIn ? `${tier.barPct}%` : "0%",
+                        background:`linear-gradient(90deg, ${sz.color}66, ${sz.color})`,
+                        borderRadius:1,
+                        boxShadow: isActive ? `0 0 10px ${sz.color}88` : "none",
+                        transition: `width 1s cubic-bezier(0.16,1,0.3,1) ${0.08*i}s, box-shadow 0.4s ease`,
+                      }}/>
+                    </div>
+
+                    {/* Description — expands on active */}
+                    <div style={{
+                      fontFamily:"'Poppins',sans-serif", fontSize:"0.66rem", fontWeight:400,
+                      color:"rgba(255,255,255,0.48)", lineHeight:1.65,
+                      overflow:"hidden",
+                      maxHeight: isActive ? "5rem" : "0",
+                      opacity: isActive ? 1 : 0,
+                      transition:"max-height 0.45s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease",
+                    }}>{tier.desc}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bottom dot-legend */}
+        <div style={{ ...fadeUp(0.55), display:"flex", alignItems:"center",
+          gap:"1.25rem", marginTop:"1.75rem", justifyContent:"flex-end" }}>
+          {TIERS.map((tier, i) => {
+            const sz = SIZE_CONFIG[tier.label];
+            return (
+              <div key={tier.label} onClick={() => setActive(i)}
+                style={{ display:"flex", alignItems:"center", gap:"0.45rem",
+                  cursor:"pointer", opacity: active===i ? 1 : 0.35,
+                  transition:"opacity 0.3s ease" }}>
+                <div style={{ width:8, height:8, borderRadius:"50%", background:sz.color,
+                  boxShadow: active===i ? `0 0 10px ${sz.color}` : "none",
+                  transition:"box-shadow 0.3s ease" }}/>
+                <span style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.5rem", fontWeight:600,
+                  letterSpacing:"0.1em", textTransform:"uppercase",
+                  color:"rgba(255,255,255,0.5)" }}>{tier.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const ProjectCard = ({ p, delay }) => {
   const [ref, visible] = useScrollReveal(0.05);
   const [hovered, setHovered] = useState(false);
@@ -1328,7 +1544,8 @@ export default function AmenitySprint({ projects = [] }) {
       {/* ── JOURNEY TIMELINE ── */}
       <LandingJourneySection />
 
-      {/* ��─ TIERS ── */}
+      {/* ── TIERS ── */}
+      <TierScopeSection />
 
       {/* ── SPRINT PROCESS ── */}
       <SprintProcessSection />
