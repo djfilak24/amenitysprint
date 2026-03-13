@@ -1,7 +1,19 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { getAllProjects } from "@/lib/projects";
+
+// Module-level scroll tracker — shared by all auto-cycling intervals.
+// Updates a plain variable (no React state) to avoid re-renders during scroll.
+let _isScrolling = false;
+let _scrollPauseTimer;
+if (typeof window !== "undefined") {
+  window.addEventListener("scroll", () => {
+    _isScrolling = true;
+    clearTimeout(_scrollPauseTimer);
+    _scrollPauseTimer = setTimeout(() => { _isScrolling = false; }, 220);
+  }, { passive: true });
+}
 
 const NoiseOverlay = () => (
   <div style={{ position:'fixed', inset:0, zIndex:9999, pointerEvents:'none', opacity:0.025 }}>
@@ -24,10 +36,13 @@ const useScrollReveal = (threshold = 0.1) => {
 };
 
 const useIsMobile = () => {
-  const [mobile, setMobile] = useState(false);
+  // Initialize synchronously from window to avoid a false→true hydration re-render
+  // that would re-layout every section exactly when users start scrolling.
+  const [mobile, setMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
   useEffect(() => {
     const check = () => setMobile(window.innerWidth < 768);
-    check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
@@ -89,6 +104,7 @@ const DiagnoseCard = ({ active }) => {
     if (!active) return;
     let i = 0;
     const t = setInterval(() => {
+      if (_isScrolling) return;
       setScanLine(i);
       setRevealed(prev => { const n=[...prev]; n[i]=true; return n; });
       i++;
@@ -162,6 +178,7 @@ const ProgramCard = ({ active }) => {
     const sequence = [0,1,3,4,2,5]; // order of selection
     let idx = 0;
     const t = setInterval(() => {
+      if (_isScrolling) return;
       if (idx < sequence.length) {
         const target = sequence[idx];
         setItems(prev => prev.map((item, i) => i===target ? {...item, selected:true} : item));
@@ -238,6 +255,7 @@ const VisualizeCard = ({ active }) => {
     if (!active) { setActiveLayer(0); return; }
     let i = 0;
     const t = setInterval(() => {
+      if (_isScrolling) return;
       i = (i + 1) % layers.length;
       setActiveLayer(i);
     }, 1100);
@@ -343,7 +361,7 @@ const LandingJourneySection = () => {
 
   useEffect(() => {
     if (!visible) return;
-    const t = setInterval(() => setActiveStep(s => (s + 1) % SPRINT_JOURNEY.length), 2800);
+    const t = setInterval(() => { if (!_isScrolling) setActiveStep(s => (s + 1) % SPRINT_JOURNEY.length); }, 2800);
     return () => clearInterval(t);
   }, [visible]);
 
@@ -362,13 +380,13 @@ const LandingJourneySection = () => {
         {/* Header */}
         <div style={{ marginBottom: mobile ? "3rem" : "4rem" }}>
           <div style={{ opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(20px)",
-            transition:"all 0.7s ease 0s",
+            transition:"opacity 0.7s ease, transform 0.7s ease",
             fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
             letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>
             From Sketch to Keys
           </div>
           <h2 style={{ opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(20px)",
-            transition:"all 0.7s ease 0.1s",
+            transition:"opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s",
             fontFamily:"'Poppins',sans-serif", fontWeight:800,
             fontSize: mobile ? "clamp(1.7rem,7vw,2.2rem)" : "clamp(2rem,4vw,3rem)",
             color:"#fff", lineHeight:1.1, margin:0 }}>
@@ -497,7 +515,7 @@ const SprintProcessSection = () => {
 
   useEffect(() => {
     if (!visible) return;
-    const t = setInterval(() => setActiveCard(c => (c+1)%3), 4000);
+    const t = setInterval(() => { if (!_isScrolling) setActiveCard(c => (c+1)%3); }, 4000);
     return () => clearInterval(t);
   }, [visible]);
 
@@ -536,13 +554,13 @@ const SprintProcessSection = () => {
         {/* Header */}
         <div style={{ marginBottom: mobile ? "3rem" : "5rem" }}>
           <div style={{ opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(20px)",
-            transition:"all 0.7s ease 0s",
+            transition:"opacity 0.7s ease, transform 0.7s ease",
             fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
             letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>
             The Sprint Process
           </div>
           <h2 style={{ opacity:visible?1:0, transform:visible?"translateY(0)":"translateY(20px)",
-            transition:"all 0.7s ease 0.1s",
+            transition:"opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s",
             fontFamily:"'Poppins',sans-serif", fontWeight:800,
             fontSize: mobile ? "clamp(1.7rem,7vw,2.2rem)" : "clamp(2rem,4vw,3.5rem)",
             color:"#fff", lineHeight:1.15 }}>
@@ -1000,32 +1018,32 @@ const MeetTheLeadSection = () => {
           position:"relative", zIndex:1,
         }}>
           <div style={{ opacity:visible?1:0, transform:visible?"none":"translateY(16px)",
-            transition:"all 0.7s ease",
+            transition:"opacity 0.7s ease, transform 0.7s ease",
             fontFamily:"'Poppins',sans-serif", fontSize:"0.62rem", fontWeight:600,
             letterSpacing:"0.22em", textTransform:"uppercase", color:"#00BADC", marginBottom:"1rem" }}>
             Meet Your Sprint Lead
           </div>
           <h2 style={{ opacity:visible?1:0, transform:visible?"none":"translateY(18px)",
-            transition:"all 0.75s ease 0.08s",
+            transition:"opacity 0.75s ease 0.08s, transform 0.75s ease 0.08s",
             fontFamily:"'Poppins',sans-serif", fontWeight:800,
             fontSize: mobile?"clamp(1.8rem,7vw,2.4rem)":"clamp(2rem,3vw,2.8rem)",
             color:"#fff", lineHeight:1.1, marginBottom:"0.5rem" }}>
             David Filak
           </h2>
-          <div style={{ opacity:visible?1:0, transition:"all 0.7s ease 0.14s",
+          <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease 0.14s, transform 0.7s ease 0.14s",
             fontFamily:"'Poppins',sans-serif", fontSize:"0.78rem", fontWeight:400,
             color:"rgba(255,255,255,0.4)", letterSpacing:"0.06em", marginBottom:"1.75rem" }}>
             Associate Principal, Asset Strategy · NELSON Worldwide
           </div>
           <p style={{ opacity:visible?1:0, transform:visible?"none":"translateY(12px)",
-            transition:"all 0.75s ease 0.2s",
+            transition:"opacity 0.75s ease 0.2s, transform 0.75s ease 0.2s",
             fontFamily:"'Poppins',sans-serif", fontSize: mobile?"0.88rem":"0.95rem",
             fontWeight:300, color:"rgba(255,255,255,0.55)", lineHeight:1.85,
             maxWidth:440, marginBottom:"2.25rem" }}>
             I've run Amenity Sprints on 40-story Loop towers, suburban flex parks, and everything in between. The Sprint process exists because I was tired of watching owners spend six months deciding whether to spend $800K — when a $10K concept would answer the question in four weeks.
           </p>
           {/* Stats row */}
-          <div style={{ opacity:visible?1:0, transition:"all 0.7s ease 0.28s",
+          <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease 0.28s, transform 0.7s ease 0.28s",
             display:"flex", gap:"2rem", flexWrap:"wrap", marginBottom:"2.5rem",
             paddingTop:"1.5rem", borderTop:"1px solid rgba(255,255,255,0.07)" }}>
             {[["10+","Sprints Led"],["5","Markets"],["$400M+","Assets Repositioned"]].map(([v,l])=>(
@@ -1039,7 +1057,7 @@ const MeetTheLeadSection = () => {
             ))}
           </div>
           {/* CTA */}
-          <div style={{ opacity:visible?1:0, transition:"all 0.7s ease 0.34s" }}>
+          <div style={{ opacity:visible?1:0, transition:"opacity 0.7s ease 0.34s, transform 0.7s ease 0.34s" }}>
             <a href="https://app.hubspot.com/meetings/dfilak" target="_blank" rel="noopener noreferrer"
               style={{
                 display:"inline-flex", alignItems:"center", gap:"0.5rem",
@@ -1097,18 +1115,26 @@ const SCROLL_CARD_LABELS = [
 ];
 
 const ScrollCardStrip = () => {
-  const [scrollY, setScrollY] = useState(0);
+  const row1Ref = useRef(null);
+  const row2Ref = useRef(null);
+
+  // Direct DOM manipulation — zero React re-renders on scroll
   useEffect(() => {
     let raf;
-    const onScroll = () => { raf = requestAnimationFrame(() => setScrollY(window.scrollY)); };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf); };
+    const onScroll = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const s = window.scrollY;
+        if (row1Ref.current) row1Ref.current.style.transform = `translateX(${s * 0.055}px)`;
+        if (row2Ref.current) row2Ref.current.style.transform = `translateX(${-s * 0.055}px)`;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
   }, []);
 
   const row1 = [...SCROLL_CARD_LABELS.slice(0,7), ...SCROLL_CARD_LABELS.slice(0,7)];
   const row2 = [...SCROLL_CARD_LABELS.slice(7), ...SCROLL_CARD_LABELS.slice(7)];
-  const shift1 =  scrollY * 0.055;
-  const shift2 = -scrollY * 0.055;
 
   const card = (label, i) => (
     <div key={i} style={{
@@ -1134,12 +1160,10 @@ const ScrollCardStrip = () => {
   return (
     <div style={{ background:"#1e2022", padding:"3.5rem 0", overflow:"hidden",
       borderTop:"1px solid rgba(255,255,255,0.05)", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
-      <div style={{ display:"flex", gap:"1rem", marginBottom:"1rem",
-        transform:`translateX(${shift1}px)`, willChange:"transform" }}>
+      <div ref={row1Ref} style={{ display:"flex", gap:"1rem", marginBottom:"1rem", willChange:"transform" }}>
         {row1.map((l,i) => card(l,i))}
       </div>
-      <div style={{ display:"flex", gap:"1rem",
-        transform:`translateX(${shift2}px)`, willChange:"transform" }}>
+      <div ref={row2Ref} style={{ display:"flex", gap:"1rem", willChange:"transform" }}>
         {row2.map((l,i) => card(l,i))}
       </div>
     </div>
@@ -1159,6 +1183,7 @@ const TiersAndTestimonialsSection = () => {
 
   useEffect(() => {
     const id = setInterval(() => {
+      if (_isScrolling) return;
       setTFading(true);
       setTimeout(() => { setTActive(p => (p + 1) % TESTIMONIALS.length); setTFading(false); }, 320);
     }, 4500);
@@ -1168,7 +1193,7 @@ const TiersAndTestimonialsSection = () => {
   useEffect(() => {
     if (!visible) return;
     const bt = setTimeout(() => setBarsIn(true), 500);
-    const ti = setInterval(() => setTiersActive(a => (a + 1) % 4), 3200);
+    const ti = setInterval(() => { if (!_isScrolling) setTiersActive(a => (a + 1) % 4); }, 3200);
     return () => { clearTimeout(bt); clearInterval(ti); };
   }, [visible]);
 
@@ -1190,13 +1215,12 @@ const TiersAndTestimonialsSection = () => {
           position:"relative", borderRadius:"1.5rem", overflow:"hidden", cursor:"pointer",
           border: isActive ? `1.5px solid ${sz.color}55` : "1px solid rgba(255,255,255,0.07)",
           boxShadow: isActive ? `0 16px 40px rgba(0,0,0,0.55), 0 0 28px ${sz.color}18` : "0 4px 16px rgba(0,0,0,0.3)",
-          transform: isActive ? "translateY(-4px)" : "translateY(0)",
-          transition:"all 0.4s cubic-bezier(0.16,1,0.3,1)",
-          minHeight: mobile ? 190 : 210,
+          transition:"border-color 0.4s ease, box-shadow 0.4s ease",
+          height: mobile ? 190 : 210,
         }}>
           <div style={{ position:"relative", height: mobile ? 100 : 115, overflow:"hidden" }}>
             <img src={tier.img} alt={tier.label} style={{ width:"100%", height:"100%", objectFit:"cover",
-              transform: isActive ? "scale(1.07)" : "scale(1)", transition:"transform 0.65s ease" }}/>
+              transform: (!mobile && isActive) ? "scale(1.07)" : "scale(1)", transition:"transform 0.65s ease" }}/>
             <div style={{ position:"absolute", inset:0,
               background:"linear-gradient(to bottom, transparent 30%, rgba(8,10,14,0.88) 100%)" }}/>
             <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:sz.color,
@@ -1207,8 +1231,7 @@ const TiersAndTestimonialsSection = () => {
               fontSize: tier.label==="XL" ? "clamp(1.8rem,2.5vw,2.6rem)" : "clamp(1.9rem,2.7vw,2.8rem)",
               fontWeight:800, lineHeight:1, letterSpacing:"-0.04em",
               color:sz.color, opacity: isActive ? 1 : 0.55,
-              filter: isActive ? `drop-shadow(0 0 14px ${sz.color}99)` : "none",
-              transition:"opacity 0.4s, filter 0.4s", userSelect:"none" }}>{tier.label}</div>
+              transition:"opacity 0.4s ease", userSelect:"none" }}>{tier.label}</div>
           </div>
           <div style={{ padding:"0.8rem 0.9rem 0.9rem",
             background: isActive ? "rgba(8,10,14,0.65)" : "rgba(8,10,14,0.5)",
@@ -1249,7 +1272,8 @@ const TiersAndTestimonialsSection = () => {
         <p style={{ fontFamily:"'Poppins',sans-serif",
           fontSize: mobile ? "clamp(1rem,4vw,1.25rem)" : "clamp(1.1rem,1.6vw,1.4rem)",
           fontWeight:300, lineHeight:1.72, color:"rgba(255,255,255,0.9)",
-          marginBottom:"2rem", letterSpacing:"-0.01em" }}>{t.quote}</p>
+          marginBottom:"2rem", letterSpacing:"-0.01em",
+          minHeight: mobile ? "8rem" : "6.5rem" }}>{t.quote}</p>
         <div style={{ display:"flex", alignItems:"center", gap:"1rem" }}>
           <div style={{ width:34, height:34, borderRadius:"50%", background:`${t.color}22`,
             border:`1.5px solid ${t.color}55`, display:"flex", alignItems:"center",
